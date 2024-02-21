@@ -1,0 +1,1092 @@
+search_keywords,issue_link,issue_title,issue_body,issue_score,issue_views,answer_1,answer_2,answer_3
+tensorflow unexpected behavior,https://stackoverflow.com/questions/38094217,TensorFlow: argmax (-min),"I just noticed an unexpected (at least for me) behavior in TensorFlow. I thought tf.argmax (-argmin) operates on the ranks of a Tensor from outer to inner, but apparently it does not?!
+
+Example:
+
+import numpy as np
+import tensorflow as tf
+
+sess = tf.InteractiveSession()
+
+arr = np.array([[31, 23,  4, 24, 27, 34],
+                [18,  3, 25,  0,  6, 35],
+                [28, 14, 33, 22, 20,  8],
+                [13, 30, 21, 19,  7,  9],
+                [16,  1, 26, 32,  2, 29],
+                [17, 12,  5, 11, 10, 15]])
+
+# arr has rank 2 and shape (6, 6)
+tf.rank(arr).eval()
+&gt; 2
+tf.shape(arr).eval()
+&gt; array([6, 6], dtype=int32)
+
+
+tf.argmax takes two arguments: input and dimension. Since the indices of array arr are arr[rows, columns], I would expect tf.argmax(arr, 0) to return the index of the maximum element per row, while I would have expected tf.argmax(arr, 1) to return the maximum element per column. Likewise for tf.argmin.
+
+However, the opposite is true:
+
+tf.argmax(arr, 0).eval()
+&gt; array([0, 3, 2, 4, 0, 1])
+
+# 0 -&gt; 31 (arr[0, 0])
+# 3 -&gt; 30 (arr[3, 1])
+# 2 -&gt; 33 (arr[2, 2])
+# ...
+# thus, this is clearly searching for the maximum element
+# for every column, and *not* for every row
+
+tf.argmax(arr, 1).eval()
+&gt; array([5, 5, 2, 1, 3, 0])
+
+# 5 -&gt; 34 (arr[0, 5])
+# 5 -&gt; 35 (arr[1, 5])
+# 2 -&gt; 33 (arr[2, 2])
+# ...
+# this clearly returns the maximum element per row,
+# albeit 'dimension' was set to 1
+
+
+Can someone explain this behavior?
+
+Generalized every n-dimensional Tensor t is indexed by t[i, j, k, ...]. Thus, t has rank n and shape (i, j, k, ...). Since dimension 0 corresponds to i, dimension 1 to j, and so forth. Why does tf.argmax (&amp; -argmin) ignore this scheme?
+",16,14542,"<p>Think of the <code>dimension</code> argument of <code>tf.argmax</code> as the axis across which you reduce. <code>tf.argmax(arr, 0)</code> reduces across dimension <code>0</code>, i.e. the rows. Reducing across rows means that you will get the argmax of each individual column.</p>
+
+<p>This might be counterintuitive, but it falls in line with the conventions used in <code>tf.reduce_max</code> and so on.</p>
+","<p>In an n-dimensional Tensor, any given dimension has n-1 dimensions that form a discrete 2 dimensional subspace. Following the same logic, it has n-2 3 dimensional subspaces, all the way down to n - (n-1), n dimensional subspaces. You could express any aggregation as a function within the remaining subspace(s), or across the subspace(s) that are being aggregated. Since the subspace will no longer exist after the aggregation, Tensorflow has chosen to implement it as an operation across that dimension.</p>
+
+<p>Frankly, it's an implementation choice by the creators of Tensorflow, now you know.</p>
+",
+tensorflow unexpected behavior,https://stackoverflow.com/questions/56156646,Keras + Tensorflow Model Optimization: TypeError: clone_model() got an unexpected keyword argument &#39;clone_function&#39;,"I'm trying Tensorflow Model Optimization in order to prune a simple Neural Network. Here's my code:
+
+from __future__ import absolute_import, division, print_function, unicode_literals, unicode_literals
+import tensorflow as tf
+from tensorflow import keras
+import numpy as np
+import matplotlib.pyplot as plt
+
+fashion_mnist = keras.datasets.fashion_mnist
+
+(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+
+class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+               'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+
+train_images = train_images / 255.0
+test_images = test_images / 255.0
+
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(28, 28)),
+    keras.layers.Dense(128, activation=tf.nn.relu),
+    keras.layers.Dense(10, activation=tf.nn.softmax)
+])
+
+import tensorflow_model_optimization as tfmot
+
+
+pruning_schedule = tfmot.sparsity.keras.PolynomialDecay(
+                        initial_sparsity=0.0, final_sparsity=0.5,
+                        begin_step=2000, end_step=4000)
+
+model_for_pruning = tfmot.sparsity.keras.prune_low_magnitude(model, pruning_schedule=pruning_schedule)
+
+
+model_for_pruning.compile(optimizer='adam',
+          loss='sparse_categorical_crossentropy',
+          metrics=['accuracy'])
+
+from tensorflow.keras.callbacks import TensorBoard
+
+
+tensorboard=TensorBoard(log_dir='D:\Python\logs', histogram_freq=0,  
+          write_graph=True, write_images=True)
+
+model_for_pruning.fit(train_images, train_labels, epochs=5,callbacks=tensorboard)
+
+
+#tensorboard --logdir D:\Python\logs 
+
+
+I'm getting the following error:
+
+File ""&lt;ipython-input-1-8f75575649d2&gt;"", line 52, in &lt;module&gt;
+    model_for_pruning = tfmot.sparsity.keras.prune_low_magnitude(model, pruning_schedule=pruning_schedule)
+
+  File ""C:\Users\Rubens\Anaconda3\lib\site-packages\tensorflow_model_optimization\python\core\sparsity\keras\prune.py"", line 152, in prune_low_magnitude
+    to_prune, input_tensors=None, clone_function=_add_pruning_wrapper)
+
+TypeError: clone_model() got an unexpected keyword argument 'clone_function'
+
+
+That is, clone function does not belong to Keras' file models.py. I tried to add **kwargs to it, without success:
+
+def clone_model(model, input_tensors=None,**kwargs):
+""""""Clone any `Model` instance.
+
+Model cloning is similar to calling a model on new inputs,
+except that it creates new layers (and thus new weights) instead
+of sharing the weights of the existing layers.
+
+# Arguments
+    model: Instance of `Model`
+        (could be a functional model or a Sequential model).
+    input_tensors: optional list of input tensors
+        to build the model upon. If not provided,
+        placeholders will be created.
+
+# Returns
+    An instance of `Model` reproducing the behavior
+    of the original model, on top of new inputs tensors,
+    using newly instantiated weights.
+
+# Raises
+    ValueError: in case of invalid `model` argument value.
+""""""
+if isinstance(model, Sequential):
+    return _clone_sequential_model(model, input_tensors=input_tensors)
+else:
+    return _clone_functional_model(model, input_tensors=input_tensors)
+
+
+This is the end of file prune.py, belonging to Tensorflow Model Optimization (notice clone_function=_strip_pruning_wrapper):
+
+  def _strip_pruning_wrapper(layer):
+    if isinstance(layer, pruning_wrapper.PruneLowMagnitude):
+      # The _batch_input_shape attribute in the first layer makes a Sequential
+      # model to be built. This makes sure that when we remove the wrapper from
+      # the first layer the model's built state preserves.
+      if not hasattr(layer.layer, '_batch_input_shape') and hasattr(
+          layer, '_batch_input_shape'):
+        layer.layer._batch_input_shape = layer._batch_input_shape
+      return layer.layer
+    return layer
+
+  return keras.models.clone_model(
+      model, input_tensors=None, clone_function=_strip_pruning_wrapper)
+
+
+All libraries included are up-to-date. Any ideas on how to overcome this error ?
+
+Thanks in advance
+",3,4104,"<p>I found the answer. There is a tricky workaround: besides fixing the code to:</p>
+
+<pre><code>from tensorflow_model_optimization.sparsity import keras as sparsity
+
+pruning_params = {
+      'pruning_schedule': sparsity.PolynomialDecay(initial_sparsity=0.50,
+                                                   final_sparsity=0.90,
+                                                   begin_step=3,
+                                                   end_step=end_step,
+                                                   frequency=100)
+}
+
+pruned_model = tf.keras.Sequential([
+    sparsity.prune_low_magnitude(
+        l.Conv2D(32, 5, padding='same', activation='relu'),
+        input_shape=input_shape,
+        **pruning_params),
+    l.MaxPooling2D((2, 2), (2, 2), padding='same'),
+    l.BatchNormalization(),
+    sparsity.prune_low_magnitude(
+        l.Conv2D(64, 5, padding='same', activation='relu'), **pruning_params),
+    l.MaxPooling2D((2, 2), (2, 2), padding='same'),
+    l.Flatten(),
+    sparsity.prune_low_magnitude(l.Dense(1024, activation='relu'),
+                                 **pruning_params),
+    l.Dropout(0.4),
+    sparsity.prune_low_magnitude(l.Dense(num_classes, activation='softmax'),
+                                 **pruning_params)
+])
+</code></pre>
+
+<p>... I had to restart Jupyter kernel to get rid of further errors, like <code>Conv2D has no attribute 'kernel'</code>, as seen at GitHub:</p>
+
+<p><a href=""https://github.com/tensorflow/tensorflow/issues/18304"" rel=""nofollow noreferrer"">tf.enable_eager_execution must be called at program startup. #18304</a></p>
+",,
+tensorflow unexpected behavior,https://stackoverflow.com/questions/67014270,TypeError: apply_gradients() got an unexpected keyword argument &#39;global_step&#39;,"After days trying to make one RL agent, I finally succeeded in creating its experience, but when I try to train it I get this error. I've tried all I could: different experience, changed step params... I am just out of ideas.
+import pyxinput
+import time
+import cv2
+from PIL import ImageGrab
+import numpy as np
+import keyboard
+import tensorflow
+import tf_agents
+import tensorflow as tf
+from tensorflow import keras
+from tensorflow.keras import layers
+import torch
+#from tf_agents.networks import actor_distribution_networ
+
+from tf_agents.policies import random_py_policy
+
+Tensod_spec = tf_agents.specs.BoundedArraySpec(
+   (15,),
+   dtype=np.float32,
+   name=""XimputSpecs"",
+   minimum=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+   maximum=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+)
+
+Tensod_spec2 = tf_agents.specs.TensorSpec(
+   [440, 600, 1], dtype=tf.int32, name=""ScreenSpecs""
+)
+
+Tensor_reward_spe = tf_agents.specs.TensorSpec(
+   [1, 1], dtype=tf.int32, name=""Reward""
+)
+
+FromEnv = tf_agents.specs.BoundedTensorSpec(
+   shape=(440, 600, 1),
+   dtype='uint8',
+   name='observation',
+   minimum=0,
+   maximum=255
+)
+FromEnv2 = tf_agents.specs.BoundedTensorSpec(
+   shape=(1, 440, 600, 1),
+   dtype=tf.int32,
+   name='observation',
+   minimum=0,
+   maximum=255
+)
+
+fullscreen = [110, 130, 710, 570]
+
+screenpil = ImageGrab.grab(bbox=fullscreen)
+showprint = np.array(screenpil)
+grayscreen = cv2.cvtColor(showprint, cv2.COLOR_BGR2GRAY)
+screenrect = cv2.cvtColor(grayscreen, cv2.COLOR_GRAY2BGR)
+grayscreen = grayscreen.reshape(440, 600, 1)
+
+time_step_spec2 = tf_agents.trajectories.time_step.time_step_spec(
+   observation_spec=FromEnv,
+   #reward_spec = Tensor_reward_spec
+)
+
+time_step_spec = tf_agents.trajectories.time_step.time_step_spec(
+    observation_spec=FromEnv,
+    #reward_spec = Tensor_reward_spec
+)
+
+actor_net = tf_agents.networks.actor_distribution_network.ActorDistributionNetwork(
+   input_tensor_spec=FromEnv,
+   output_tensor_spec=tf_agents.specs.tensor_spec.from_spec(Tensod_spec),
+   activation_fn='relu',
+   #conv_layer_params=[(25, 40, 2)],
+   fc_layer_params=(50, 25, 15),
+   #dtype='int32'
+)
+print(actor_net)
+
+train_step_counter = tf.dtypes.cast(1, tf.int32)
+
+optimizer = tf.keras.optimizers.Adam(learning_rate=0.003)
+
+tf_agent = tf_agents.agents.ReinforceAgent(
+   time_step_spec=time_step_spec,
+   action_spec=tf_agents.specs.tensor_spec.from_spec(Tensod_spec),
+   actor_network=actor_net,
+   optimizer=optimizer,
+   normalize_returns=True,
+   #train_step_counter=tf.Variable(1, name=""global_step"")
+   )
+tf_agent.initialize()
+
+grayscreen2 = grayscreen
+grayscreen2 = grayscreen2.reshape(1, 440, 600, 1)
+time_step2 = tf_agents.trajectories.time_step.TimeStep(
+   step_type=tf_agents.trajectories.time_step.StepType.FIRST,
+   reward=tf.dtypes.cast(1, tf.float32),
+   discount=tf.dtypes.cast(1, tf.float32),
+   observation=grayscreen2
+)
+
+policy_state = tf_agent.policy.get_initial_state(batch_size=1)
+
+policy_step = tf_agent.policy.action(time_step2, policy_state)
+print(policy_step)
+
+observe = time_step2.observation
+#print(observe.dtype)
+#observe = observe.astype(int)
+#print(observe.shape)
+
+experience = tf_agents.trajectories.trajectory.Trajectory(
+   action=tf.compat.v2.Variable([
+           tf.compat.v2.Variable(policy_step.action),
+           tf.compat.v2.Variable(policy_step.action),
+           tf.compat.v2.Variable(policy_step.action)
+   ]),
+   reward=tf.compat.v2.Variable([[
+       tf.compat.v2.Variable(time_step2.reward),
+       tf.compat.v2.Variable(time_step2.reward),
+       tf.compat.v2.Variable(time_step2.reward)
+   ]]),
+   step_type=tf.compat.v2.Variable([[
+       tf.compat.v2.Variable(tf_agents.trajectories.time_step.StepType.FIRST),
+       tf.compat.v2.Variable(tf_agents.trajectories.time_step.StepType.MID),
+       tf.compat.v2.Variable(tf_agents.trajectories.time_step.StepType.LAST)
+   ]]),
+   observation=tf.compat.v2.Variable([
+       tf.compat.v2.Variable(observe),
+       tf.compat.v2.Variable(observe),
+       tf.compat.v2.Variable(observe)
+   ]),
+   policy_info=tf_agent.policy.info_spec,
+   next_step_type=tf.compat.v2.Variable([[
+       tf.compat.v2.Variable(tf_agents.trajectories.time_step.StepType.MID),
+       tf.compat.v2.Variable(tf_agents.trajectories.time_step.StepType.LAST),
+       tf.compat.v2.Variable(tf_agents.trajectories.time_step.StepType.LAST)
+   ]]),
+   discount=tf.compat.v2.Variable([[
+       tf.dtypes.cast(1, tf.float32),
+       tf.dtypes.cast(1, tf.float32),
+       tf.dtypes.cast(1, tf.float32)
+   ]]), 
+)
+
+train_loss = tf_agent.train(experience)
+print(train_loss)
+
+And I get this error:
+---------------------------------------------------------------------------
+TypeError                                 Traceback (most recent call last)
+&lt;ipython-input-15-4dd3966a32b6&gt; in &lt;module&gt;
+      1 #
+----&gt; 2 train_loss = tf_agent.train(experience)
+      3 print(train_loss)
+
+~\AppData\Local\Programs\Python\Python38\lib\site-packages\tf_agents\agents\tf_agent.py in train(self, experience, weights, **kwargs)
+    516 
+    517     if self._enable_functions:
+--&gt; 518       loss_info = self._train_fn(
+    519           experience=experience, weights=weights, **kwargs)
+    520     else:
+
+~\AppData\Local\Programs\Python\Python38\lib\site-packages\tf_agents\utils\common.py in with_check_resource_vars(*fn_args, **fn_kwargs)
+    183         # We're either in eager mode or in tf.function mode (no in-between); so
+    184         # autodep-like behavior is already expected of fn.
+--&gt; 185         return fn(*fn_args, **fn_kwargs)
+    186       if not resource_variables_enabled():
+    187         raise RuntimeError(MISSING_RESOURCE_VARIABLES_ERROR)
+
+~\AppData\Local\Programs\Python\Python38\lib\site-packages\tf_agents\agents\reinforce\reinforce_agent.py in _train(self, experience, weights)
+    286                                           self.train_step_counter)
+    287 
+--&gt; 288     self._optimizer.apply_gradients(
+    289         grads_and_vars, global_step=0)
+    290 
+
+TypeError: apply_gradients() got an unexpected keyword argument 'global_step'
+
+What is this global step, and where is this error coming from? Why can't I train my agent?
+Specs:
+
+Python 3.8
+TensorFlow 2.4 (GPU and non-GPU)
+Windows 10 / ubuntu
+
+If you need more info, please let me know.
+EDIT: Tried other agents they run fine and i posted this ISUE on Tensor
+GIT:https://github.com/tensorflow/tensorflow/issues/48424
+If anyone has the same problem in the future
+",2,1046,"<p>You should try to use a different Optimizer. Those in <code>tf.keras.optimizer</code> don't take <code>global_steps</code> as an argument in <code>apply_gradients</code> function.
+Instead, use these from <code>tf.compat.v1.train</code>, e.g.,</p>
+<pre><code>optimizer = tf.compat.v1.train.AdamOptimizer(learn_rate=0.003)
+</code></pre>
+<p>Note this passes the runtime check, but it makes the training impossible to complete. <code>global_step</code> is supposed to take a <code>Variable</code> and its value will be <code>+1</code> when <code>apply_gradients</code> is called. However, here you see <code>global_step=0</code> is passed in making it no effect at all. The <code>train_step_counter</code> you defined above will remain <code>0</code>.</p>
+<p>Also note there's a <a href=""https://github.com/tensorflow/agents/commit/266251e43c34cce541fd80442e754d6a092aa74f"" rel=""nofollow noreferrer"">fix</a> on the way.</p>
+",,
+tensorflow unexpected behavior,https://stackoverflow.com/questions/40327541,Tensorflow shuffle batch fraction unexpected behavior,"I am training a convolutional neural network and I got some unexpected behavior with the shuffle_batch fraction summary, or maybe I just do not understand it. Can someone pls explain it? The difference between those two graphs is that I exchanged the loss function. 
+
+With this loss function I get the line at 0.0
+
+loss = tf.nn.l2_loss(expected_labels-labels)
+
+
+While this one gives me a constant 1.0 (after hitting 1.0 the first time)
+
+loss = tf.reduce_mean(tf.square(expected_labels - labels))
+
+
+Can the change of loss function really cause that change? I am not sure what this means.
+
+
+
+EDIT: Code as requested
+The first part is for setting up the batching and the big picture.
+
+filename_queue = tf.train.string_input_producer(filenames,
+                                                num_epochs=None)
+label, image = read_and_decode_single_example(filename_queue=filename_queue)
+image = tf.image.decode_jpeg(image.values[0], channels=3)
+jpeg = tf.cast(image, tf.float32) / 255.
+jpeg.set_shape([66,200,3])
+images_batch, labels_batch = tf.train.shuffle_batch(
+    [jpeg, label], batch_size= FLAGS.batch_size,
+    num_threads=8,
+    capacity=60000,
+    min_after_dequeue=10000)
+images_placeholder, labels_placeholder = placeholder_inputs(
+    FLAGS.batch_size)
+
+label_estimations, W1_conv, h1_conv, current_images = e2e.inference(images_placeholder)
+
+# Add to the Graph the Ops for loss calculation.
+loss = e2e.loss(label_estimations, labels_placeholder)
+
+
+# Decay once per epoch, using an exponential schedule starting at 0.01.
+
+
+# Add to the Graph the Ops that calculate and apply gradients.
+train_op = e2e.training(loss, FLAGS.learning_rate, FLAGS.batch_size)
+
+
+Here come the methods for inference loss and train
+
+def inference(images):
+with tf.name_scope('conv1'):
+    W_conv1 = tf.Variable(tf.truncated_normal([5, 5, 3, FEATURE_MAPS_C1], stddev=STDDEV))
+    b_conv1 = tf.Variable(tf.constant(BIAS_INIT, shape=[FEATURE_MAPS_C1]))
+    h_conv1 = tf.nn.bias_add(
+        tf.nn.conv2d(images, W_conv1, strides=[1, 2, 2, 1], padding='VALID'), b_conv1)
+
+with tf.name_scope('conv2'):
+    W_conv2 = tf.Variable(tf.truncated_normal([5, 5, FEATURE_MAPS_C1, 36], stddev=STDDEV))
+    b_conv2 = tf.Variable(tf.constant(BIAS_INIT, shape=[36]))
+    h_conv2 = tf.nn.conv2d(h_conv1, W_conv2, strides=[1, 2, 2, 1], padding='VALID') + b_conv2
+
+with tf.name_scope('conv3'):
+    W_conv3 = tf.Variable(tf.truncated_normal([5, 5, 36, 48], stddev=STDDEV))
+    b_conv3 = tf.Variable(tf.constant(BIAS_INIT, shape=[48]))
+    h_conv3 = tf.nn.conv2d(h_conv2, W_conv3, strides=[1, 2, 2, 1], padding='VALID') + b_conv3
+
+with tf.name_scope('conv4'):
+    W_conv4 = tf.Variable(tf.truncated_normal([3, 3, 48, 64], stddev=STDDEV))
+    b_conv4 = tf.Variable(tf.constant(BIAS_INIT, shape=[64]))
+    h_conv4 = tf.nn.conv2d(h_conv3, W_conv4, strides=[1, 1, 1, 1], padding='VALID') + b_conv4
+
+with tf.name_scope('conv5'):
+    W_conv5 = tf.Variable(tf.truncated_normal([3, 3, 64, 64], stddev=STDDEV))
+    b_conv5 = tf.Variable(tf.constant(BIAS_INIT, shape=[64]))
+    h_conv5 = tf.nn.conv2d(h_conv4, W_conv5, strides=[1, 1, 1, 1], padding='VALID') + b_conv5
+    h_conv5_flat = tf.reshape(h_conv5, [-1, 1 * 18 * 64])
+
+
+with tf.name_scope('fc1'):
+    W_fc1 = tf.Variable(tf.truncated_normal([1 * 18 * 64, 100], stddev=STDDEV))
+    b_fc1 = tf.Variable(tf.constant(BIAS_INIT, shape=[100]))
+    h_fc1 = tf.matmul(h_conv5_flat, W_fc1) + b_fc1
+
+with tf.name_scope('fc2'):
+    W_fc2 = tf.Variable(tf.truncated_normal([100, 50], stddev=STDDEV))
+    b_fc2 = tf.Variable(tf.constant(BIAS_INIT, shape=[50]))
+    h_fc2 = tf.matmul(h_fc1, W_fc2) + b_fc2
+
+with tf.name_scope('fc3'):
+    W_fc3 = tf.Variable(tf.truncated_normal([50, 10], stddev=STDDEV))
+    b_fc3 = tf.Variable(tf.constant(BIAS_INIT, shape=[10]))
+    h_fc3 = tf.matmul(h_fc2, W_fc3) + b_fc3
+
+with tf.name_scope('fc4'):
+    W_fc4 = tf.Variable(tf.truncated_normal([10, 1], stddev=STDDEV))
+    b_fc4 = tf.Variable(tf.constant(BIAS_INIT, shape=[1]))
+    h_fc4 = tf.matmul(h_fc3, W_fc4) + b_fc4
+
+
+return h_fc4
+
+
+Here is the loss function, using l2 causes the issue.
+
+def loss(label_estimations, labels):    
+    n_labels = tf.reshape(label_estimations, [-1])
+    # Here are the two loss functions
+    #loss = tf.reduce_mean(tf.square(n_labels - labels))
+    loss = tf.nn.l2_loss(n_labels-labels)
+    return loss
+
+
+Train method:
+
+def training(loss, learning_rate, batch_size): 
+    global_step = tf.Variable(0, name='global_step', trainable=False)
+    tf.scalar_summary('learning_rate',learning_rate)
+    tf.scalar_summary('Loss ('+loss.op.name+')', loss)
+
+    optimizer = tf.train.AdamOptimizer(learning_rate)
+    train_op = optimizer.minimize(loss, global_step=global_step)
+    return train_op
+
+
+Plot for tf.reduce_sum(tf.square(n_labels - labels)/2)
+
+
+",1,784,"<p>As mentioned in TensorFlow's original guide <a href=""https://www.tensorflow.org/programmers_guide/reading_data"" rel=""nofollow noreferrer"">https://www.tensorflow.org/programmers_guide/reading_data</a></p>
+
+<blockquote>
+  <p>How many threads do you need? the tf.train.shuffle_batch* functions add a summary to the graph that indicates how full the example queue is. If you have enough reading threads, that summary will stay above zero. You can view your summaries as training progresses using TensorBoard.</p>
+</blockquote>
+
+<p>It seems better if the queue is never empty, i.e. the ""fraction_full"" stays non-zero. If not, you should allocate more threads to <code>queue_runner</code></p>
+","<p>The only difference between your loss and <code>l2</code> is scaling, thus you might need to play around with your learning rate / other hyperparameters to take this into account. </p>
+
+<p>l2 loss in TF is defined as:</p>
+
+<pre><code>1/2 SUM_i^N (pred(x_i) - y_i)^2
+</code></pre>
+
+<p>while your cost is</p>
+
+<pre><code>1/N SUM_i^N (pred(x_i) - y_i)^2
+</code></pre>
+
+<p>Of course since you are using stochastic gradient approach, efficienty you are using an approximator of form</p>
+
+<pre><code>1/2 SUM_{(x_i, y_i) in batch} (pred(x_i) - y_i)^2 # l2
+1/#batch SUM_{(x_i, y_i) in batch} (pred(x_i) - y_i)^2 # you
+</code></pre>
+
+<p>Thus you would have to multiply your cost by <code>batch_size / 2</code> to get the original cost. Typically this is not a problem, but sometimes wrong scaling can put you in very degenerated parts of the error surface, and the optimizer will simply fail (especially such aggressive one like Adam).</p>
+
+<p>Side note - you are aware that your model is a deep <strong>linear</strong> model? You do not have any non-linearities in the model. This is very specific network.</p>
+",
+tensorflow unexpected behavior,https://stackoverflow.com/questions/52264238,tensorflow - Unexpected behavior of per_process_gpu_memory_fraction,"I am trying to limit the gpu memory usage to exactly 10% of the gpu memory, but according to nvidia-smi the below program uses about 13% of the gpu. Is this expected behavior? If it is expected behavior, what is the other approximately 3-4% coming from? 
+
+from time import sleep
+
+i = tf.constant(0)
+x = tf.constant(10)
+r = tf.add(i,x)
+
+# Use at most 10% of gpu memory, I expect this to set a hard limit
+gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=.1)
+
+# sleep is used to see what nvidia-smi says for gpu memory usage, 
+# I expect that it will be at most 10% of gpu memory (which is 1616.0 mib for my gpu)
+# but instead I see the process using up to 2120 mib 
+with tf.Session(config=tf.ConfigProto(gpu_options=gpu_options)) as sess:
+        sess.run(r);
+        sleep(10) 
+
+
+See this github issue for more details about my environment and gpu: https://github.com/tensorflow/tensorflow/issues/22158
+",1,62,"<p>From my experimentation, it looks like cudnn and cublas context initialization take around 228 mb of memory. Also, the cuda context can take from 50 to 118 mb.</p>
+",,
+tensorflow unexpected behavior,https://stackoverflow.com/questions/59072533,Subclassing Sequential() keras-model,"I wanted to subclass a sequential model in order to be able to write a custom call() and handle named inputs. However, I got, for me, some unexpected behavior already for very minor changes to the __init__ function. If I try to add a new member to my subclass and initialize it after calling super().__init__() the model fails to build automatically.
+
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, Activation, MaxPooling2D, Dense, Flatten
+import tensorflow as tf
+class Sequential2(Sequential):
+
+    def __init__(self):
+        super(Sequential2, self).__init__()
+        self.custom_member = []
+
+    def get_my_custom_member(self):
+        return self.custom_member
+
+model = Sequential2()
+
+if tf.keras.backend.image_data_format() == 'channels_first':
+    input_shape = (1, 28, 28)
+else:
+    assert tf.keras.backend.image_data_format() == 'channels_last'
+    input_shape = (28, 28, 1)
+
+layers = [Conv2D(32, (3, 3), input_shape=input_shape)]
+
+for layer in layers:
+    model.add(layer)
+
+model.add(Dense(10))
+model.add(Activation('relu'))
+
+model.summary()
+
+
+fails with output: ValueError: This model has not yet been built. Build the model first by calling `build()` or calling `fit()` with some data, or specify an `input_shape` argument in the first layer(s) for automatic build.
+
+However if self.custom_member = [] is left out it works as expected.
+
+What am I missing here? (tested with Tensorflow 1.14)
+",1,1116,"<p>This issue was fixed in <code>TF 2.2</code>. You can refer working code as shown below</p>
+<pre><code>from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Conv2D, Activation, MaxPooling2D, Dense, Flatten
+
+import tensorflow as tf
+print(tf.__version__)
+
+class Sequential2(Sequential):
+
+    def __init__(self):
+        super(Sequential2, self).__init__()
+        self.custom_member = []
+
+    def get_my_custom_member(self):
+        return self.custom_member
+
+model = Sequential2()
+
+if tf.keras.backend.image_data_format() == 'channels_first':
+    input_shape = (1, 28, 28)
+else:
+    assert tf.keras.backend.image_data_format() == 'channels_last'
+    input_shape = (28, 28, 1)
+
+layers = [Conv2D(32, (3, 3), input_shape=input_shape)]
+
+for layer in layers:
+    model.add(layer)
+
+model.add(Dense(10))
+model.add(Activation('relu'))
+
+model.summary()
+</code></pre>
+<p>Output:</p>
+<pre><code>2.2.0
+Model: &quot;sequential&quot;
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv2d (Conv2D)              (None, 26, 26, 32)        320       
+_________________________________________________________________
+dense (Dense)                (None, 26, 26, 10)        330       
+_________________________________________________________________
+activation (Activation)      (None, 26, 26, 10)        0         
+=================================================================
+Total params: 650
+Trainable params: 650
+Non-trainable params: 0
+_________________________________________________________________
+</code></pre>
+",,
+tensorflow unexpected behavior,https://stackoverflow.com/questions/76216267,Why Keras / TensorFlow do not see input features in random forest models if the dataset is very small?,"I am trying to use Keras and TensorFlow to predict a variable via random forests. I encountered an unexpected behavior and I managed to trace it back to the following issue. If my training dataset is too small, I get the warning The model does not have any input features i.e. the model is constant and will always return the same prediction. even though there is a feature in the dataset. Is it a bug, or maybe a deeply undocumented feature?
+Below is a minimal non-working example. The training dataset just says that the key 1 is associated always with the value 1 and the key 2 is associated with the value 2. This information is encoded ""multiplicity"" number of times.
+The correct behaviour should be that whenever we get the key ""1"" as the input, the probability that ""0"" is the correct answer is equal to 0.0, the probability that ""1"" is the correct answer is equal to 1.0, while the probability that ""2"" is the correct answer is equal to 0.0. This means that my desired answer is the vector of probabilities (0.0, 1.0, 0.0). If ""2"" is the key, the desired answer should be (0.0, 0.0, 1.0)].
+The real output of the program is as follows: if the multiplicity is at most 4, TensorFlow does not see any input features; if the multiplicity is 5 or more, TensorFlow can see 1 feature. This change of behaviour may indicate a bug.
+Also, the output of the prediction seems very strange, for example for multiplicity=5 we get really crazy probabilities: for ""1"" we get [0., 0.61333287,  0.3866664 ] and for ""2"" we get [0., 0.35999975, 0.6399995 ].
+import tensorflow as tf
+import tensorflow_decision_forests as tfdf
+import pandas as pd
+
+
+def train_and_predict(multiplicity):
+    train_pd=pd.DataFrame( multiplicity *[ {""key"":1, ""value"":1}] + multiplicity *[ {""key"":2, ""value"":2} ] )
+    train_tf = tfdf.keras.pd_dataframe_to_tf_dataset(train_pd,  label= ""value"")
+
+    rf = tfdf.keras.RandomForestModel()
+    rf.fit(x=train_tf)
+
+    to_guess =pd.DataFrame( [ {""key"":1}, {""key"":2} ] )
+    guess_tf = tfdf.keras.pd_dataframe_to_tf_dataset(to_guess)
+    return rf.predict(guess_tf )
+
+
+print(train_and_predict(4))
+print(train_and_predict(5))
+
+The interesting parts of the output:
+[WARNING] The model does not have any input features i.e. the model is constant and will always return the same prediction.
+[INFO] Model loaded with 300 root(s), 300 node(s), and 0 input feature(s).
+[INFO] Engine ""RandomForestGeneric"" built
+[INFO] Use fast generic engine
+
+[[0.         0.6033329  0.39666638]
+ [0.         0.6033329  0.39666638]]
+
+
+[INFO] Model loaded with 300 root(s), 452 node(s), and 1 input feature(s).
+[INFO] Use fast generic engine.
+
+[[0.         0.61333287 0.3866664 ]
+ [0.         0.35999975 0.6399995 ]]
+
+I use TensorFlow version 2.11.0 on Kaggle. Can you help me figuring out whether the problem lies on a software bug or rather on me not understanding something?
+",1,179,"<p>There are 3 question in this, let me answer them one by one.</p>
+<ol>
+<li><p>By default, Tensorflow Decision Forests will not create any nodes with less than 5 examples in the node. If you just have 8 examples (multiplicity = 4), you cannot split these examples to get 2 nodes with at least 5 examples, so no split is applied and the model is constant. You can control this <a href=""https://ydf.readthedocs.io/en/latest/hyper_parameters.html#id19"" rel=""nofollow noreferrer"">hyperparameter</a> by setting to 1, e.g. <code>rf = tfdf.keras.RandomForestModel(min_examples=1)</code>.</p>
+</li>
+<li><p>The probability vector is 3-dimensional because the labels are integers 1 and 2, so TF-DF implicitly assumes that all integers in the range [0,1,2] are valid labels. This is done mostly to avoid having to compute a mapping from the real label to actual label - you can control this process in detail through the <a href=""https://ydf.readthedocs.io/en/latest/cli_user_manual.html?highlight=integerized#dataset"" rel=""nofollow noreferrer"">dataspec of the underlying C++ library</a>.</p>
+</li>
+<li><p>The reason you're getting &quot;weird&quot; probabilities is due to the definition of random forests. Random Forests (RF) are based on <a href=""https://en.wikipedia.org/wiki/Random_forest#Bagging"" rel=""nofollow noreferrer"">bagging</a> techniques. Each tree is trained <strong>on a different dataset, sampled randomly</strong> (with replacement) from the original one. For you, this means that Tree 1 is (always) trained on the full dataset, which gives to perfect 0-1-probabilities you probably expected. For all other trees, those are sampled on a sample of the dataset that may not have a good split (see Part 1 of the answer), and therefore the tree will just predict the priority class. When averaging over all trees, you end up with the probabilities you're seeing.</p>
+</li>
+</ol>
+<p>It can be interesting to plot the individual trees in order to get a feel for this with</p>
+<pre><code># Text representation of all trees
+print(rf.make_inspector().extract_all_trees())
+# In Colab / IPython, we have interactive plots for individual trees
+tfdf.model_plotter.plot_model_in_colab(rf, tree_idx=77)
+</code></pre>
+<p>TF-DF allows you to <a href=""https://ydf.readthedocs.io/en/latest/hyper_parameters.html#bootstrap-training-dataset"" rel=""nofollow noreferrer"">disable bagging</a> by setting <code>rf = tfdf.keras.RandomForestModel(bootstrap_training_dataset=False)</code>, but doing so completely destroys one of the main ideas of Random Forests. You can also just create a single tree <code>rf = tfdf.keras.RandomForestModel(num_trees=1)</code>, as the first tree does not use bagging.</p>
+<p>Note: Generally, RFs also use <a href=""https://en.wikipedia.org/wiki/Random_forest#From_bagging_to_random_forests"" rel=""nofollow noreferrer"">feature bagging</a>, i.e. sampling a random subset of attributes, but it is not used since the dataset only has one feature.</p>
+<p>Full Disclosure: I'm one of the authors of Tensorflow Decision Forests.</p>
+",,
+tensorflow unexpected behavior,https://stackoverflow.com/questions/63437100,Custom loss function fails with standard loss inside,"I am having a trouble with custom loss function in Keras. The tasks seems fairly simple, but cannot progress due to unexpected behavior. The idea is to join tf.keras.losses.SparseCategoricalCrossentropy with some extras. First I wanted to confirm that if I just user sparse categorical crossentropy in the custom loss function, it will not change networks training.
+the default solution is to set
+model.compile(loss=""sparse_categorical_crossentropy"",...)
+
+this works no problem. network learns and shows improvement in both training and validation accuracy.
+however, when I define custom loss
+def new_loss(y_true,y_pred):
+    ls = tf.keras.losses.SparseCategoricalCrossentropy()
+    return ls(y_true,y_pred)
+
+the network fails to train.
+training and validation accuracy decrease to 0.09... with no hope of proper training.
+moreover, if I do the following
+model.compile(loss= tf.keras.losses.SparseCategoricalCrossentropy(),...)
+
+network is trained well.
+Tensorflow version is
+tf.__version__ = '1.15.3'
+
+Keras version is
+keras.__version__ = '2.2.4-tf'
+
+",1,159,"<p>I replaced &quot;sparse_categorical_crossentropy&quot; with your loss function and it worked fine for my example, did you manage to get it working?</p>
+<pre><code>model.compile(loss=new_loss,...)
+</code></pre>
+",,
+tensorflow unexpected behavior,https://stackoverflow.com/questions/60173337,How to manipulate and return tf.Variable using a for loop over tf.data.Dataset inside function decorated with @tf.function?,"I am trying to create a function containing a for loop over a TensorFlow Dataset that assigns a new value to a TensorFlow Variable in each iteration. The Variable should also be returned as output of the function. With eager execution enabled, there are no issues, however, in graph mode, some unexpected things seem to happen. Consider the following simple dummy code:
+
+import tensorflow as tf
+
+
+class Test(object):
+    def __init__(self):
+        self.var = tf.Variable(0, trainable=False, dtype=tf.float32)
+        self.increment = tf.constant(1, dtype=tf.float32)
+        self.dataset = tf.data.Dataset.from_tensor_slices([0, 1, 2])
+
+    @tf.function
+    def fn1(self):
+        self.var.assign(0)
+        for _ in tf.range(3):
+            self.var.assign(self.var+self.increment)
+            tf.print(self.var)
+        tf.print(self.var)
+        return self.var
+
+    @tf.function
+    def fn2(self):
+        self.var.assign(0)
+        for _ in self.dataset:
+            self.var.assign(self.var+self.increment)
+            tf.print(self.var)
+        tf.print(self.var)
+        return self.var
+
+    @tf.function
+    def fn3(self):
+        self.var.assign(0)
+        y = self.var
+        for _ in self.dataset:
+            self.var.assign(self.var+self.increment)
+            y = self.var
+            tf.print(y)
+        tf.print(y)
+        return y
+
+    @tf.function
+    def fn4(self):
+        var = 0.0
+        for _ in self.dataset:
+            var += 1.0
+            tf.print(var)
+        tf.print(var)
+        return var
+
+
+
+test.fn1(), test.fn3() and test.fn4() all return the following (desired) output:
+
+1
+2
+3
+3
+&lt;tf.Tensor: shape=(), dtype=float32, numpy=3.0&gt;
+
+
+However, test.fn2() behaves differently:
+
+1
+2
+3
+0
+&lt;tf.Tensor: shape=(), dtype=float32, numpy=0.0&gt;
+
+
+Interestingly, after execution of test.fn2, test.var does seem to contain the correct value:
+
+&lt;tf.Variable 'Variable:0' shape=() dtype=float32, numpy=3.0&gt;
+
+
+I am not sure why test.fn2 fails. Clearly, it is doing some things correctly (as test.var contains the correct value after execution of the function), but it does not deliver the correct result. Can you help me understand what causes this code to fail?
+
+The behavior described above occurs when using TensorFlow 2.1.0 for Python 3.6 on CentOS 7.
+",1,346,"<p>Running this on <strong>TensorFlow 2.1.0</strong> reproduces your scenario.</p>
+
+<p>Which prints <code>1 2 3 0</code> for <code>test.fn2()</code>, but you should also consider that when you print <code>self.var</code> in <code>test.fn3()</code> it will also show you <code>self.var = 0</code> during the function call.</p>
+
+<p><strong>Modified</strong> <strong>fn3( )</strong>:</p>
+
+<pre><code>    @tf.function
+    def fn3(self):
+        self.var.assign(0)
+        y = self.var
+        for _ in self.dataset:
+            self.var.assign(self.var+self.increment)
+            y = self.var
+            tf.print(y)
+        tf.print(self.var)  # Inspect self.var value
+        tf.print(y)
+        return y
+</code></pre>
+
+<p><strong>Output:</strong></p>
+
+<pre><code># Executed in Tensorflow 2.1.0
+# test.fn3()
+1
+2
+3
+0  &lt;&lt; self.var
+3
+</code></pre>
+
+<p>This is already fixed If you execute this in <strong>Tensorflow 2.2.0-rc2</strong>.<br>
+The output will be your desired outcome even when printing it during graph execution.</p>
+
+<p>To quickly simulate this you could use <strong>Google Colab</strong> and use <code>%tensorflow_version 2.x</code> to get the <strong>latest available version</strong> for <strong>Tensorflow</strong>.</p>
+
+<p><strong>Output:</strong></p>
+
+<pre><code># Executed in Tensorflow 2.2.0-rc2
+Function 1
+1
+2
+3
+3
+Function 2
+1
+2
+3
+3
+Function 3
+1
+2
+3
+3 &lt;&lt; Value of self.var in test.fn3()
+3
+Function 4
+1
+2
+3
+3
+</code></pre>
+
+<p>You could check more about the changes in the <strong>latest Tensorflow Updates</strong> in this <a href=""https://github.com/tensorflow/tensorflow/releases"" rel=""nofollow noreferrer"">link</a>.  </p>
+",,
+tensorflow unexpected behavior,https://stackoverflow.com/questions/53660631,mxnet model does not produce same output for same input with no intermediate gradient backprop,"I have some experience with Tensorflow but only about a week with mxnet. I am trying to understand the behavior of some code when I hit a break point in the function below:
+
+def train_and_eval(lr, end_date_str, pred):
+    model.collect_params().initialize(mx.init.Xavier(), ctx=ctx, force_reinit=True)
+    mgr      = ProcessMgr(2, end_date_str)
+
+    for epoch in range(args_epochs):    
+        for i in range(2):
+            if i == TRAIN_MODE:
+                mgr.switch_to_train()
+            elif epoch == args_epochs - 1 and i == VALIDATE_MODE:
+                mgr.switch_to_validate()
+            else:
+                break
+
+            while True:
+                try:
+                    data, target, eval_target, date_str = mgr.get_batch()
+                    data        = gluon.utils.split_and_load(data, ctx)
+                    target      = gluon.utils.split_and_load(target, ctx)
+                    eval_target = gluon.utils.split_and_load(eval_target, ctx)
+                    data        = [mx.nd.swapaxes(d, 0, 1) for d in data]
+
+                    with autograd.record():                    
+                        losses = [loss(model(X)[-args_batch_size:], Y) for X, Y in zip(data, target)]
+                        null_loss_vals = sum([Y.square().sum().asscalar() for Y in target])
+                        model_loss_vals = sum([sum(l).asscalar() for l in losses])
+                        null_loss[i] += null_loss_vals
+                        model_loss[i] += model_loss_vals
+
+                        **pdb.set_trace() ## BREAK POINT IS HERE**
+                        if i == TRAIN_MODE:
+                            for l in losses:
+                                l.backward()
+                            x = 18
+                            grads = [i.grad(ctx) for i in model.collect_params().values() if i._grad is not None]
+                            gluon.utils.clip_global_norm(grads, args_clip)
+                            trainer.step(GPU_COUNT * args_batch_size)
+                except:
+                    print(""completed an epoch"")
+                    break
+
+
+I am getting some unexpected values for the losses I am calculating, so I put a break point in to see what was going on. The problem is that when I run the same data through the model, I get different outputs each time. Below I paste some of the outputs I have when I hit the pdb breakpoint and try to run data through the model.
+
+&lt;NDArray 38400x1 @gpu(0)&gt;
+(Pdb) model(data[0])
+
+[[ 2.9265028e-01]
+ [ 9.3701184e-03]
+ [ 4.3234527e-02]
+ ...
+ [-5.0668776e-09]
+ [-2.7628975e-08]
+ [-1.9340845e-08]]
+&lt;NDArray 38400x1 @gpu(0)&gt;
+(Pdb) model(data[0])
+
+[[ 1.5275864e-01]
+ [ 2.0615126e-01]
+ [ 4.6957955e-02]
+ ...
+ [-2.6077061e-08]
+ [-9.2040580e-09]
+ [-3.2883932e-08]]
+&lt;NDArray 38400x1 @gpu(0)&gt;
+(Pdb) data[0]
+
+[[[ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]
+  ...
+  [ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]]
+
+ [[ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]
+  ...
+  [ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]]
+
+ [[ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]
+  ...
+  [ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]]
+
+ ...
+
+ [[ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]
+  ...
+  [ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]]
+
+ [[ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]
+  ...
+  [ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]]
+
+ [[ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]
+  ...
+  [ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]]]
+&lt;NDArray 128x300x2 @gpu(0)&gt;
+(Pdb) data[0]
+
+[[[ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]
+  ...
+  [ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]]
+
+ [[ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]
+  ...
+  [ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]]
+
+ [[ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]
+  ...
+  [ 0. -4.]
+  [ 0. -4.]
+  [ 0. -4.]]
+
+ ...
+
+ [[ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]
+  ...
+  [ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]]
+
+ [[ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]
+  ...
+  [ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]]
+
+ [[ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]
+  ...
+  [ 0.  0.]
+  [ 0.  0.]
+  [ 0.  0.]]]
+&lt;NDArray 128x300x2 @gpu(0)&gt;
+(Pdb) 
+
+
+I am perplexed as to what is going on here. I do realize my code may not be entirely proper in that I am not running anything in a predict or inference model (was planning to check/tackle that later), but I don't understand how the model itself seems to changing each time I run input into the model even though I am not running  backward() or trainer.step(). Any insight would be appreciated. Why is this happening? 
+
+My only guess is that perhaps the hidden state is preserved between runs. But I thought I had not coded it to do so (I saw an example where this was done and the hidden state had to be explicitly saved and fed back into the RNN). In particular, I have not implemented a begin_state method for my gluon.Block. I am not sure how to verify or disprove this guess.
+
+Here is my gluon.Block as implemented in case that is relevant:
+
+class RNNModel(gluon.Block):
+    def __init__(self, mode, num_inputs, num_embed, num_hidden,
+                 num_layers, dropout=0.5, tie_weights=False, **kwargs):
+        super(RNNModel, self).__init__(**kwargs)
+        with self.name_scope():
+            self.drop = nn.Dropout(dropout)
+            self.rnn = rnn.GRU(num_hidden, num_layers, dropout=dropout,
+                               input_size=num_inputs)
+            self.decoder = nn.Dense(1, in_units = num_hidden)
+            self.num_hidden = num_hidden
+
+    def forward(self, inputs):
+        output = self.rnn(inputs)
+        output = self.drop(output)
+        decoded = self.decoder(output.reshape((-1, self.num_hidden)))
+        return decoded
+
+",1,171,"<p>I determined that within the with <code>autograd.record()</code> context, the hidden state must keep evolving, because I did not see this behavior outside of this context. Because my model does not provide a variable which exposes the hidden state I was not able to verify this explicitly, but it makes the most sense. Also I was able to confirm that the weights that are exposed (via <code>trainer._params</code>) were not changing, so it had to be the hidden state.</p>
+",,
