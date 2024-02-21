@@ -38,7 +38,7 @@ const argv = await (yargs(hideBin(process.argv))
 const DEFAULT_OUT_FILE = './out/collected_issues.csv';
 const DEFAULT_IN_FILE = './out/collected_issues.csv';
 const DEFAULT_START_PAGE = 1;
-const DEFAULT_END_PAGE = 2;
+const DEFAULT_END_PAGE = 1;
 
 if (argv.collect) {
 

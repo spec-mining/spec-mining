@@ -99,17 +99,13 @@ const searchIssues = async (searchPhrase: string, currentPage: string): Promise<
         site: 'stackoverflow',
         q: searchPhrase,
         page: currentPage,
-        pagesize: '5',
+        pagesize: '100',
         order: 'desc',
         sort: 'votes',
         answers: '1',
     });
 
-    const a = (await fetch(`${SEARCH_API_URL}?${params}`)).json() as Promise<SearchResult>;
-
-    console.log('search result:', JSON.stringify(await a, null, 2));
-
-    return a;
+    return (await fetch(`${SEARCH_API_URL}?${params}`)).json() as Promise<SearchResult>;
 }
 
 const fetchQuestionBody = async (questionIds: Array<number>): Promise<QuestionBodyResult> => {
@@ -120,11 +116,7 @@ const fetchQuestionBody = async (questionIds: Array<number>): Promise<QuestionBo
         filter: 'withbody'
     });
 
-    const a = (await fetch(`${QUESTION_API_URL}/${questionIds.join(';')}?${params}`)).json() as Promise<QuestionBodyResult>;
-
-    console.log('question bodies:', JSON.stringify(await a, null, 2));
-
-    return a
+    return (await fetch(`${QUESTION_API_URL}/${questionIds.join(';')}?${params}`)).json() as Promise<QuestionBodyResult>;
 }
 
 const fetchAnswerBodies = async (questionIds: Array<number>): Promise<AnswerBodyResult> => {
@@ -137,14 +129,7 @@ const fetchAnswerBodies = async (questionIds: Array<number>): Promise<AnswerBody
 
     console.log('Fetching answer bodies for question ids:', questionIds.join(';'));
     console.log('using link:', `${ANSWER_API_URL}/${questionIds.join(';')}/answers?${params}`);
-    const a = (await fetch(`${ANSWER_API_URL}/${questionIds.join(';')}/answers?${params}`)).json() as Promise<AnswerBodyResult>;
-
-    console.log('answer bodies:', JSON.stringify(await a, null, 2));
-
-    return a;
-
-    // const responses = await Promise.all(questionIds.map(id => fetch(`${ANSWER_API_URL}/${id}/answers?${params}`)));
-    // return await Promise.all(responses.map(response => response.json()));
+    return (await fetch(`${ANSWER_API_URL}/${questionIds.join(';')}/answers?${params}`)).json() as Promise<AnswerBodyResult>;
 }
 
 const sanitizeHTMLContent = (htmlContent: string): string => {
@@ -159,10 +144,44 @@ const fetchData = async (searchPhrase: string, currentPage: string): Promise<Sea
 
     const questionIds = searchResult.items.map((item: StackoverflowSearchResult) => item.question_id);
 
+    if (questionIds.length === 0) {
+        console.log('No questions found for search phrase:', searchPhrase);
+        return {
+            searchResult,
+            questionBodyResult: {
+                items: [],
+                has_more: false,
+                quota_max: 0,
+                quota_remaining: 0
+            },
+            answerBodyResult: {
+                items: [],
+                has_more: false,
+                quota_max: 0,
+                quota_remaining: 0
+            }
+        }
+    }
+
     const questionBodyResult = await fetchQuestionBody(questionIds);
 
     const answerBodyResult = await fetchAnswerBodies(questionIds);
     
+    console.log('remaining search quota:', searchResult.quota_remaining)
+    console.log('remaining question quota:', questionBodyResult.quota_remaining)
+    console.log('remaining answer quota:', answerBodyResult.quota_remaining)
+
+    console.log('question items:', questionBodyResult.items && questionBodyResult.items.length)
+    console.log('answer items:', answerBodyResult.items && answerBodyResult.items.length)
+    
+    if (!questionBodyResult.items) {
+        console.log('No question body results: ', questionBodyResult);
+    }
+    
+    if (!answerBodyResult.items) {
+        console.log('No search results: ', answerBodyResult);
+    }
+
     return {
         searchResult,
         questionBodyResult,
@@ -255,8 +274,8 @@ export const collectData = async (outFile: string, startPage: number, endPage: n
     for (const phrase of searchPhrases) {
         for (const page of pages) {
             console.log(`Searching for ${phrase} on page ${page}`);
-            const { searchResult, questionBodyResult, answerBodyResult } = await fetchData(phrase, page.toString());
-            const sanitizedData = sanitizeData({ searchResult, questionBodyResult, answerBodyResult });
+            const data = await fetchData(phrase, page.toString());
+            const sanitizedData = sanitizeData(data);
             // console.log('Sanitized data:', sanitizedData);
             await saveData(outFile, phrase, sanitizedData)
 

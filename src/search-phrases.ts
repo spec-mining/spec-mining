@@ -1,90 +1,57 @@
-export const searchPhrases = [
-    "tensorflow unexpected behavior",
-    // "tensorflow sometimes fails",
-    // "tensorflow weird output",
-    // "Flask unexpected output",
-    // "numpy unexpected result",
-    // "numpy random crash",
-    // "numpy bizarre behavior",
-    // "pandas unexpected behavior",
-    // "pandas data corruption",
-    // "pandas odd results",
-    // "matplotlib unexpected plot",
-    // "matplotlib strange behavior",
-    // "matplotlib rendering issue",
-    // "scikit-learn unexpected outcome",
-    // "scikit-learn inconsistent results",
-    // "scikit-learn strange error",
-    // "requests unexpected response",
-    // "requests fails randomly",
-    // "requests strange behavior",
-    // "Django unexpected behavior",
-    // "Django template error",
-    // "Django view malfunction",
-    // "PyTorch unexpected tensor values",
-    // "PyTorch random failure",
-    // "PyTorch weird gradient",
-    // "SQLAlchemy unexpected query result",
-    // "SQLAlchemy session crash",
-    // "SQLAlchemy odd behavior",
-    // "Keras unexpected accuracy",
-    // "Keras model fails",
-    // "Keras strange predictions",
-    // "BeautifulSoup parsing issue",
-    // "BeautifulSoup unexpected output",
-    // "BeautifulSoup strange behavior",
-    // "Pillow image corruption",
-    // "Pillow unexpected output",
-    // "Pillow rendering issue",
-    // "SciPy unexpected result",
-    // "SciPy optimization fails",
-    // "SciPy weird output",
-    // "Tornado unexpected behavior",
-    // "Tornado server crash",
-    // "Tornado weird request handling",
-    // "Plotly unexpected plot",
-    // "Plotly rendering issue",
-    // "Plotly strange behavior",
-    // "Dash unexpected layout",
-    // "Dash component fails",
-    // "Dash strange behavior",
-    // "Celery task hangs",
-    // "Celery unexpected behavior",
-    // "Celery worker crash",
-    // "Bokeh plot not displaying",
-    // "Bokeh unexpected output",
-    // "Bokeh strange behavior",
-    // "FastAPI unexpected response",
-    // "FastAPI route fails",
-    // "FastAPI middleware issue",
-    // "NumPy array mismatch",
-    // "Pandas DataFrame anomaly",
-    // "TensorFlow GPU memory leak",
-    // "Keras loss stagnation",
-    // "Matplotlib plot distortion",
-    // "Seaborn visualization flaws",
-    // "Scikit-learn model inconsistency",
-    // "PyTorch memory overflow",
-    // "Django ORM quirks",
-    // "Flask route misbehavior",
-    // "SQLAlchemy transaction deadlock",
-    // "BeautifulSoup HTML miss",
-    // "Requests SSL error",
-    // "Pillow color aberration",
-    // "SciPy calculation discrepancy",
-    // "Tornado asynchronous confusion",
-    // "Plotly dynamic update failure",
-    // "Dash interactive callback issue",
-    // "Celery beat schedule drift",
-    // "Bokeh server disconnect",
-    // "FastAPI authentication glitch",
-    // "Streamlit session state error",
-    // "PySpark RDD partitioning error",
-    // "NLTK tokenizer exception",
-    // "SpaCy NER misclassification",
-    // "Gensim model divergence",
-    // "Plotnine layering mishap",
-    // "Altair chart misalignment",
-    // "Folium map loading error",
-    // "PyGame sprite collision oversight",
+const libraryLists = [
+    ['scikit-learn', 'SQLAlchemy', 'NLTK', 'SciPy'],
+    ['Flask', 'Django', 'FastAPI', 'requests'],
+    ['tensorflow', 'PyTorch', 'Keras', 'Altair'],
+    ['Seaborn', 'Plotly', 'Bokeh', 'matplotlib'],
+    ['SpaCy', 'Gensim', 'BeautifulSoup', 'Tornado'],
+    ['PyGame', 'Celery', 'Pillow', 'Folium'],
+    ['Plotnine', 'pandas', 'Streamlit', 'Dash'],
+    ['PySpark', 'numpy']
 ]
+
+const libraryNames: string[] = libraryLists[0];
+  
+  const adjectives: string[] = [
+    "unexpected",
+    "strange",
+    // "weird",
+    // "random",
+    // "bizarre",
+    // "odd",
+    // "inconsistent"
+  ];
+  
+  const nouns: string[] = [
+    "behavior",
+    // "output",
+    "result",
+    // "error",
+    // "crash",
+    // "failure",
+    "issue"
+  ];
+  
+  // Function to generate all combinations
+  const generateCombinations = (
+    libraries: string[],
+    adjectives: string[],
+    nouns: string[]
+  ): string[] => {
+    const combinations: string[] = [];
+  
+    libraries.forEach((library) => {
+      adjectives.forEach((adjective) => {
+        nouns.forEach((noun) => {
+          combinations.push(`${library} ${adjective} ${noun}`);
+        });
+      });
+    });
+  
+    return combinations;
+  }
+  
+  
+  export const searchPhrases: string[] = generateCombinations(libraryNames, adjectives, nouns);
+  
+  console.log(searchPhrases);
+  
