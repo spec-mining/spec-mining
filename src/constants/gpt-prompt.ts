@@ -1,29 +1,16 @@
-import dotenv from "dotenv";
-dotenv.config();
-
-import fs from 'fs';
-import csv from 'csv-parser';
-import OpenAI from "openai";
-import { createObjectCsvWriter } from 'csv-writer';
-
-const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY_2"], // This is the default and can be omitted
-  organization: 'org-OzVBy55bI74K0Y2WSivPTmsG'
-});
-
 const AFEW_SHOT_EXAMPLES = `
 input:
 [
   {
     "issue_link": "https://stackoverflow.com/questions/63206407/rgb-to-grayscale-with-tensorflow-2-3-getting-dimensions-must-be-equal-error",
-    "issue_title": "rgb_to_grayscale with tensorflow 2.3, getting \"dimensions must be equal error\"",
+    "issue_title": "rgb_to_grayscale with tensorflow 2.3, getting \\"dimensions must be equal error\\"",
     "issue_body": "I'm a tensorflow noob, sorry. I am following this tutorial: https://www.tensorflow.org/tutorials/images/segmentation     I want to apply some preprocessing to the images in the dataset, and rgb_to_grayscale is failing with the error below. My median filter works, just not rbg_to_grayscale.     I would really appreciate any advice you have.     @tf.function     def load_image_train(datapoint):       input_image = tf.image.resize(datapoint['image'], (128, 128))       input_mask = tf.image.resize(datapoint['segmentation_mask'], (128, 128))         print(type(input_image))       print(input_image.shape)       input_image = tf.image.rgb_to_grayscale(input_image)       input_mask = tf.image.rgb_to_grayscale(input_mask)       input_image = tfa.image.median_filter2d(input_image)       input_mask = tfa.image.median_filter2d(input_mask)    print output:     <class 'tensorflow.python.framework.ops.Tensor'>     (128, 128, 3)     Errror received:         tutorial.py:36 load_image_train  *             input_mask = tf.image.rgb_to_grayscale(input_mask)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/util/dispatch.py:201 wrapper  **             return target(*args, **kwargs)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/ops/image_ops_impl.py:2136 rgb_to_grayscale             gray_float = math_ops.tensordot(flt_image, rgb_weights, [-1, -1])         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/util/dispatch.py:201 wrapper             return target(*args, **kwargs)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/ops/math_ops.py:4519 tensordot             ab_matmul = matmul(a_reshape, b_reshape)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/util/dispatch.py:201 wrapper             return target(*args, **kwargs)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/ops/math_ops.py:3255 matmul             a, b, transpose_a=transpose_a, transpose_b=transpose_b, name=name)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/ops/gen_math_ops.py:5642 mat_mul             name=name)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/framework/op_def_library.py:744 _apply_op_helper             attrs=attr_protos, op_def=op_def)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/framework/func_graph.py:593 _create_op_internal             compute_device)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/framework/ops.py:3485 _create_op_internal             op_def=op_def)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/framework/ops.py:1975 __init__             control_input_ops, op_def)         /home/dmattie/environments/imgproc/lib/python3.7/site-packages/tensorflow/python/framework/ops.py:1815 _create_c_op             raise ValueError(str(e))         ValueError: Dimensions must be equal, but are 1 and 3 for '{{node rgb_to_grayscale_1/Tensordot/MatMul}} = MatMul[T=DT_FLOAT, transpose_a=false, transpose_b=false](rgb_to_grayscale_1/Tensordot/Reshape, rgb_to_grayscale_1/Tensordot/Reshape_1)' with input shapes: [16384,1], [3,1].",
     "answer_1": "The shape of input_mask is (128,128,1) so that when it gets flattened there is only one value in the last axis. This makes it incompatible with tf.image.rgb_to_grayscale which requires three RGB values in the last axis. You should not be interpreting the mask as an image, but if you really want to be able to apply the greyscale to the mask values (I don't see any reason to do this), you could broadcast it: input_mask = tf.broadcast_to(input_mask, (128,128,3))"
   },  
   {
     "issue_link": "https://stackoverflow.com/questions/22591174/pandas-multiple-conditions-while-indexing-data-frame-unexpected-behavior",
     "issue_title": "pandas: multiple conditions while indexing data frame - unexpected behavior",
-    "issue_body": "I am filtering rows in a dataframe by values in two columns.\n\nFor some reason the OR operator behaves like I would expect AND operator to behave and vice versa.\n\nMy test code:\n\ndf = pd.DataFrame({'a': range(5), 'b': range(5) })\n\n# let's insert some -1 values\ndf['a'][1] = -1\ndf['b'][1] = -1\ndf['a'][3] = -1\ndf['b'][4] = -1\n\ndf1 = df[(df.a != -1) & (df.b != -1)]\ndf2 = df[(df.a != -1) | (df.b != -1)]\n\nprint(pd.concat([df, df1, df2], axis=1,\n                keys = [ 'original df', 'using AND (&)', 'using OR (|)',]))\nAnd the result:\n\n      original df      using AND (&)      using OR (|)    \n             a  b              a   b             a   b\n0            0  0              0   0             0   0\n1           -1 -1            NaN NaN           NaN NaN\n2            2  2              2   2             2   2\n3           -1  3            NaN NaN            -1   3\n4            4 -1            NaN NaN             4  -1\n\n[5 rows x 6 columns]\nAs you can see, the AND operator drops every row in which at least one value equals -1. On the other hand, the OR operator requires both values to be equal to -1 to drop them. I would expect exactly the opposite result. Could anyone explain this behavior?\n\nI am using pandas 0.13.1.\nanswers:\n\n1. As you can see, the AND operator drops every row in which at least one value equals -1. On the other hand, the OR operator requires both values to be equal to -1 to drop them. I would expect exactly the opposite result. Could anyone explain this behavior?"
+    "issue_body": "I am filtering rows in a dataframe by values in two columns.\\n\\nFor some reason the OR operator behaves like I would expect AND operator to behave and vice versa.\\n\\nMy test code:\\n\\ndf = pd.DataFrame({'a': range(5), 'b': range(5) })\\n\\n# let's insert some -1 values\\ndf['a'][1] = -1\\ndf['b'][1] = -1\\ndf['a'][3] = -1\\ndf['b'][4] = -1\\n\\ndf1 = df[(df.a != -1) & (df.b != -1)]\\ndf2 = df[(df.a != -1) | (df.b != -1)]\\n\\nprint(pd.concat([df, df1, df2], axis=1,\\n                keys = [ 'original df', 'using AND (&)', 'using OR (|)',]))\\nAnd the result:\\n\\n      original df      using AND (&)      using OR (|)    \\n             a  b              a   b             a   b\\n0            0  0              0   0             0   0\\n1           -1 -1            NaN NaN           NaN NaN\\n2            2  2              2   2             2   2\\n3           -1  3            NaN NaN            -1   3\\n4            4 -1            NaN NaN             4  -1\\n\\n[5 rows x 6 columns]\\nAs you can see, the AND operator drops every row in which at least one value equals -1. On the other hand, the OR operator requires both values to be equal to -1 to drop them. I would expect exactly the opposite result. Could anyone explain this behavior?\\n\\nI am using pandas 0.13.1.\\nanswers:\\n\\n1. As you can see, the AND operator drops every row in which at least one value equals -1. On the other hand, the OR operator requires both values to be equal to -1 to drop them. I would expect exactly the opposite result. Could anyone explain this behavior?"
   }
 ]
 
@@ -38,7 +25,7 @@ output:
       "api_details": {
         "library_name": "TensorFlow",
         "api_name": "tf.image.rgb_to_grayscale",
-        "issue_description": "When applying tf.image.rgb_to_grayscale on a segmentation mask (which typically has a single channel), TensorFlow raises a \"dimensions must be equal\" error. This is because the API expects an input tensor with three channels (RGB), but the input mask only has one channel.",
+        "issue_description": "When applying tf.image.rgb_to_grayscale on a segmentation mask (which typically has a single channel), TensorFlow raises a \\"dimensions must be equal\\" error. This is because the API expects an input tensor with three channels (RGB), but the input mask only has one channel.",
         "expected_vs_actual_behavior": "The expected behavior is for rgb_to_grayscale to convert a 3-channel RGB image to a single-channel grayscale image. However, applying it to a single-channel input leads to a dimensionality error.",
         "trigger_conditions": "The issue is triggered when tf.image.rgb_to_grayscale is applied to a tensor with a shape that does not end in 3 (i.e., not an RGB image).",
         "reason_for_difficulty_in_detection": "This issue might be challenging to detect for users unfamiliar with the specific requirements of the tf.image.rgb_to_grayscale function or those who assume that it can handle inputs with any number of channels."
@@ -48,11 +35,11 @@ output:
       "issue_link": "https://stackoverflow.com/questions/22591174/pandas-multiple-conditions-while-indexing-data-frame-unexpected-behavior",
       "problematic_api_exist": false,
       "reason": "The behavior is due to a misunderstanding of logical operators and conditions in pandas rather than a problem with the API itself."
-    },
+    }
   ]
 }
 `
-const CUSTOM_INSTRUCTIONS_PROMPT = `
+export const CUSTOM_INSTRUCTIONS_PROMPT = `
 Objective:
 Classify and analyze provided software development issues to identify if they involve a problematic API exhibiting unexpected failures or unpredictable behaviors under specific runtime conditions. The goal is to ascertain whether an issue involves such an API and, if so, provide detailed information about the API and the conditions under which it fails.
 
@@ -131,154 +118,3 @@ ${AFEW_SHOT_EXAMPLES}
 
 Get ready, I will provide the list of issues in JSON format in subsequent messages.
 `;
-
-// console.log('CUSTOM_INSTRUCTIONS_PROMPT: ', CUSTOM_INSTRUCTIONS_PROMPT);
-
-const history = [
-  {
-    role: "user",
-    content:CUSTOM_INSTRUCTIONS_PROMPT,
-  },
-  {
-    role: "assistant",
-    content: 'Sure, please provide the list of issues in JSON format, and I\'ll proceed with the analysis for each one.',
-  },
-];
-
-const inputCSV = "./sanitized_stackoverflow_issues.csv";
-
-const analyzedIssues = [];
-
-// const initializeChat = async () => {
-//   const chatCompletion = await openai.chat.completions.create({
-//     messages: history,
-//     model: "gpt-3.5-turbo-16k-0613",
-//     temperature: 0.5,
-//   });
-
-//   console.log(chatCompletion.choices[0].message);
-//   history.push(chatCompletion.choices[0].message);
-// };
-
-const analyzeIssueChunk = async (issueChunk) => {
-  const chatCompletion = await openai.chat.completions.create({
-    messages: [...history, { role: "user", content: issueChunk }],
-    model: "gpt-3.5-turbo-16k-0613",
-    temperature: 0.4,
-  });
-
-  console.log(chatCompletion.choices[0].message);
-  analyzedIssues.push(chatCompletion.choices[0].message.content);
-};
-
-const readIssues = async () => {
-  const issues = [];
-
-  return new Promise((resolve, reject) => {
-    fs.createReadStream(inputCSV)
-      .pipe(csv())
-      .on("data", (data) => {
-        console.log("data: ", data);
-        issues.push({
-          issue_link: data.issue_link,
-          issue_title: data.issue_title,
-          issue_body: data.issue_body,
-          answer_1: data.answer_1,
-          answer_2: data.answer_2,
-          answer_3: data.answer_3,
-        });
-      })
-      .on("end", () => {
-        resolve(issues);
-      })
-      .on("error", (error) => {
-        reject(error);
-      });
-  });
-};
-
-const makeIssueChunks = (issues, chunkSize) => {
-  // stringify each issue and add it to the string chunk until the charachter size is less than or equal to chunkSize
-
-  const issueChunks = [];
-  let currentChunk = '[';
-
-  for (let issue of issues) {
-    const stringifiedIssue = JSON.stringify(issue, null, 2);
-    if (currentChunk.length + stringifiedIssue.length <= chunkSize) {
-      currentChunk = `${currentChunk}${stringifiedIssue},`;
-    } else {
-      issueChunks.push(`${currentChunk.substring(0, currentChunk.length - 1)}]`);
-      currentChunk = stringifiedIssue;
-    }
-  }
-
-  issueChunks.push(currentChunk);
-
-  return issueChunks;
-}
-
-/**
- * Saves an array of analyzedIssue objects to a CSV file.
- * @param {Array} analyzedIssues Array of issue objects to be saved.
- * @param {String} outputPath The path where the CSV file will be saved.
- */
-async function saveIssuesToCSV(analyzedIssues, outputPath) {
-
-  // check if the file exists
-  const fileExists = fs.existsSync(outputPath);
-
-  const csvWriter = createObjectCsvWriter({
-    path: outputPath,
-    header: [
-      { id: 'issue_link', title: 'ISSUE_LINK' },
-      { id: 'problematic_api_exist', title: 'PROBLEMATIC_API_EXIST' },
-      { id: 'reason', title: 'REASON' },
-      { id: 'api_details.library_name', title: 'LIBRARY_NAME' },
-      { id: 'api_details.api_name', title: 'API_NAME' },
-      { id: 'api_details.issue_description', title: 'ISSUE_DESCRIPTION' },
-      { id: 'api_details.expected_vs_actual_behavior', title: 'EXPECTED_VS_ACTUAL_BEHAVIOR' },
-      { id: 'api_details.trigger_conditions', title: 'TRIGGER_CONDITIONS' },
-      { id: 'api_details.reason_for_difficulty_in_detection', title: 'REASON_FOR_DIFFICULTY_IN_DETECTION' },
-    ],
-    headerIdDelimiter: '.',
-    append: fileExists, // Set to true if you want to append to an existing file
-  });
-
-  try {
-    await csvWriter.writeRecords(analyzedIssues);
-    console.log('Data has been written to CSV file successfully.');
-  } catch (error) {
-    console.error('Error writing to CSV file:', error);
-  }
-}
-
-async function main() {
-
-  const issues = await readIssues()
-  const issueChunks = makeIssueChunks(issues, 20000);
-  console.log('issueChunks: ', JSON.stringify(JSON.parse(issueChunks[0]), null, 2));
-
-
-  // fs.writeFileSync('issueChunks.json', issueChunks[0]);
-
-  console.log(issueChunks.length)
-
-  const outputPath = './analyzedIssues.csv';
-  const testChunks = issueChunks;//.slice(0, 4);
-  for (let issueChunk of testChunks) {
-    console.log('issueChunk: ', issueChunk)
-
-    await analyzeIssueChunk(issueChunk);
-    const parsedAnalyzedIssues = analyzedIssues.map((issue) => {
-      return JSON.parse(issue).analysis_results;
-    }).flat();
-
-    saveIssuesToCSV(parsedAnalyzedIssues, outputPath).catch(console.error);
-
-    analyzedIssues.splice(0, analyzedIssues.length);
-  }
- 
-}
-
-main();
