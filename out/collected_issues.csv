@@ -1145,9 +1145,6 @@ conda install --yes --quiet \
 
 The big difference: by listing all of those packages as build requirements, you're actually ensuring that they won't be in your final conda package.  Think of build requirements more like a compiler, or something that's necessary when you're building the package, but not when you're actually running it.
 ",,
-scikit-learn unexpected issue,https://stackoverflow.com/questions/30066268,Provide Starting Positions to t-distributed Stochastic Neighbor Embedding (TSNE) in scikit-learn,,2,906,"It is currently not possible, but it would be a two-line change.
-I think it would be a good addition, and we do support init=array for things like k-means. So PR welcome.
-",,
 scikit-learn unexpected issue,https://stackoverflow.com/questions/76309535,Quantile Forest error &quot;predict() got an unexpected keyword argument &#39;quantiles&#39;&quot;,"I continue to run into errors when run any form of quantile forest models with the prediction and quantile phases. I am following this example but with my own X and y. I have trained many a random forest and other derivations of tree models with this dataset, so I'm fairly certain it's not the input data issue.
 https://github.com/zillow/quantile-forest
 And have created an environment that supposedly follows all the installation requirements. I can provide my list of versions upon request. Time and time again, the RandomForestQuantileRegressor will work, but when I want to plot and see the quantiles, I get the error
@@ -2757,57 +2754,6 @@ res2 vs res3:  [ True  True  True  True]
 
 as expected.
 ",,
-scikit-learn strange result,https://stackoverflow.com/questions/48263740,strange memory consumption behaviour when running PCA in python,,1,300,"The important question is, how many of the features you are extractiong.
-Since version 0.18 of Scikit-learn, the svd_solver flag of the PCA algorithm determines which algorithm to use.  The default behavior is to select the ""best"" choice, which is described in detail in the official documentation which you mentioned. 
-Possibly, one of those selections hits your performance, depending on the number of components. Otherwise, I would suggest you mention this behavior in the official GitHub of scikit-learn, since this could be interesting to them as well.
-",,
-scikit-learn strange result,https://stackoverflow.com/questions/53630329,Watershed analysis of coins - wrong output,,1,514,"You can fix this by adding a background label using the tutorial provided by openCV. 
-https://docs.opencv.org/3.1.0/d3/db4/tutorial_py_watershed.html
-
-They added an extra step to insert sure background and sure foreground region to help the watershed algorithm to properly segment the coin regions.
-
-*********** edit**************
-
-After reading your code again. I found that your original code has no problem. 
-Background label was set using the variable border.
-
-You will probably get the same result by executing the code found in OpenCV tutorial. The problem is in the way your draw the results. Since this is a display problem, there are many ways we can tackle the problem. One of the many is to use the information of the sure-background
-
-Here are the modification to the function segment_on_dt
-
-def segment_on_dt(a, img):
-    sure_background = cv2.dilate(img, None, iterations=3)
-    border = sure_background - cv2.erode(sure_background, None)
-
-
-    dt = cv2.distanceTransform(img, cv2.DIST_L2, 3)
-    dt = ((dt - dt.min()) / (dt.max() - dt.min()) * 255).astype(np.uint8)
-    _, dt = cv2.threshold(dt, 200, 255, cv2.THRESH_BINARY)
-    lbl, ncc = label(dt)
-
-
-    # Completing the markers now. 
-    lbl[border == 255] = 255 
-
-
-    lbl = lbl.astype(np.int32)
-    cv2.watershed(a, lbl)
-    lbl[lbl == -1] = 0
-    # Only draw red line if its not in sure background
-    lbl[sure_background == 0] = 255
-
-    lbl = lbl.astype(np.uint8)
-    cv2.imshow('lbl_2',lbl)
-
-    return 255 - lbl
-
-
-I have added a new condition for the red lines to be drawn. The line are only drawn if its not in sure background region.
-
-Your final result should look like this.
-
-
-",,
 scikit-learn strange result,https://stackoverflow.com/questions/73491673,Strange results when scaling data using scikit learn,"I have an input dataset that has 4 time series with 288 values for 80 days. So the actual shape is (80,4,288). I would like to cluster differnt days. I have 80 days and all of them have 4 time series: outside temperature, solar radiation, electrical demand, electricity prices. What I want is to group similar days with regard to these 4 time series combined into clusters. Days belonging to the same cluster should have similar time series.
 Before clustering the days using k-means or Ward's method, I would like to scale them using scikit learn. For this I have to transform the data into a 2 dimensional shape array with the shape (80, 4*288) = (80, 1152), as the Standard Scaler of scikit learn does not accept 3-dimensional input. The Standard Scaler just standardizes features by removing the mean and scaling to unit variance.
 Now I scale this data using sckit learn's standard scaler:
@@ -3195,103 +3141,6 @@ I'm not an expert, but it appears that your input features are not only highly c
 The intuitive reason is that because they are correlated, there exists an infinite amount of possible coefficients, where they counter one another, and the prediction would still be exactly the same (imagine in your case first-second is exactly the same as 2first-3second or 0first-1second etc).
 I also think this causes the normal equation of linear regression to generate a matrix that cannot be inverted..
 ",,
-scikit-learn strange issue,https://stackoverflow.com/questions/22054964,OLS Regression: Scikit vs. Statsmodels?,"Short version: I was using the scikit LinearRegression on some data, but I'm used to p-values so put the data into the statsmodels OLS, and although the R^2 is about the same the variable coefficients are all different by large amounts. This concerns me since the most likely problem is that I've made an error somewhere and now I don't feel confident in either output (since likely I have made one model incorrectly but don't know which one).
-
-Longer version: Because I don't know where the issue is, I don't know exactly which details to include, and including everything is probably too much. I am also not sure about including code or data. 
-
-I am under the impression that scikit's LR and statsmodels OLS should both be doing OLS, and as far as I know OLS is OLS so the results should be the same.
-
-For scikit's LR, the results are (statistically) the same whether or not I set normalize=True or =False, which I find somewhat strange.
-
-For statsmodels OLS, I normalize the data using StandardScaler from sklearn. I add a column of ones so it includes an intercept (since scikit's output includes an intercept). More on that here: http://statsmodels.sourceforge.net/devel/examples/generated/example_ols.html (Adding this column did not change the variable coefficients to any notable degree and the intercept was very close to zero.) StandardScaler didn't like that my ints weren't floats, so I tried this: https://github.com/scikit-learn/scikit-learn/issues/1709
-That makes the warning go away but the results are exactly the same.
-
-Granted I'm using 5-folds cv for the sklearn approach (R^2 are consistent for both test and training data each time), and for statsmodels I just throw it all the data.
-
-R^2 is about 0.41 for both sklearn and statsmodels (this is good for social science). This could be a good sign or just a coincidence.
-
-The data is observations of avatars in WoW (from http://mmnet.iis.sinica.edu.tw/dl/wowah/) which I munged about to make it weekly with some different features. Originally this was a class project for a data science class.
-
-Independent variables include number of observations in a week (int), character level (int), if in a guild (Boolean), when seen (Booleans on weekday day, weekday eve, weekday late, and the same three for weekend), a dummy for character class (at the time for the data collection, there were only 8 classes in WoW, so there are 7 dummy vars and the original string categorical variable is dropped), and others.
-
-The dependent variable is how many levels each character gained during that week (int).
-
-Interestingly, some of the relative order within like variables is maintained across statsmodels and sklearn. So, rank order of ""when seen"" is the same although the loadings are very different, and rank order for the character class dummies is the same although again the loadings are very different.
-
-I think this question is similar to this one: Difference in Python statsmodels OLS and R's lm
-
-I am good enough at Python and stats to make a go of it, but then not good enough to figure something like this out. I tried reading the sklearn docs and the statsmodels docs, but if the answer was there staring me in the face I did not understand it. 
-
-I would love to know:
-
-
-Which output might be accurate? (Granted they might both be if I missed a kwarg.)
-If I made a mistake, what is it and how to fix it?
-Could I have figured this out without asking here, and if so how?
-
-
-I know this question has some rather vague bits (no code, no data, no output), but I am thinking it is more about the general processes of the two packages. Sure, one seems to be more stats and one seems to be more machine learning, but they're both OLS so I don't understand why the outputs aren't the same.
-
-(I even tried some other OLS calls to triangulate, one gave a much lower R^2, one looped for five minutes and I killed it, and one crashed.)
-
-Thanks!
-",31,34799,"It sounds like you are not feeding the same matrix of regressors X to both procedures (but see below). Here's an example to show you which options you need to use for sklearn and statsmodels to produce identical results.
-
-import numpy as np
-import statsmodels.api as sm
-from sklearn.linear_model import LinearRegression
-
-# Generate artificial data (2 regressors + constant)
-nobs = 100 
-X = np.random.random((nobs, 2)) 
-X = sm.add_constant(X)
-beta = [1, .1, .5] 
-e = np.random.random(nobs)
-y = np.dot(X, beta) + e 
-
-# Fit regression model
-sm.OLS(y, X).fit().params
-&gt;&gt; array([ 1.4507724 ,  0.08612654,  0.60129898])
-
-LinearRegression(fit_intercept=False).fit(X, y).coef_
-&gt;&gt; array([ 1.4507724 ,  0.08612654,  0.60129898])
-
-
-As a commenter suggested, even if you are giving both programs the same X, X may not have full column rank, and they sm/sk could be taking (different) actions under-the-hood to make the OLS computation go through (i.e. dropping different columns).
-
-I recommend you use pandas and patsy to take care of this:
-
-import pandas as pd
-from patsy import dmatrices
-
-dat = pd.read_csv('wow.csv')
-y, X = dmatrices('levels ~ week + character + guild', data=dat)
-
-
-Or, alternatively, the statsmodels formula interface:
-
-import statsmodels.formula.api as smf
-dat = pd.read_csv('wow.csv')
-mod = smf.ols('levels ~ week + character + guild', data=dat).fit()
-
-
-Edit: This example might be useful: http://statsmodels.sourceforge.net/devel/example_formulas.html
-","If you use statsmodels, I would highly recommend using the statsmodels formula interface instead.  You will get the same old result from OLS using the statsmodels formula interface as you would from sklearn.linear_model.LinearRegression, or R, or SAS, or Excel.  
-
-smod = smf.ols(formula ='y~ x', data=df)
-result = smod.fit()
-print(result.summary())
-
-
-When in doubt, please 
-
-
-try reading the source code
-try a different language for benchmark, or 
-try OLS from scratch, which is basic linear algebra. 
-
-","i just wanted to add here, that in terms of sklearn, it does not use OLS method for linear regression under the hood. Since sklearn comes from the data-mining/machine-learning realm, they like to use Steepest Descent Gradient algorithm. This is a numerical method that is sensitive to initial conditions etc, while the OLS is an analytical closed form approach, so one should expect differences. So statsmodels comes from classical statistics field hence they would use OLS technique. So there are differences between the two linear regressions from the 2 different libraries
-"
 scikit-learn strange issue,https://stackoverflow.com/questions/57484399,Issue importing scikit-learn: module &#39;scipy&#39; has no attribute &#39;_lib&#39;,"I'm new to Python and am using Anaconda on Windows 10 to learn how to implement machine learning. Running this code on Spyder:
 
 import sklearn as skl
@@ -3781,28 +3630,6 @@ This probably won't work for everyone, but it might save someone a little agony.
 
 and the simple fact that collab ai suggested this move emboldened me
 "
-scikit-learn strange issue,https://stackoverflow.com/questions/59140556,Can / should I use past (e.g. monthly) label columns from a database as features in an ML prediction (no time-series!)?,,1,1210,"It is perfectly possible and also good practice to include past label columns as features, though it depends on your question: do you want to explain the label only with other features (on purpose), or do you want to consider other and your past label columns to get the next label predicted, as a sort of adding a time-series character to the model without using a time-series?
-The sequence in time is not even important, as long as all of such monthly columns are shifted in time consistently by the same time when going over to the predicting set. The model does not care if it is just January and February of the same column type, for the model, every feature is isolated.
-Example: You can perfectly run a random forest model on various features, including their past label columns that repeat the same column type again and again, only representing different months. Any month's column can be dealt with as an independent new feature in the ml model, the only importance is to shift all of those monthly columns by the exactly same period to reach a consistent predicting set. In other words, obviously you should avoid replacing January with March column when you go from a training set January-June to a predicting set February-July, instead you must replace January with February of course.
-Update 202301: model name is ""walk-forward""
-This model setup is called ""walk-forward"", see Why isn’t out-of-time validation more ubiquitous? --&gt; option 3 almost at the bottom of the page.
-I got this from a comment at Splitting Time Series Data into Train/Test/Validation Sets.
-In the following, it shows only training and testing set. It writes ""validation set"", but it is known that this gets mixed up all over the place, see What is the Difference Between Test and Validation Datasets?, and it must be meant as the testing set in the default understanding of it.
-
-Thus, with the right wording, it is:
-
-This should be the best model for labels that become features in time.
-validation set in a ""walk-forward"" model?
-As you can see in the model, no validation set is needed since the test data must be biased ""forward"" in time, that is the whole idea of predicting the ""step forward in time"", and any validation set would have to be in that same biased artificial future - which is already the past at the time of training, but the model does not know this.
-The validation happens by default, without a needed dataset split, during the walk-forward, when the model learns again and again to predict the future and the output metrics can be put against each other. As the model is to predict the time-biased future, there is no need to prove that or how the artificial future is biased and sort of ""overtrained by time"". It is the aim of the model to have the validation in the artificial future and predict the real future as a last step only.
-But then, why not still having a validation set on top of this, at least if it is just a small k-fold validation? It could play a role if the testing set has a few strong changes that happen in small time windows but which are still important to be predicted, or at least hinted at, but should also not be overtrained within each training step. The validation set would hit some of these time windows and might show whether the model can handle them well enough. Any other method than k-fold would shrink the power of the model too much. The more you take away from the testing set during training, the less it can predict the future.
-Wrap up:
-Try it out, and in doubt, leave the validation aside and judge upon the model by checking its metrics over time, during the ""walk-forward"". This model is not like the others.
-Thus, in the end, you can, but you do not have to, split a k-fold validation from the testing set. That would look like:
-
-After predicting a lot of known futures, the very last step in time is then the prediction of the unknown future.
-This also answers Does the training+testing set have to be different from the predicting set (so that you need to apply a time-shift to ALL columns)?.
-",,
 scikit-learn strange issue,https://stackoverflow.com/questions/73491958,Installation always stuck on PyCaret 2.2.2 + Package problems,"I'm stuck on an issue that I can't seem to solve. I was fine using PyCaret on my other PC and had recently got a new desktop.
 I was working on one dataset on my old PC and had no problems with setup() and PyCaret preprocessed my data without any issues. When I worked on my the same dataset with my new desktop and Jupyter newly installed, I noticed I ran into an ValueError: Setting a random_state has no effect since shuffle is False. You should leave random_state to its default (None), or set shuffle=True. I thought it was strange but went on to set fold_shuffle=True to get through this.
 Next, I encountered AttributeError: 'Simple_Imputer' object has no attribute 'fill_value_categorical'. It seems I'm getting failures at every step of setup(). I went through the forums and found a thread where at the bottom of it, @eddygeek mentioned that PyCaret was set up to fail if the sklearn version is wrong. This got me looking into the packages I have that may meet dependencies between packages.
@@ -5190,7 +5017,6 @@ async def async_main():
 asyncio.run(async_main())
 
 ",,
-SQLAlchemy unexpected result,https://stackoverflow.com/questions/28901050,Default value doesn&#39;t work in SQLAlchemy + PostgreSQL + aiopg + psycopg2,,4,1565,,,
 SQLAlchemy unexpected result,https://stackoverflow.com/questions/71116549,sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) with PostgreSQL,"I searched for this error a lot, but I only find some with more information behind that like ""FATAL: ..."". Mine has none. It only says
 sqlalchemy.exc.OperationalError: (psycopg2.OperationalError) 
 
@@ -5708,16 +5534,6 @@ async def get_all_users():
         print(response)
 
 There is more discussion in the Preventing Implicit IO when Using AsyncSession section of the docs.
-",,
-SQLAlchemy unexpected result,https://stackoverflow.com/questions/66656355,How to access only filtered objects when filtering on joined tables in sqlalchemy,,1,202,"After posting this I found the same question here with an answer that didn't work for me, but with a small modification I managed to do it:
-parents = (
-        db.query(Parent)
-        .join(Child)
-        .filter(Child.did_homework == True)
-        .options(contains_eager(""children""))
-        .all()
-    )
-
 ",,
 SQLAlchemy unexpected result,https://stackoverflow.com/questions/78010668,Docker fastapi unable to connect to mysql,"I'm new to docker and fastapi and I'm trying to connect fastapi with mysql service but it always say that it cannot connect to mysql in the logs. What am I missing here?
 .env file
@@ -6972,16 +6788,6 @@ SQLAlchemy unexpected result,https://stackoverflow.com/questions/35693081,sqlalc
 SQLAlchemy unexpected result,https://stackoverflow.com/questions/32786334,Python3 sqlalchemy pymysql gevent sqlalchemy.util.queue.Empty gevent.hub.LoopExit: This operation would block forever,,1,2022,,,
 SQLAlchemy unexpected result,https://stackoverflow.com/questions/29308836,Turbogears nostests results in OperationalError when using SQLAlchemy-FullText-Search,,1,59,,,
 SQLAlchemy unexpected result,https://stackoverflow.com/questions/10739967,Python subprocess calling bcp on .csv: &#39;unexpected eof&#39;,,1,3082,,,
-SQLAlchemy unexpected result,https://stackoverflow.com/questions/76536770,SQLAlchemy: Understanding Select statements within transactions,,0,106,"PostgreSQL uses ""Read Committed"" isolation level. This means that the each query being executed sees data committed earlier.
-So, when you are making changes without ""session.commit()"", the changes are not made in the database, so the queries does not see those changes. Once you have committed the changes, the changes are made in database and upcoming queries within same session will see updated data.
-To avoid ""session.commit()"" after every query, you can set ""autocommit"" to true.
-",,
-SQLAlchemy unexpected result,https://stackoverflow.com/questions/77024615,Redshift Sqlalchemy transactions and session management,,0,84,"For this to be happening these different queries would need to be in different transactions (xid).  Can you confirm this is what is happening?  (I say this b/c if they happen in the same transaction you should get the same version of the tables.  And it sounds like from your description that this isn't just result ordering differences.)
-So the first solution would be to have everything happen in a single transaction (if possible).  The best way to run this would be with a cursor to store the results between fetches.  See: https://docs.aws.amazon.com/redshift/latest/dg/declare.html and https://docs.aws.amazon.com/redshift/latest/dg/fetch.html
-If it isn't possible to be in a single transaction, then can it be in a single session?  This way you could keep the results in a temp table and read from there.
-If these queries absolutely need to be made across separate connections then you will need to set up a perm table to hold results.  This has the disadvantage of needing to be cleaned up when the process ends.  You will want to add some per iteration random chars to the table name so that no iteration collisions can happen on the table name.
-I'd start by examining the system tables for these queries on Redshift and note the pid and xid of each.  This will give you more specific information on how SQLAlchemy is interacting with Redshift and what changes are needed.
-",,
 SQLAlchemy unexpected result,https://stackoverflow.com/questions/77644943,"asynch.errors.UnexpectedPacketFromServerError: Code: 102. Unexpected packet from server &lt;host:port&gt; (expected Hello or Exception, got Unknown packet)","I'm trying to connect to clickhouse with sqlalchemy. I'm using:
 
 python3.11
@@ -8140,40 +7946,6 @@ def query_index(index, query, page, per_page):
 As my included app/routes.py shows, I made a workaround by catching the OperationalError and treating it as an indicator that no results were found, but since the all() documentation makes no mention of it, I did not expect there to be this exception being raised.
 ",0,371,,,
 SQLAlchemy unexpected result,https://stackoverflow.com/questions/28008124,How to find all columns with a particular number as an attribute?,,0,268,,,
-SQLAlchemy unexpected issue,https://stackoverflow.com/questions/70104873,how to access relationships with async sqlalchemy?,,18,11578,"This is how:
-from sqlalchemy.orm import selectinload
-
-async with async_session() as session:
-    result = await session.execute(select(A).order_by(A.id)
-                                            .options(selectinload(A.bs)))
-    a = result.scalars().first()
-
-    print(a.bs)
-
-
-key is using the selectinload method to prevent implicit IO
-UPDATE
-There are a few alternatives to selectinload like joinedload, lazyload. I am still trying to understand the differences.
-","muon’s answer is correct if you want eager loading (which is better).
-But if for some reason you already have loaded your model and later want to load a relationship, there is a way starting with SQLAlchemy 2.0.4:
-Using session.refresh, you can tell it to load a1.bs:
-await session.refresh(a1, attribute_names=[""bs""])
-print(a1.bs)  # This works
-
-From the docs:
-
-New in version 2.0.4: Added support for AsyncSession.refresh() and the underlying Session.refresh() method to force lazy-loaded relationships to load, if they are named explicitly in the Session.refresh.attribute_names parameter.
-
-","There is an additional way of accessing the relationship attributes in SQLAlchemy v2, for the case where you have already loaded your model and later want to load a relationship.
-As the documentation says, you can use AsyncAttrs: ""when added to a specific class or more generally to the Declarative Base superclass, provides an accessor AsyncAttrs.awaitable_attrs which delivers any attribute as an awaitable"". So you can create a Declarative Base class like this:
-class Base(AsyncAttrs, DeclarativeBase):
-    pass
-
-And then use awaitable_attrs to access the relationship that must be previously loaded:
-a1_bs = await a1.awaitable_attrs.bs
-print(a1_bs)
-
-"
 SQLAlchemy unexpected issue,https://stackoverflow.com/questions/17198595,SQLAlchemy DELETE Error caused by having a both lazy-load AND a dynamic version of the same relationship,"Here is some example code:
 
 users_groups = Table('users_groups', Model.metadata,
@@ -8742,45 +8514,6 @@ async def post(data: ServiceOrderUpdateSchema,db: AsyncSession = Depends(get_ses
     # Force status to load
     await database.refresh(new_service_order, [""status""])
     return new_service_order
-
-",,
-SQLAlchemy unexpected issue,https://stackoverflow.com/questions/71004077,"How to get average value from SQL(Superset, SQLAlchemy under PostgreSQL) timestamp",,0,600,"I was not able to reproduce the error.
-Works fine.
-Setup in Postgresql Database:
-postgres=&gt; create table the_best_table(last_checked_at timestamp);
-CREATE TABLE
-postgres=&gt; insert into the_best_table values(now());
-INSERT 0 1
-postgres=&gt; select
-    to_timestamp(
-        avg(
-            cast(
-                extract(epoch from last_checked_at) as integer)
-                )::integer
-        ) as datetime
-from
-    the_best_table;
-        datetime
-------------------------
- 2022-02-07 04:54:06+09
-(1 row)
-
-The exact two queries run fine for me in SQLAlchemy:
-&gt;&gt;&gt; from sqlalchemy import create_engine
-&gt;&gt;&gt; engine = create_engine('postgresql+pg8000://&lt;username&gt;:&lt;passwd&gt;@192.xxx.xxx.123/postgres')
-&gt;&gt;&gt;  metadata.create_all(engine)
-&gt;&gt;&gt; with engine.connect() as con:
-...     rs = con.execute('select to_timestamp(avg(cast(extract(epoch from last_checked_at) as integer))::integer ) as datetime from the_best_table;')
-...     for row in rs:
-...             print(row)
-... 
-(datetime.datetime(2022, 2, 7, 4, 54, 6, tzinfo=datetime.timezone(datetime.timedelta(seconds=32400))),)
-&gt;&gt;&gt; with engine.connect() as con:
-...     rs = con.execute('select to_timestamp(1644117319) as datetime;')
-...     for row in rs:
-...             print(row)
-... 
-(datetime.datetime(2022, 2, 6, 12, 15, 19, tzinfo=datetime.timezone(datetime.timedelta(seconds=32400))),)
 
 ",,
 SQLAlchemy unexpected issue,https://stackoverflow.com/questions/77811401,Correct way of retaining database information with fastapi and sqlalchemy,"we've recently changed tech stack for our python API so it now uses fastAPI and SQLAlchemy 2. Great combo, I'm sure, but I'm having issues creating something which I'd imagine would be pretty simple. I'm trying to build a simple post endpoint which takes a request body, processes it, adds it to the database, then return the inserted database entity. Something like this:
@@ -12284,67 +12017,6 @@ print(q)
 SELECT CASE WHEN (:param_1 = :param_2) THEN :param_3 ELSE :param_4 END AS anon_1
 
 ",,
-SQLAlchemy strange result,https://stackoverflow.com/questions/17315422,Unable to store datetime.datetime.max using SQLAlchemy==0.8.1 with the mysql-python==1.2.4 driver,,1,832,"This is a reported bug in the new version of the MySQL server (5.6.X) to do with the rounding of fractional seconds.
-
-See this link for more information:
-http://bugs.mysql.com/bug.php?id=68760
-
-The way round this is to round out the milliseconds.
-",,
-SQLAlchemy strange result,https://stackoverflow.com/questions/64855545,SQLalchemy rowcount always -1 for statements,,1,1388,"The single-row INSERT … VALUES ( … ) is trivial: If the statement succeeds then one row was affected, and if it fails (throws an error) then zero rows were affected.
-For a multi-row INSERT simply perform it inside a transaction and rollback if an error occurs. Then the number of rows affected will either be zero or len(values_list).
-To get the number of rows that a SELECT will return, wrap the select query in a SELECT count(*) query and run that first, for example:
-select_stmt = sa.select([Parent])
-count_stmt = sa.select([sa.func.count(sa.text(""*""))]).select_from(
-    select_stmt.alias(""s"")
-)
-with engine.connect() as conn:
-    conn.execution_options(isolation_level=""SERIALIZABLE"")
-    rows_found = conn.execute(count_stmt).scalar()
-    print(f""{rows_found} row(s) found"")
-    results = conn.execute(select_stmt).fetchall()
-for item in results:
-    print(item.id)
-
-",,
-SQLAlchemy strange result,https://stackoverflow.com/questions/71445447,"How can I access the joined results of lazy=’joined’, without executing a second SQL statement, or changing the parent query",,1,1362,"Gord Thompson solved it for me.
-Since I posted the original code, I thought it might be helpful to post the modified code that worked.
-class User(Base, UserMixin):
-    __tablename__ = 'user'
-
-    email = db.Column(db.Unicode(255), nullable=False, server_default=u'', unique=True)
-
-    userprofile = db.relationship(
-        ""Userprofile"",
-        back_populates=""user"",
-        uselist=False,
-        lazy=""joined"",
-        innerjoin=True,
-        passive_deletes=True)   
-
-class Userprofile(Base):
-    __tablename__ = 'userprofile'
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='CASCADE'))
-    first_name = db.Column(db.Unicode(100), nullable=False, server_default=u'')
-    last_name = db.Column(db.Unicode(100), nullable=False, server_default=u'')
-
-user = db.relationship(""User"", back_populates=""userprofile"", uselist=False)
-
-
-
-",,
-SQLAlchemy strange result,https://stackoverflow.com/questions/65100066,SQLAlchemy loads unrelated cached objects when using contains_eager,,1,551,"I asked this question on the SQLAlchemy GitHub page. The solution is to use populate_existing on any query that uses contains_eager and filter. In my specific example, this query does the right thing
-session \
-        .query(Parent) \
-        .join(Child, Parent.id == Child.parent_id) \
-        .options(
-            contains_eager(Parent.children)
-        ).filter(Child.value &lt; 15) \
-        .order_by(Parent.id) \
-        .populate_existing() \
-        .all()
-
-",,
 SQLAlchemy strange result,https://stackoverflow.com/questions/67975069,Phantom Queries in PyMSQL + SQLAlchemy on Lambda,"I'm trying to debug an issue that one of our developers recently revealed.
 We're using AWS Lambda functions to periodically query our MySQL DB.
 These functions are written in Python 3.7, with a Lambda layer added to support using PyMSQL, SQLAlchemy, and Pandas.
@@ -13679,8 +13351,6 @@ SQLALCHEMY_DATABASE_URI = 'mysql://{}:{}@localhost:3306/test_db'.format(USR, PWD
 
 But when I trying to put something serious to password (like '8yq+aB&amp;k$V') connection failed. How to 'escape' or encode password somehow that sqlalchemy passed it to mysql succesfully?
 ",12,36592,,,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/25768428,SQLAlchemy connection errors,,9,5967,,,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/14470688,SQLAlchemy Bidirectional Relationship association proxy,,8,2495,,,
 SQLAlchemy strange issue,https://stackoverflow.com/questions/41514960,"Use DB data model to generate SQLAlchemy models, schemas, and JSON response","Using Flask and SQLAlchemy for a Python webapp, my goal is to create a system in which I can:
 
 
@@ -13910,91 +13580,6 @@ stmt = (
 result = list(session.query(Team).params(p1=provinces).from_statement(stmt))
 
 ",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/24231535,Flask-SQLAlchemy Can&#39;t Create Relationship - SAWarning,,3,650,,,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/39298822,SQLAlchemy secondary join model fails under strange conditions,,3,505,"The reason you get this error is that you've inadvertently added objects into the session.
-
-Here is the MVCE:
-
-engine = create_engine(""sqlite://"", echo=False)
-
-
-def get_data():
-    children = [
-        Child(name=""Carol"", versions=[ChildVersion(age=0, fav_toy=""med"")]),
-        Child(name=""Timmy"", versions=[ChildVersion(age=0, fav_toy=""med"")]),
-    ]
-    return Parent(
-        name=""Zane"", children=children,
-        versions=[
-            ParentVersion(
-                address=""123 Fake St"",
-                children=[v for child in children for v in child.versions]
-            )
-        ]
-    )
-
-
-def main():
-    Base.metadata.create_all(engine)
-
-    session = Session(engine)
-    parent_match = get_data()
-    session.add(parent_match)
-    session.commit()
-
-    with session.no_autoflush:
-        search_parent = get_data()
-
-        parent_match.versions.append(search_parent.current_version)
-        for search_child in search_parent.children[:]:
-            child_match = next(c for c in parent_match.children if c.name == search_child.name)
-
-            if child_match.current_version != search_child.current_version:
-                child_match.versions.append(search_child.current_version)
-            else:
-                session.expunge(search_child.current_version)
-
-            session.expunge(search_child)
-
-        session.expunge(search_parent)
-        session.commit()
-
-
-Aside: this is what you needed to provide in the question itself. Providing a tarball with instructions is not the best way to get answers.
-
-The line
-
-parent_match.versions.append(search_parent.current_version)
-
-
-not only adds search_parent.current_version, it also adds search_parent, which in turn adds all related objects, including the child versions of other children. Judging by the fact that you later expunge other related objects to prevent them from being added to the session, I conclude that you only want to add search_parent.current_version without adding other related objects. Due to the circular nature of your relationships you need to take care to lift only the objects you want out of search_parent before you add them. Here is the fixed MVCE:
-
-with session.no_autoflush:
-    search_parent = get_data()
-
-    current_parent_version = search_parent.current_version
-    search_parent.versions.remove(current_parent_version)
-    current_parent_version.children = []  # &lt;--- this is key
-    for search_child in search_parent.children[:]:
-        child_match = next(c for c in parent_match.children if c.name == search_child.name)
-
-        if child_match.current_version != search_child.current_version:
-            current_child_version = search_child.current_version
-            search_child.versions.remove(current_child_version)
-            child_match.versions.append(current_child_version)
-            current_parent_version.children.append(current_child_version)
-
-    parent_match.versions.append(current_parent_version)
-
-    session.commit()
-
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/66896139,Flask-Executor and Flask-SQLAlchemy: Can&#39;t get updated data from DB inside of executor function,,3,437,"use update
-Project.query.filter_by(id=project_id).update({
- 'last_activity': datetime.utcnow()
-})
-
-",,
 SQLAlchemy strange issue,https://stackoverflow.com/questions/41240754,Why can I import certain modules in Python only with administrator rights?,"I'm struggling with some strange issues in Python 2.7. I wrote a very long tool where I import different modules, which I had to install first using pip. The tool is to be shared within the company, where different users have different rights on their specific machines.
 The problem occurred when another user logged into my machine (I'm having administrator rights there) and tried to use the tool. He was unable to run it, because specific modules could not be imported because of his status as a ""non-admin"". 
 
@@ -14093,24 +13678,6 @@ When I deleted the /home/my_user/.ipython/profile_default/history.sqlite file, I
     sqlite3.OperationalError: database is locked
     [TerminalIPythonApp] ERROR | Failed to open SQLite history :memory: (database is locked).
 
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/56317578,SQLAlchemy does not update/expire model instances with external changes,,2,1378,"I ran into a very similar situation with MySQL. I needed to ""see"" changes to the table that were coming from external sources in the middle of my code's database operations. I ended up having to set autocommit=True in my session call and use the begin() / commit() methods of the session to ""see"" data that was updated externally.
-
-The SQLAlchemy docs say this is a legacy configuration:
-
-
-  Warning
-  
-  “autocommit” mode is a legacy mode of use and should not be considered for new projects.
-
-
-but also say in the next paragraph:
-
-
-  Modern usage of “autocommit mode” tends to be for framework integrations that wish to control specifically when the “begin” state occurs
-
-
-So it doesn't seem to be clear which statement is correct.
 ",,
 SQLAlchemy strange issue,https://stackoverflow.com/questions/39542204,Intermittent &quot;ORA-01458: invalid length inside variable character string&quot; error when inserting data into Oracle DB using SQLAlchemy,"I am working on a Python 3.5 server project and using SQLAlchemy 1.0.12 with cx_Oracle 5.2.1 to insert data into Oracle 11g. I noticed that many of my multi-row table insertions are failing intermittently with ""ORA-01458: invalid length inside variable character string"" error. 
 
@@ -14328,45 +13895,6 @@ create_all() needs to call only once when the application is installed, because 
 You need DBSession.configure(bind=engine) or related which will tell models to which database connection they are related. This is missing from the question.
 
 ",
-SQLAlchemy strange issue,https://stackoverflow.com/questions/64855545,SQLalchemy rowcount always -1 for statements,,1,1388,"The single-row INSERT … VALUES ( … ) is trivial: If the statement succeeds then one row was affected, and if it fails (throws an error) then zero rows were affected.
-For a multi-row INSERT simply perform it inside a transaction and rollback if an error occurs. Then the number of rows affected will either be zero or len(values_list).
-To get the number of rows that a SELECT will return, wrap the select query in a SELECT count(*) query and run that first, for example:
-select_stmt = sa.select([Parent])
-count_stmt = sa.select([sa.func.count(sa.text(""*""))]).select_from(
-    select_stmt.alias(""s"")
-)
-with engine.connect() as conn:
-    conn.execution_options(isolation_level=""SERIALIZABLE"")
-    rows_found = conn.execute(count_stmt).scalar()
-    print(f""{rows_found} row(s) found"")
-    results = conn.execute(select_stmt).fetchall()
-for item in results:
-    print(item.id)
-
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/65100066,SQLAlchemy loads unrelated cached objects when using contains_eager,,1,551,"I asked this question on the SQLAlchemy GitHub page. The solution is to use populate_existing on any query that uses contains_eager and filter. In my specific example, this query does the right thing
-session \
-        .query(Parent) \
-        .join(Child, Parent.id == Child.parent_id) \
-        .options(
-            contains_eager(Parent.children)
-        ).filter(Child.value &lt; 15) \
-        .order_by(Parent.id) \
-        .populate_existing() \
-        .all()
-
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/67975069,Phantom Queries in PyMSQL + SQLAlchemy on Lambda,,1,161,"snakecharmerb and Ilja Everilä provided a few answers in the comments, all of which work. Thanks!
-
-Upgrade SQLAlchemy to version 1.4
-Don't use pandas to execute the SQL.
-Use pandas read_sql_query function instead of read_sql.
-
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/59093282,Why is Oracle Pivot producing non-existent results?,,1,72,"It turns out that Nathan's comment was correct. Though it seems counter-intuitive (to me, at least), it appears that calling ResultSet.getString on a DATE column will in fact convert to Timestamp first. Timestamp has the unfortunate default behavior of using the system default timezone unless you specify otherwise explicitly.
-
-This default behavior meant that daylight saving's time was taken into account when we didn't intend it to be, leading to the odd behavior described.
-",,
 SQLAlchemy strange issue,https://stackoverflow.com/questions/57014580,Can&#39;t access sqlalchemy database from heroku. Strange error about some &#39;user&#39; model that I don&#39;t have not existing,"I have an SQLAlchemy database running on a flask app that works fine locally, but as soon as I run it on Heroku I get a strange issue (See stack trace below).
 
 I don't have a model called 'user' so I don't know what's going on. I've made sure that I've run db.create_all().
@@ -14956,105 +14484,6 @@ print Session.query(aChild.id).filter(~(aChild.parent == None))
 
 You can see there is a cross join in the second query, while 1st and 3rd are working as expected. Is there any explanation or solution for this issue except the 3rd example?
 ",1,345,,,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/49154668,SQLAlchemy plus FormAlchemy displays @hybrid_property name and not the returned value,,0,254,"By the courtesy of Michael Bayer who commented on reported issue #4214:
-hybrid_property name being displayed rather than the returned value
-
-The value of Asset.underscore_name is a SQL expression, which since the changes described in http://docs.sqlalchemy.org/en/latest/changelog/migration_11.html#hybrid-properties-and-methods-now-propagate-the-docstring-as-well-as-info is derived from the clause_element() method of the returned object that Core understands. The hybrid you illustrate above is not correctly written because it is not returning a Core SQL expression object:
-
-    s = Session()
-    print(s.query(Asset.underscore_name))
-
-sqlalchemy.exc.InvalidRequestError: SQL expression, column, or mapped entity expected - got ''x_underscore_name_x''
-
-
-if you are looking for a class-bound attribute to return a string, just assign it:
-
-class Asset(...):
-    underscore_name = ""x_underscore_name_x""
-
-
-or if you want that to be a method that is callable at the classlevel, use a @classproperty, there's a recipe for that here: https://stackoverflow.com/a/5191224/34549 and SQLAlchemy has one you can copy: 
-https://github.com/zzzeek/sqlalchemy/blob/master/lib/sqlalchemy/util/langhelpers.py#L1140
-
-IMO there's no bug here because this is not the correct usage of @hybrid_property
-
-Thank you very much Michael!
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/71451982,How to make alembic or flask migrate name foreign keys when autogenerating migrations?,,0,1258,"There is an answer to this question in the best practices suggested here, at the end of the section on The Importance of Naming Conventions. The solution is to add a naming_convention to your sqlalchemy metadata, like this:
-convention = {
-  ""ix"": ""ix_%(column_0_label)s"",
-  ""uq"": ""uq_%(table_name)s_%(column_0_name)s"",
-  ""ck"": ""ck_%(table_name)s_%(constraint_name)s"",
-  ""fk"": ""fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s"",
-  ""pk"": ""pk_%(table_name)s""
-}
-
-metadata = MetaData(naming_convention=convention)
-
-More specifically, with Flask-SQLAlchemy, do this when initializing your db:
-from sqlalchemy import MetaData
-
-convention = {
-  ""ix"": ""ix_%(column_0_label)s"",
-  ""uq"": ""uq_%(table_name)s_%(column_0_name)s"",
-  ""ck"": ""ck_%(table_name)s_%(constraint_name)s"",
-  ""fk"": ""fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s"",
-  ""pk"": ""pk_%(table_name)s""
-}
-
-db = SQLAlchemy(metadata=MetaData(naming_convention=convention))
-
-And voila! If you run autogenerate, you'll get this:
-def upgrade():
-  op.create_foreign_key(op.f('fk_characters_background_id_backgrounds'), 'characters', 'backgrounds', ['background_id'], ['id'])
-
-def downgrade():
-  op.drop_constraint(op.f('fk_characters_background_id_backgrounds'), 'characters', type_='foreignkey')
-
-Thanks (unsurprisingly) to  Miguel Grinberg, creator of Flask Migrate, for having linked to the correct page in the Alembic docs that finally allowed me to solve this problem! Someone had asked about this in an issue on Flask Migrate GitHub, and Miguel correctly pointed out that this was an Alembic issue, not a Flask Migrate issue.
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/66004467,MySQL BIGINT inconsistent for inserts?,,0,326,"after racking my brains for days.. coming at it from all angles, i could not figure out why 1 table out of many, had issues with truncating the SHA'd value.
-In the end, i have redesigned how i hold my Ids, and i no longer bother converting to BIGINT. it all works fine when i leave it as CHAR.
-CAST(SHA(CONCAT(full_name,ga)) AS CHAR)
-
-So changed all my Id columns to varchar(40) and use the above style.  All good now. Joins will use varchar instead of bigint - which i'm ok with.
-",,
-SQLAlchemy strange issue,https://stackoverflow.com/questions/35247731,more than one row returned by a subquery used as an expression,,0,556,"I believe you don't need FROM item,poi in 2 subqueries and I also remove the group by in those too. Regading the case expression involving :param_1 I am not sure if what I suggest below is funcionally correct or not, but you need to create a SUM() value before you can test if that SUM() IS NULL.
-
-SELECT
-      poi.key
-    , poi.pok
-    , poi.noc
-    , COALESCE((
-            SELECT SUM(COALESCE(item.noc,:param_1))
-            FROM item
-            WHERE poi.key = item.poi_key
-      )
-      , poi.noc) AS coalesce_1
-    , COALESCE((
-            SELECT
-                  SUM(soi.noc) AS sum_1
-            FROM soi
-            WHERE soi.poi_key = poi.key
-                  AND soi.is_shipped = 0
-      )
-      , @param_2) AS coalesce_2
-    , COALESCE((
-            SELECT SUM(COALESCE(item.noc,:param_1))
-            FROM item
-            WHERE poi.key = item.poi_key
-      )
-      , poi.noc) - ee((
-            SELECT
-                  SUM(soi.noc) AS sum_1
-            FROM soi
-            WHERE soi.poi_key = poi.key
-                  AND soi.is_shipped = 0
-      )
-      , :param_2) AS anon_2
-FROM poi
-
-",,
 SQLAlchemy strange issue,https://stackoverflow.com/questions/69130661,"Flask SQL Alchemy try perform SET operation, when it is not needed","I am facing a very strange issue using SQL Alchemy. I have a table in SQL server, to store Sales, with this format :
 CREATE TABLE Resale (
   [address] VARCHAR(100) NOT NULL,
@@ -15359,82 +14788,6 @@ Any help on this issue would be wonderful, and if there is any additional inform
 As for the difference between Sublime and running from console, look for (a) any potential difference in the Python interpreter being used and (b) any potential difference in imports due to PYTHONPATH issues.
 ",,
 SQLAlchemy strange issue,https://stackoverflow.com/questions/9814632,running a bottle app from mod_wsgi handle results in maximum recursion depth exceeded while calling a Python object,,0,1907,,,
-
-
-NLTK unexpected issue,https://stackoverflow.com/questions/38966075,How to restrict anaconda from upgrading the module being installed if its a higher level dependency,,3,577,"Unless there's a specific reason you need to compile python yourself, I think what you're actually going after is conda bundle (http://conda.pydata.org/docs/commands/conda-bundle.html).  Unfortunately we've removed it in conda 4.2 which will be coming out soon, intending to move it to conda-build.  Since that hasn't happened yet, and if it ends up actually being useful to people, we can add it back.
-
-
-
-You could also try this using conda-build...
-
-Remove the whole source block in your meta.yaml file. Also remove all of the build requirements that are also not run requirements.  Then in your build.sh file
-
-conda install --yes --quiet \
-    python=2.7.10 \
-    ipython=5.0.0 \
-    numpy=1.11.1 \
-    cython=0.24.1 \
-    scipy=0.18.0 \
-    pandas=0.18.1 \
-    patsy=0.4.1 \
-    statsmodels=0.6.1 \
-    matplotlib=1.5.2 \
-    ggplot=0.9.4 \
-    scikit-learn=0.17.1 \
-    distribute=0.6.45 \
-    backports.ssl-match-hostname=3.5.0.1 \
-    certifi=14.05.14 \
-    nose_parameterized=0.5.0 \
-    pyparsing=2.1.4 \
-    python-dateutil=2.5.3 \
-    pytz=2016.6.1 \
-    pyzmq=15.3.0 \
-    simplejson=3.3.3 \
-    six=1.10.0 \
-    sympy=1.0 \
-    tornado=4.4.1 \
-    virtualenv=13.0.1 \
-    wsgiref=0.1.2 \
-    python-swiftclient=2.7.0 \
-    python-cinderclient=1.1.2 \
-    python-glanceclient=0.17.2 \
-    python-neutronclient=2.4.0 \
-    networkx=1.11 \
-    pysal=1.11.1 \
-    pyyaml=3.11 \
-    shapely=1.5.13 \
-    beautifulsoup4=4.4.1 \
-    nltk=3.2.1 \
-    requests=2.10.0 \
-    seaborn=0.5.0 \
-    h5py=2.6.0 \
-    xlrd=1.0.0 \
-    markupsafe=0.23 \
-    crypto=1.1.0 \
-    jinja2=2.8 \
-    openpyxl=2.3.2 \
-    jaro_winkler=1.0.2 \
-    bokeh=0.12.1 \
-    numexpr=2.6.1 \
-    pytables=3.2.3.1 \
-    pycurl=7.43.0 \
-    mgrs=1.1.0 \
-    psutil=4.3.0 \
-    biopython=1.67 \
-    enaml=0.9.8 \
-    mdp=3.5 \
-    bitarray=0.8.1 \
-    clusterpy=0.9.9 \
-    pyside=1.2.1 \
-    pyqt=4.11.4 \
-    parsedatetime=1.4 \
-    pymysql=0.6.7 \
-    pyodbc=3.0.10 \
-    tabulate=0.7.2
-
-
-The big difference: by listing all of those packages as build requirements, you're actually ensuring that they won't be in your final conda package.  Think of build requirements more like a compiler, or something that's necessary when you're building the package, but not when you're actually running it.
-",,
 NLTK strange behavior,https://stackoverflow.com/questions/33157847,Lemmatizing words after POS tagging produces unexpected results,"I am using python3.5 with the nltk pos_tag function and the WordNetLemmatizer. My goal is to flatten words in our database to classify text. I am trying to test using the lemmatizer and I encounter strange behavior when using the POS tagger on identical tokens. In the example below, I have a list of three strings and when running them in the POS tagger every other element is returned as a noun(NN) and the rest are return as verbs (VBG). 
 
 This affects the lemmatization. The out put looks like this:  
@@ -15627,17 +14980,6 @@ Michael Heilman uses this approach for question generation.  For more details, r
 Good Question! Statistical Ranking for Question Generation and
 Rating Computer-Generated Questions with Mechanical Turk.
 "
-NLTK strange result,https://stackoverflow.com/questions/10407266,scikits learn and nltk: Naive Bayes classifier performance highly different,,14,5547,"Naive Bayes classifier usually means a Bayesian classfier over binary features that are assumed to be independent. This is what NLTK's Naive Bayes classifier implements. The corresponding scikit classifier is BernoulliNB classifier.
-
-The restriction to boolean valued features is not actually necessary,
-it is just the simplest to implement.
-A naive Bayes classifier can be defined for (assumed) independent features from any parametric distribution.
-
-MultinomialNB is for data with integer valued input features that are assumed to be multinomially distributed.
-
-Sckit also has GaussianNB that for continuous valued features that are assumed to idependently Gaussian distributed.
-","Is the default behavior for class weights the same in both libraries?  The difference in precision for the rare class (-1) looks like that might be the cause...
-",
 NLTK strange result,https://stackoverflow.com/questions/40480839,NLTK relation extraction returns nothing,"I am recently working on using nltk to extract relation from text. so i build a sample text:"" Tom is the cofounder of Microsoft."" and using following program to test and return nothing. I cannot figure out why.
 
 I'm using NLTK version: 3.2.1, python version: 3.5.2.
@@ -16240,17 +15582,6 @@ But, the problem itself is that you are printing out the score right after you e
 
 Note that the examples in the README are shown from the Python terminal where they wait after the execution of start() function until the Timer completed. Disconnecting now... message appears.
 ",
-NLTK strange result,https://stackoverflow.com/questions/39865557,sentiment analysis joint list,,1,68,"You would do:
-
-second_array = [' '.join(each) for each in first_array]
-
-
-Alternatively you can tell sklearn.CountVectorizer to just use your tokens:
-
-vect = CountVectorizer(preprocessor=lambda x: x, tokenizer=lambda x: x)
-X = vect.fit_transform(first_array)
-
-",,
 NLTK strange result,https://stackoverflow.com/questions/63508107,"What causes the problem: csv, pandas or nltk?","I have a strange problem resulting in wrong output delivered by NLTK collocations. In short, when I pass pandas object created in python envi (PyCharm or Jupyter) to the function I get correct result. When I save this object to csv and upload it to the pandas object, functions returns single letters and/or numbers instead of full words. Must be sth wrong with csv upload through pandas but I have no idea what is wrong...
 here is the code.
 Function that is applied:
@@ -16422,20 +15753,6 @@ https://radimrehurek.com/gensim/
 or lda
 https://pypi.python.org/pypi/lda
 ",,
-NLTK strange issue,https://stackoverflow.com/questions/8842817,Selecting the most fluent text from a set of possibilities via grammar checking (Python),,30,3461,"Very cool project, first of all. 
-
-I found a java grammar checker. I've never used it but the docs claim it can run as a server. Both java and listening to a port should be supported basically anywhere. 
-
-I'm just getting into NLP with a CS background so I wouldn't mind going into more detail to help you integrate whatever you decide on using. Feel free to ask for more detail.
-","The pylinkgrammar link provided above is a bit out of date.  It points to version 0.1.9, and the code samples for that version no longer work.  If you go down this path, be sure to use the latest version which can be found at:
-
-https://pypi.python.org/pypi/pylinkgrammar
-","Another approach would be to use what is called an overgenerate and rank approach.  In the first step you have your poetry generator generate multiple candidate generations.  Then using a service like Amazon's Mechanical Turk to collect human judgments of fluency.  I would actually suggest collecting simultaneous judgments for a number of sentences generated from the same seed conditions.  Lastly, you extract features from the generated sentences (presumably using some form of syntactic parser) to train a model to rate or classify question quality.  You could even thrown in the heuristics listed above.
-
-Michael Heilman uses this approach for question generation.  For more details, read these papers:
-Good Question! Statistical Ranking for Question Generation and
-Rating Computer-Generated Questions with Mechanical Turk.
-"
 NLTK strange issue,https://stackoverflow.com/questions/64945076,Using Natural Language Tool Kit with Django on Heroku - - Error: &#39;nltk.txt&#39; not found,"I’ve got a basic Django project. One feature I am working on counts the number of most commonly occurring words in a .txt file, such as a large public domain book. I’ve used the Python Natural Language Tool Kit to filter out “stopwords” (in SEO language, that means redundant words such as ‘the’, ‘you’, etc. ).
 Anyways, I’m getting this debug traceback when Django serves the template:
 
@@ -16515,12 +15832,6 @@ python setup.py install
 
 
 Or you can download Numpy wheel package, then install it localy with pip
-",,
-NLTK strange issue,https://stackoverflow.com/questions/34491819,Semantic Clustering,,0,684,"Your question is based in the area called ""topic modeling"" you can use:
-gensim
-https://radimrehurek.com/gensim/
-or lda
-https://pypi.python.org/pypi/lda
 ",,
 SciPy unexpected behavior,https://stackoverflow.com/questions/49280404,Shift interpolation does not give expected behaviour,"When using scipy.ndimage.interpolation.shift to shift a numpy data array along one axis with periodic boundary treatment (mode = 'wrap'), I get an unexpected behavior. The routine tries to force the first pixel (index 0) to be identical to the last one (index N-1) instead of the ""last plus one (index N)"".
 
@@ -17879,13 +17190,6 @@ print(out.best_values)
 
 ",,
 SciPy unexpected result,https://stackoverflow.com/questions/24242660,pymc3 : Multiple observed values,,11,5730,,,
-SciPy unexpected result,https://stackoverflow.com/questions/49280404,Shift interpolation does not give expected behaviour,,7,985,"It is worth noting that this behavior appears to be a bug, as noted in this SciPy issue:
-https://github.com/scipy/scipy/issues/2640
-
-The issue appears to effect every extrapolation mode in scipy.ndimage other than mode='mirror'.
-",,
-SciPy unexpected result,https://stackoverflow.com/questions/40451203,Cython parallel loop problems,,5,3869,,,
-SciPy unexpected result,https://stackoverflow.com/questions/45255265,Unexpected behavior of Gaussian filtering with Scipy,,5,1015,,,
 SciPy unexpected result,https://stackoverflow.com/questions/50831551,parallel/multithread differential evolution in python,"I'm trying to model a biochemical process, and I structured my question as an optimization problem, that I solve using  differential_evolution from scipy.
 So far, so good, I'm pretty happy with the  implementation of a simplified model with 15-19 parameters.
 I expanded the model and now, with 32 parameters, is taking way too long. Not  totally unexpected, but still an issue, hence the question.
@@ -18346,80 +17650,6 @@ Library versions used: scipy '0.19.1', numpy '1.13.3', fastcluster '1.1.24'
 
 Edit: It's also posted here: https://github.com/scipy/scipy/issues/7977.
 ",3,1203,,,
-SciPy unexpected result,https://stackoverflow.com/questions/59281884,Unexpected behavior of `scipy.ndimage.zoom()` for `order=0`,,2,3324,"This is a bin/edge array interpretation issue.
-The behavior of scipy.ndimage.zoom() is based on the edge interpretation of the array values, while the behavior that would produce equally-sized blocks for integer zoom factors (mimicking np.repeat()) is based on the bin interpretation.
-
-Let's illustrate with some ""pictures"".
-
-Bin Interpretation
-
-Consider the array [1 2 3], and let's assign each value to a bin.
-The edges of each bin would be: 0 and 1 for 1, 1 and 2 for 2, etc.
-
-0 1 2 3
-|1|2|3|
-
-
-Now, let's zoom this array by a factor of 4:
-
-                    1 1 1
-0 1 2 3 4 5 6 7 8 9 0 1 2
-|   1   |   2   |   3   |
-
-
-Hence, the values to assign to the bins using the Next-door Neighbor method are:
-
-                    1 1 1
-0 1 2 3 4 5 6 7 8 9 0 1 2
-|1 1 1 1|2 2 2 2|3 3 3 3|
-
-
-Edge Interpretation
-
-Consider the same array as before [1 2 3], but now let's assign each value to an edge:
-
-0 1 2
-| | |
-1 2 3
-
-
-Now, let's zoom this array by a factor of 4:
-
-                    1 1
-0 1 2 3 4 5 6 7 8 9 0 1
-| | | | | | | | | | | |
-1          2          3
-
-
-
-Hence, the values to assign to the edges using the Next-door Neighbor method are:
-
-                    1 1
-0 1 2 3 4 5 6 7 8 9 0 1
-| | | | | | | | | | | |
-1 1 1 2 2 2 2 2 2 3 3 3
-
-
-and edge 3 is assigned to 2 because 2 has position 5.5 while 1 has position 0 and (5.5 - 3 = 2.5) &lt; (3 - 0 = 3).
-Similarly, edge 8 is assigned to 2 because (8 - 5.5 = 2.5) &lt; (11 - 8 = 3).
-
-
-
-Comments
-
-In Physics, the ""bin array interpretation"" is generally more useful, because measurements are typically ""the result of some integration over a certain bin in an appropriate domain"" (notably signal of any form -- including images -- collected at a given time interval), hence I was expecting a ""bin interpretation"" for scipy.ndimage.zoom() but I acknowledge that the ""edge interpretation"" is equally valid (although I am not sure which applications benefit the most from it).
-
-
-
-(Thanks to @Patol75 for pointing me into the right direction)
-","I think that this is the expected behaviour.
-
-Consider your initial list, [1, 2, 3]. You ask scipy to zoom on it 4 times, which thereby creates a 4x3=12 elements list. The first element of the list has to be 1, the last one has to be 3. Then, for 2, well we have an even number of elements, so it would make sense to have 2 as both the 6th and 7th elements. This gives [1, , , , , 2, 2, , , , , 3]. From here, you provided zoom with order=0, which means zoom is going to fill in for the missing values with splines of order 0. First case, zoom needs to fill in for 4 missing values between 1 and 2. This has to be [1, 1, 2, 2]. Second case, 4 missing values between 2 and 3. Same logic, [2, 2, 3, 3]. Final result [1, 1, 1, 2, 2, 2, 2, 2, 2, 3, 3, 3].
-
-Now consider a 5x zoom, which generates a 15 elements array. Same story, except that there is a ""middle"" element, so that only one 2 is initially placed in the new list, at the 8th spot. With six elements to fill in between each pair, we get with the same logic [1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3].
-
-Therefore, you get more 2s than 1s or 3s because 2 is involved in two interpolation operations, opposed to one for both 1 &amp; 3. 
-",
 SciPy unexpected result,https://stackoverflow.com/questions/76011928,Python: np.linalg.eigvalsh returning negatve eigen values,"I have a 7x7 covariance matrix (represented as an numpy array).
 t = np.array(
     [
@@ -18560,63 +17790,6 @@ for x in X:
 ",,
 SciPy unexpected result,https://stackoverflow.com/questions/40050369,Different eigenvalues between scipy.sparse.linalg.eigs and numpy/scipy.eig,,2,3125,,,
 SciPy unexpected result,https://stackoverflow.com/questions/32920920,Stepsize control of dopri5 integrator,,2,1979,,,
-SciPy unexpected result,https://stackoverflow.com/questions/57477723,Unexpected behaviour of scipy.integrate,,1,1213,"It is not a bug, it has to do with the numerical precision of the integration, and the fact that you are integrating a function that is (almost) 0 in most of the interval.
-From the docs:
-
-
-  Be aware that pulse shapes and other sharp features as compared to the
-  size of the integration interval may not be integrated correctly using
-  this method.
-
-
-Based on your output, the function is using only two (last=2) intervals, evaluating values for rlist=(2.06145321e-045, 0.00000000e+000, ..) on each (see the docs for more detail on the output)
-
-You can add points to the interval to force the routine to use points closer to the left limit.
-
-a = quad(lambda x: np.exp(-x), 0, 1e9, points=np.logspace(-10,3,10))
-print(a)
-(0.9999999999999997, 2.247900608926337e-09)
-
-
-Adding to the explanation (thanks to @norok2): Note that points is a sequence of break points in the bounded integration interval where local difficulties of the integrand may occur (e.g., singularities, discontinuities). In this case, I'm not using it to point out discontinuities, but rather to force quad to perform more integration steps near the left boundary, using a log-spaced interval since a I have an exponential function (this is of course arbitrary and for this function, since I know its shape).
-","There is no need to convert your integral into one over a (very large) interval. There is a specific integration scheme for integrals of the form
-
-,
-
-namely Gauss-Laguerre quadrature. It's also included in quadpy (a project of mine). Simply try out
-
-import numpy
-import quadpy
-
-scheme = quadpy.e1r.gauss_laguerre(1)
-
-val = scheme.integrate(lambda x: numpy.ones(x.shape[1:]))
-
-print(val)
-
-
-1.0
-
-",
-SciPy unexpected result,https://stackoverflow.com/questions/69916926,Unexpected error when trying to install conda environment from .yaml file,,1,915,"There is no problem in your environment, I managed to install it, getting
-Successfully built MDAnalysis
-Installing collected packages: msgpack, tqdm, mrcfile, mmtf-python, gsd, fasteners, biopython, GridDataFormats, torchani, MDAnalysis
-Successfully installed GridDataFormats-1.0.1 MDAnalysis-2.6.0.dev0 biopython-1.81 fasteners-0.18 gsd-3.1.1 mmtf-python-1.1.3 mrcfile-1.4.3 msgpack-1.0.5 torchani-2.2.3 tqdm-4.66.1
-
-done
-#
-# To activate this environment, use
-#
-#     $ conda activate ael
-
-in the end.
-The problem you encountering is probably related to https://github.com/conda/conda/issues/9590
-which has a workaround
-sudo rm -r ~/.condarc
-
-or editing the ~/.condarc like https://github.com/conda/conda/issues/9590#issuecomment-1003211237
-",,
-SciPy unexpected result,https://stackoverflow.com/questions/29306538,Unexpected behavior in scipy isf,,1,234,,,
 SciPy unexpected result,https://stackoverflow.com/questions/77945259,"slurm didn&#39;t execute my Python code after running a few lines but also didn&#39;t stop, whereas it worked well on my local Linux","my code:
 from datasets import load_dataset
 MAX_LEN = 512
@@ -20222,223 +19395,6 @@ All credits go to @rubik (see the comments)
 
 Check out this answer to find your site-packages path in case it is different than the one used here.
 ",,
-SciPy unexpected issue,https://stackoverflow.com/questions/40451203,Cython parallel loop problems,,5,3869,"I haven't timed this myself so it's possible this might not help too much, however:
-
-If you run cython -a to get an annotated version of your initial attempt (pairwise_distance_omp) you'll find the ans[c] += ... line is yellow, suggesting it's got Python overhead. A look at that the C corresponding to that line suggests that it's checking for divide by zero. One key part of it starts:
-
-if (unlikely(M_PI == 0)) {
-
-
-You know this will never be true (and in any case you'd probably live with NaN values rather than an exception if it was). You can avoid this check by adding the following extra decorator to the function:
-
-@cython.cdivision(True)
-# other decorators
-def pairwise_distance_omp # etc...
-
-
-This cuts out quite a bit of C code, including bits that have to be run in a single thread. The flip-side is that most of that code should never be run, and the compiler should probably be able to work that out, so it isn't clear how much difference that will make.
-
-
-
-Second suggestion:
-
-# at the top
-cdef np.double_t accumulator, tmp
-
-    # further down later in the loop:
-    c = i * (m - 1) - i * (i + 1) / 2 + j - 1
-    accumulator = 0
-    for k in range(r.shape[1]):
-        tmp = (1.0 - fabs(fabs(r[i, k] - r[j, k]) / M_PI - 1.0))
-        accumulator = accumulator + w[k] * (tmp*tmp)
-    ans[c] = accumulator
-
-
-This has two advantages hopefully: 1) tmp*tmp should probably be quicker than floating point exponent to the power of 2. 2) You avoid reading from the ans array, which might be a bit slow because the compiler always has to be careful that some other thread hasn't changed it (even though you know it shouldn't have).
-",,
-SciPy unexpected issue,https://stackoverflow.com/questions/50831551,parallel/multithread differential evolution in python,,5,4707,"Scipy differential_evolution can now be used in parallel extremely easily, by specifying the workers:
-
-
-  workers int or map-like callable, optional
-  
-  If workers is an int the population is subdivided into workers
-  sections and evaluated in parallel (uses multiprocessing.Pool). Supply
-  -1 to use all available CPU cores. Alternatively supply a map-like callable, such as multiprocessing.Pool.map for evaluating the
-  population in parallel. This evaluation is carried out as
-  workers(func, iterable). This option will override the updating
-  keyword to updating='deferred' if workers != 1. Requires that func be
-  pickleable.
-  
-  New in version 1.2.0.
-
-
-scipy.optimize.differential_evolution documentation
-","Thanks to @jp2011 for pointing to pygmo
-
-First, worth noting the difference from pygmo 1, since the fist link on google still directs to the older version.
-
-Second, Multiprocessing island are available only for python 3.4+
-
-Third, it works. The processes I started when I first asked the question are still running while I write, the pygmo archipelago running an extensive test of all the 18 possible DE variations present in saDE made in less than 3h. The compiled version using Numba as suggested here https://esa.github.io/pagmo2/docs/python/tutorials/coding_udp_simple.html will probably finish even earlier. Chapeau.
-
-I personally find it a bit less intuitive than the scipy version, given the need to build a new class (vs a signle function in scipy) to define the problem but is probably just a personal preference. Also, the mutation/crossing over parameters are defined less clearly, for someone approaching DE for the first time might be a bit obscure.
-But, since serial DE in scipy just isn't cutting it, welcome pygmo(2).
-
-Additionally I found a couple other options claiming to parallelize DE. I didn't test them myself, but might be useful to someone stumbling on this question.  
-
-Platypus, focused on multiobjective evolutionary algorithms 
-https://github.com/Project-Platypus/Platypus
-
-Yabox
-https://github.com/pablormier/yabox
-
-from Yabox creator a detailed, yet IMHO crystal clear, explaination of DE
-https://pablormier.github.io/2017/09/05/a-tutorial-on-differential-evolution-with-python/
-","I've been having exactly the same problem. Perhaps, you could try pygmo, which does support different optimisation algorithms (including DE) and has a model for parallel computation. However, I'm finding that the community is not big as it is for scipy. Their tutorials, documentation, and examples are good quality and one can get things to work from that. 
-"
-SciPy unexpected issue,https://stackoverflow.com/questions/28321286,pandas rolling_quantile bug?,,4,1150,"As described here, the problem seems to be that the rolling_quantile() function (now in pandas 0.18 is rolling().quantile()) does not interpolate, it simply uses the nearest point.
-
-A workaround is to apply the numpy percentile function after rolling:
-
-a.rolling(row).apply(func=np.percentile, args=(25,)).tail(1)
-
-
-which gives the correct interpolated results.
-","This has be fixed in pandas 0.21.0. I just tried it. BTW, 0.20.3 hasn't fixed it.  The fix is here: https://github.com/pandas-dev/pandas/pull/16247
-",
-SciPy unexpected issue,https://stackoverflow.com/questions/46556376,Scipy&#39;s cut_tree() doesn&#39;t return requested number of clusters and the linkage matrices obtained with scipy and fastcluster do not match,,3,1203,"First, I am not concerned about the differences in the output of the three methods scipy.cluster.hierarchy.linkage(), fastcluster.linkage(), and fastcluster.linkage_vector(). Differences may arise for two reasons:
-
-
-Small differences in cluster distances due to the limitations of floating-point arithmetic (algebraically equivalent formulae yield different results).
-Aside from arithmetic differences, the algorithms are allowed to resolve ties differently. A “tie“ in this context are two pairs of clusters (A,B), (C,D) with exactly the same distances between A and B, and C and D. As the OP wrote, there are e.g. numerous pairs of points with distance 0 at the beginning of the process, which the algorithms may cluster in any order.
-
-
-Second, the question why scipy.cluster.hierarchy.cut_tree() does not yield the desired number of clusters is the really interesting issue here. Algebraically, the “Ward” clustering method cannot produce so-called “inversions” in the dendrogram. (An inversion occurs when a clustering distance in one step is bigger than the clustering distance in the next step.) That is, the sequence of distances in the third column of the stepwise dendrogram (the output of linkage()) is ideally a monotonically increasing sequence for the “Ward” method. However, due to floating-point inaccuracies, in the dataset supplied by the OP, the clustering distance in step 35 is reported as 2.2e−16 by fastcluster.linkage_vector(), but 0.0 in the next step 36.
-
-SciPy's cut_tree() does unfortunately not handle these inversions well. Even when they happen “deep down” in the dendrogram (like in the present case), this confuses the algorithm for the entire rest of the merging process, with the effect of wrongly formed clusters. (At first glance, I believe that the dendrogram is not only “cut” at the wrong level but that the clusters are actually wrong. I have not analyzed the situation completely, though.)
-
-This is even more troubling as inversions occur not only by numerical inaccuracies as in the present case, but the “centroid” and “median” clustering methods produce them quite often, even with perfect arithmetic.
-
-Lastly, an imperfect solution: In order to resolve the problem, replace two marked lines in the loop in SciPy's cut_tree() function:
-
-for i, node in enumerate(nodes):
-    idx = node.pre_order()
-    this_group = last_group.copy()
-    # ------------- Replace this:
-    this_group[idx] = last_group[idx].min()
-    this_group[this_group &gt; last_group[idx].max()] -= 1
-    # -------------
-    if i + 1 in cols_idx:
-        groups[np.where(i + 1 == cols_idx)[0]] = this_group
-    last_group = this_group
-
-
-by the following lines:
-
-    unique_idx = np.unique(last_group[idx])
-    this_group[idx] = unique_idx[0]
-    for ui in unique_idx[:0:-1]:
-        this_group[this_group &gt; ui] -= 1
-
-
-(Look at the SciPy source code for context.)
-
-However, I would rather recommend to reimplement the cut_tree() method from scratch, as the current implementation is overly complicated, and the task can be performed more efficiently in terms of runtime complexity.
-",,
-SciPy unexpected issue,https://stackoverflow.com/questions/38966075,How to restrict anaconda from upgrading the module being installed if its a higher level dependency,,3,577,"Unless there's a specific reason you need to compile python yourself, I think what you're actually going after is conda bundle (http://conda.pydata.org/docs/commands/conda-bundle.html).  Unfortunately we've removed it in conda 4.2 which will be coming out soon, intending to move it to conda-build.  Since that hasn't happened yet, and if it ends up actually being useful to people, we can add it back.
-
-
-
-You could also try this using conda-build...
-
-Remove the whole source block in your meta.yaml file. Also remove all of the build requirements that are also not run requirements.  Then in your build.sh file
-
-conda install --yes --quiet \
-    python=2.7.10 \
-    ipython=5.0.0 \
-    numpy=1.11.1 \
-    cython=0.24.1 \
-    scipy=0.18.0 \
-    pandas=0.18.1 \
-    patsy=0.4.1 \
-    statsmodels=0.6.1 \
-    matplotlib=1.5.2 \
-    ggplot=0.9.4 \
-    scikit-learn=0.17.1 \
-    distribute=0.6.45 \
-    backports.ssl-match-hostname=3.5.0.1 \
-    certifi=14.05.14 \
-    nose_parameterized=0.5.0 \
-    pyparsing=2.1.4 \
-    python-dateutil=2.5.3 \
-    pytz=2016.6.1 \
-    pyzmq=15.3.0 \
-    simplejson=3.3.3 \
-    six=1.10.0 \
-    sympy=1.0 \
-    tornado=4.4.1 \
-    virtualenv=13.0.1 \
-    wsgiref=0.1.2 \
-    python-swiftclient=2.7.0 \
-    python-cinderclient=1.1.2 \
-    python-glanceclient=0.17.2 \
-    python-neutronclient=2.4.0 \
-    networkx=1.11 \
-    pysal=1.11.1 \
-    pyyaml=3.11 \
-    shapely=1.5.13 \
-    beautifulsoup4=4.4.1 \
-    nltk=3.2.1 \
-    requests=2.10.0 \
-    seaborn=0.5.0 \
-    h5py=2.6.0 \
-    xlrd=1.0.0 \
-    markupsafe=0.23 \
-    crypto=1.1.0 \
-    jinja2=2.8 \
-    openpyxl=2.3.2 \
-    jaro_winkler=1.0.2 \
-    bokeh=0.12.1 \
-    numexpr=2.6.1 \
-    pytables=3.2.3.1 \
-    pycurl=7.43.0 \
-    mgrs=1.1.0 \
-    psutil=4.3.0 \
-    biopython=1.67 \
-    enaml=0.9.8 \
-    mdp=3.5 \
-    bitarray=0.8.1 \
-    clusterpy=0.9.9 \
-    pyside=1.2.1 \
-    pyqt=4.11.4 \
-    parsedatetime=1.4 \
-    pymysql=0.6.7 \
-    pyodbc=3.0.10 \
-    tabulate=0.7.2
-
-
-The big difference: by listing all of those packages as build requirements, you're actually ensuring that they won't be in your final conda package.  Think of build requirements more like a compiler, or something that's necessary when you're building the package, but not when you're actually running it.
-",,
-SciPy unexpected issue,https://stackoverflow.com/questions/76011928,Python: np.linalg.eigvalsh returning negatve eigen values,,2,295,"It's totally normal for symmetric matrices to have negative eigenvalues. A matrix being Hermitian only guarantees that its eigenvalues are real. It doesn't guarantee that the eigenvalues are positive.
-It's not normal for a covariance matrix to have negative eigenvalues, meaning this isn't actually a covariance matrix, despite what you thought. Perhaps you rounded the entries of an actual covariance matrix?
-",,
-SciPy unexpected issue,https://stackoverflow.com/questions/32920920,Stepsize control of dopri5 integrator,,2,1979,"No, there is nothing wrong. You are telling the integrator to perform an integration step to t_final and it performs that step. Internal steps of the integrator are not reported.
-
-
-
-The sensible thing to do is to give the desired sampling points as input of the algorithm, set for example dt=0.1 and use
-
-state_ode_f.integrate( min(state_ode_f.t+dt, t_final) )
-
-
-There is no single-step method in dopri5, only vode has it defined, see the source code https://github.com/scipy/scipy/blob/v0.14.0/scipy/integrate/_ode.py#L376, this could account for the observed differences.
-
-As you found in Using adaptive step sizes with scipy.integrate.ode, one can force single-step behavior by setting the iteration bound nsteps=1. This will produce a warning every time, so one has to suppress these specific warnings to see a sensible result.
-
-
-
-You should not use a parameter (which is a constant for the integration interval) for a time-dependent force. Use inside MassSpring_with_force the evaluation f=force(t). Possibly you could pass the function handle of force as parameter.
-",,
 SciPy unexpected issue,https://stackoverflow.com/questions/40690045,conda update failed in windows 10,"In Anaconda prompt as an administrator (Window 10 - 64 bit) after this command : conda update --all I see these errors as below:
 I want to update and install packages but after enter every command these errors appear.
 
@@ -20541,64 +19497,6 @@ In the results, you should see one titled ""Anaconda prompt (anaconda 3)""
 type your command in this anaconda terminal e.g. conda update conda
 
 "
-SciPy unexpected issue,https://stackoverflow.com/questions/61594854,Packaged dags - Airflow can&#39;t find module installed,,1,5544,"Ciao Marco,
-I know this is an old question, but I had to go through the very same process and what worked for me was to use:
-pip install -r ../requirements_dag.txt --target=""$PWD""
-
-The same works for packages hosted on git. The key difference is the use of --target rather than --prefix.
-","The Airflow documentation page you're referring to says this about packaged DAGs:
-
-
-  To allow this you can create a zip file that contains the DAG(s) in the root of the zip file and have the extra modules unpacked in directories.
-
-
-The way I interpret this is different from yours. I don't think Airflow handles these packaged DAGs as a real python package. It just seems like a custom zip folder that will be added to your DAGs folder. So the lib or lib64 folders you have are probably not real python modules (they don't have a __init__.py file). That's why they say that ""the extra modules should be unpacked in directories"".
-
-Look at the example zip file they give:
-
-my_dag1.py
-my_dag2.py
-package1/__init__.py
-package1/functions.py
-
-
-package1 has a __init__.py file. So in your case, your vertica_python library should be directly importable like this:
-
-my_custom_package
-vertica_python/
-predict_dag.py  
-train_dag.py
-
-
-However, I don't think you should do this. I have the impression that the modules that you should add here are your own developed modules, not third party libraries.
-
-So I suggest that you install the libraries you need to run your packaged DAGs beforehand.
-",
-SciPy unexpected issue,https://stackoverflow.com/questions/40377810,"interpolate.griddata shifts data northwards, is it a bug?",,0,288,"Pauli Virtanen on SciPy bugtracker answered the question.
-
-The issue goes away if one replaces basemap.imshow() with matplotlib.pyplot.pcolormesh()
-
-Replacing above
-
-m.imshow(mapdata)
-
-
-with
-
-meshx,meshy = m(mapx,mapy)
-plt.pcolormesh(meshx,meshy,mapdata)
-
-
-produces correctly aligned image.
-
-
-
-It is not clear what I am doing wrong with basemap.imshow, but that is probably another question.
-",,
-SciPy unexpected issue,https://stackoverflow.com/questions/76309535,Quantile Forest error &quot;predict() got an unexpected keyword argument &#39;quantiles&#39;&quot;,,0,180,"I notice that the code you've provided is an example from the sklearn-quantile package. Perhaps confusingly, both packages -- sklearn-quantile and quantile-forest -- provide a RandomForestQuantileRegressor class, but the packages have different ways of passing the quantiles to the class methods. As a result, the RandomForestQuantileRegressor classes from the two packages are not currently interchangeable.
-In the code snippet you've provided, it's not clear what imports are being used, but it appears that you may be using the RandomForestQuantileRegressor class from the sklearn-quantile package. This class expects the quantiles to be passed to the initialization function instead of the predict function and would lead to the error you've presented. If this is correct, then you can fix this by importing the RandomForestQuantileRegressor class from the quantile-forest package and passing the quantiles to the predict function instead of the initialization function.
-If the above is not helpful or you still are running into errors, you're welcome to create an issue in the quantile-forest repository here for additional troubleshooting.
-",,
 SciPy unexpected issue,https://stackoverflow.com/questions/61973962,pypy3 dyld can not be found in homebrew,"I got the following error when I use homebrew. Does anybody know how to fix the problem?
 
 dyld: Library not loaded: /usr/local/opt/libffi/lib/libffi.6.dylib
@@ -21577,44 +20475,6 @@ array_float[0, 0] = array_float[0, 0] + 0.1
 print array_float[0, 0] # 0.1
 
 ",
-SciPy strange behavior,https://stackoverflow.com/questions/57477723,Unexpected behaviour of scipy.integrate,,1,1213,"It is not a bug, it has to do with the numerical precision of the integration, and the fact that you are integrating a function that is (almost) 0 in most of the interval.
-From the docs:
-
-
-  Be aware that pulse shapes and other sharp features as compared to the
-  size of the integration interval may not be integrated correctly using
-  this method.
-
-
-Based on your output, the function is using only two (last=2) intervals, evaluating values for rlist=(2.06145321e-045, 0.00000000e+000, ..) on each (see the docs for more detail on the output)
-
-You can add points to the interval to force the routine to use points closer to the left limit.
-
-a = quad(lambda x: np.exp(-x), 0, 1e9, points=np.logspace(-10,3,10))
-print(a)
-(0.9999999999999997, 2.247900608926337e-09)
-
-
-Adding to the explanation (thanks to @norok2): Note that points is a sequence of break points in the bounded integration interval where local difficulties of the integrand may occur (e.g., singularities, discontinuities). In this case, I'm not using it to point out discontinuities, but rather to force quad to perform more integration steps near the left boundary, using a log-spaced interval since a I have an exponential function (this is of course arbitrary and for this function, since I know its shape).
-","There is no need to convert your integral into one over a (very large) interval. There is a specific integration scheme for integrals of the form
-
-,
-
-namely Gauss-Laguerre quadrature. It's also included in quadpy (a project of mine). Simply try out
-
-import numpy
-import quadpy
-
-scheme = quadpy.e1r.gauss_laguerre(1)
-
-val = scheme.integrate(lambda x: numpy.ones(x.shape[1:]))
-
-print(val)
-
-
-1.0
-
-",
 SciPy strange behavior,https://stackoverflow.com/questions/65513251,Scipy coo_matrix.max() alters data attribute,"I am building a recommendation system using an open source library, LightFM. This library requires certain pieces of data to be in a sparse matrix format, specifically the scipy coo_matrix. It is here that I am encountering strange behavior. It seems like a bug, but it's more likely that I am doing something wrong.
 Basically, I let LightFM.Dataset build me a sparse matrix, like so:
 interactions, weights = dataset.build_interactions(data=_get_interactions_data())
@@ -22122,35 +20982,6 @@ This happens with all of the modules that I thought I had pip'd ... pandas, torn
 ",45,166470,"The problem is that your Python version and the library you want to use are not same versionally (Python). Even if you install Python's latest version, your PATH might not change properly and automatically. Thus, you should change it manually.After matching their version, it will work.
 
 Ex: When I tried to install Django3, I got same error. I noticed that my PATH still seems C:\python27\Scripts though I already install Python3.8, so that I manually edited my PATH C:\python38\Scripts and reinstalled pip install Django and everything worked well. 
-",,
-SciPy strange result,https://stackoverflow.com/questions/65585639,Eigenvalues in Python: A Bug?,,10,1316,"As far as I know, assumption 1 is correct, but assumption 2 is not.
-A Real Symmetric matrix produces eigenvalues and eigenvectors that are real only.
-However, for a given eigenvalue, the associated eigenvector isn't necessarily unique.
-Furthermore, round-off error shouldn't be so significant for a matrix that actually isn't that big, or contain numbers that aren't very small.
-For comparison, I ran your test matrix through a JavaScript version of RG.F (Real General, from the EISPACK Library):  Eigenvalues and Eigenvectors Calculator
-Here is the output:
-Eigenvalues:
-   20
-   12
-   20
-   20
-   20
-   20
-   20
-   20
-
-Eigenvectors:
- 0.9354143466934854     0.35355339059327395     -0.021596710639534     -0.021596710639534     -0.021596710639534     -0.021596710639534     -0.021596710639533997     -0.021596710639533997
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     0.9286585574999623     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     0.9286585574999623     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     0.9286585574999623     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     0.9286585574999623     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     0.9286585574999622     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     0.9286585574999622
-
-No imaginary components.
-To confirm, or deny, the validity of results, you could always write a small program that plugs the results back into the original equation. Simple matrix and vector multiplication. Then you'd know for sure whether or not the outputs are correct. Or, if they are wrong, how far away from correct answers they are.
 ",,
 SciPy strange result,https://stackoverflow.com/questions/34890585,In scipy why doesn&#39;t idct(dct(a)) equal to a?,"I am trying to implement JPEG compression using python. When I tried to apply the DCT, quantization, IDCT process for a tiff image, I found something strange for scipy.fftpack.dct/idct.
 
@@ -23393,7 +22224,6 @@ For a more detailed description, please read the original Welch's paper. See als
 SciPy strange result,https://stackoverflow.com/questions/44710838,Calling BLAS / LAPACK directly using the SciPy interface and Cython,,4,2232,,,
 SciPy strange result,https://stackoverflow.com/questions/39196057,Libraries in &quot;virtualenv&quot; much bigger than system libraries,,4,933,,,
 SciPy strange result,https://stackoverflow.com/questions/36706163,python multiprocessing module: strange behaviour and processor load when using Pool,,4,871,,,
-SciPy strange result,https://stackoverflow.com/questions/27004245,Numpy array bug or feature (catsing to int behind the scenes)?,,3,135,,,
 SciPy strange result,https://stackoverflow.com/questions/71146140,Using RNN Trained Model without pytorch installed,"I have trained an RNN model with pytorch. I need to use the model for prediction in an environment where I'm unable to install pytorch because of some strange dependency issue with glibc. However, I can install numpy and scipy and other libraries. So, I want to use the trained model, with the network definition, without pytorch.
 I have the weights of the model as I save the model with its state dict and weights in the standard way, but I can also save it using just json/pickle files or similar.
 I also have the network definition, which depends on pytorch in a number of ways. This is my RNN network definition.
@@ -23905,8 +22735,6 @@ Shifting back your time domain Gaussian pulse with ifftshift should give you a p
 SciPy strange result,https://stackoverflow.com/questions/20061141,pymc 3.0 Predictive Posterior Distribution,,2,1176,,,
 SciPy strange result,https://stackoverflow.com/questions/17527869,Curve fit fails with exponential but zunzun gets it right,,2,1944,,,
 SciPy strange result,https://stackoverflow.com/questions/16929179,Strange result with python&#39;s (scipy) curve fitting,,2,1153,,,
-SciPy strange result,https://stackoverflow.com/questions/57477723,Unexpected behaviour of scipy.integrate,,1,1213,,,
-SciPy strange result,https://stackoverflow.com/questions/58164513,Problems with bisplrep and bisplev from scipy.interpolate,,1,1443,,,
 SciPy strange result,https://stackoverflow.com/questions/74073866,SciPy Minimize doesn&#39;t pass all guesses on?,"I am trying to minimize a function of two variables using SciPy. The function itself is a chain of multiple lambda functions (makes it complicated but unfortunately it is the easiest way to write the expressions I need).
 However, when using SciPy's minimize routine, I get the error ""TypeError: () missing 1 required positional argument: 'labour'""
 Strangely enough, if I pass the arguments to the function directly, there is no error, so I assume that my chaining was correct.
@@ -25080,47 +23908,6 @@ Intel(R) Core(TM) i5-4300U CPU @ 1.90GHz
 be sure your processor runs at fixed speed, noswap.
 /tmp is mounted in RAM.
 "
-SciPy strange issue,https://stackoverflow.com/questions/65585639,Eigenvalues in Python: A Bug?,,10,1316,"As far as I know, assumption 1 is correct, but assumption 2 is not.
-A Real Symmetric matrix produces eigenvalues and eigenvectors that are real only.
-However, for a given eigenvalue, the associated eigenvector isn't necessarily unique.
-Furthermore, round-off error shouldn't be so significant for a matrix that actually isn't that big, or contain numbers that aren't very small.
-For comparison, I ran your test matrix through a JavaScript version of RG.F (Real General, from the EISPACK Library):  Eigenvalues and Eigenvectors Calculator
-Here is the output:
-Eigenvalues:
-   20
-   12
-   20
-   20
-   20
-   20
-   20
-   20
-
-Eigenvectors:
- 0.9354143466934854     0.35355339059327395     -0.021596710639534     -0.021596710639534     -0.021596710639534     -0.021596710639534     -0.021596710639533997     -0.021596710639533997
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     0.9286585574999623     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     0.9286585574999623     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     0.9286585574999623     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     0.9286585574999623     -0.15117697447673797     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     0.9286585574999622     -0.15117697447673797
--0.1336306209562122     0.3535533905932738     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     -0.15117697447673797     0.9286585574999622
-
-No imaginary components.
-To confirm, or deny, the validity of results, you could always write a small program that plugs the results back into the original equation. Simple matrix and vector multiplication. Then you'd know for sure whether or not the outputs are correct. Or, if they are wrong, how far away from correct answers they are.
-",,
-SciPy strange issue,https://stackoverflow.com/questions/36706163,python multiprocessing module: strange behaviour and processor load when using Pool,,4,871,"According to here, there is an issue when OpenBLAS is used together with joblib.
-
-Similar issues occur when MKL is used (see here).
-The solution given here, also worked for me:
-Adding
-
-import os
-os.environ['MKL_NUM_THREADS'] = '1'
-
-
-at the beginning of my python script solves the issue.
-",,
 SciPy strange issue,https://stackoverflow.com/questions/28056404,MATLAB and SciPy give different results for &#39;buttord&#39; function,"I'm trying to design an analog Butterworth filter using the buttord function (actually, I'm porting a program where this function is called from MATLAB to Python). 
 
 My parameters are:
@@ -25226,313 +24013,6 @@ plt.xlabel('Frequency [rad/s]')
 plt.ylabel('Gain [dB]')
 plt.show()
 
-",,
-SciPy strange issue,https://stackoverflow.com/questions/57484399,Issue importing scikit-learn: module &#39;scipy&#39; has no attribute &#39;_lib&#39;,,3,12402,"I encountered the same error after letting my PC sit for 4 days unattended. Restarting the kernel solved it.
-This probably won't work for everyone, but it might save someone a little agony.
-","I ended up fixing this by uninstalling my current version of Anaconda and installing a version from a few months ago. I didn't get the ""ordinal 242"" error nor the issues with scikit-learn.
-","had a similar problem on google collaboratory, simply uninstalling and reinstalling the scipy module alone solved it for me
-
-and the simple fact that collab ai suggested this move emboldened me
-"
-SciPy strange issue,https://stackoverflow.com/questions/71146140,Using RNN Trained Model without pytorch installed,,3,934,"You should try to export the model using torch.onnx. The page gives you an example that you can start with.
-An alternative is to use TorchScript, but that requires torch libraries.
-Both of these can be run without python. You can load torchscript in a C++ application https://pytorch.org/tutorials/advanced/cpp_export.html
-ONNX is much more portable and you can use in languages such as C#, Java, or Javascript
-https://onnxruntime.ai/ (even on the browser)
-A running example
-Just modifying a little your example to go over the errors I found
-Notice that via tracing any if/elif/else, for, while will be unrolled
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import torch.optim as optim
-import random
-
-torch.manual_seed(1)
-random.seed(1)
-device = torch.device('cpu')
-
-class RNN(nn.Module):
-  def __init__(self, input_size, hidden_size, output_size,num_layers, matching_in_out=False, batch_size=1):
-    super(RNN, self).__init__()
-    self.input_size = input_size
-    self.hidden_size = hidden_size
-    self.output_size = output_size
-    self.num_layers = num_layers
-    self.batch_size = batch_size
-    self.matching_in_out = matching_in_out #length of input vector matches the length of output vector 
-    self.lstm = nn.LSTM(input_size, hidden_size,num_layers)
-    self.hidden2out = nn.Linear(hidden_size, output_size)
-  def forward(self, x, h0, c0):
-    lstm_out, (hidden_a, hidden_b) = self.lstm(x, (h0, c0))
-    outs=self.hidden2out(lstm_out)
-    return outs, (hidden_a, hidden_b)
-  def init_hidden(self):
-    #return torch.rand(self.num_layers, self.batch_size, self.hidden_size)
-    return (torch.rand(self.num_layers, self.batch_size, self.hidden_size).to(device).detach(),
-            torch.rand(self.num_layers, self.batch_size, self.hidden_size).to(device).detach())
-
-# convert the arguments passed during onnx.export call
-class MWrapper(nn.Module):
-    def __init__(self, model):
-        super(MWrapper, self).__init__()
-        self.model = model;
-    def forward(self, kwargs):
-        return self.model(**kwargs)
-
-Run an example
-rnn = RNN(10, 10, 10, 3)
-X = torch.randn(3,1,10)
-h0,c0  = rnn.init_hidden()
-print(rnn(X, h0, c0)[0])
-
-Use the same input to trace the model and export an onnx file
-
-torch.onnx.export(MWrapper(rnn), {'x':X,'h0':h0,'c0':c0}, 'rnn.onnx', 
-                  dynamic_axes={'x':{1:'N'},
-                               'c0':{1: 'N'},
-                               'h0':{1: 'N'}
-                               },
-                  input_names=['x', 'h0', 'c0'],
-                  output_names=['y', 'hn', 'cn']
-                 )
-
-Notice that you can use symbolic values for the dimensions of some axes of some inputs. Unspecified dimensions will be fixed with the values from the traced inputs. By default LSTM uses dimension 1 as batch.
-Next we load the ONNX model and pass the same inputs
-import onnxruntime
-ort_model = onnxruntime.InferenceSession('rnn.onnx')
-print(ort_model.run(['y'], {'x':X.numpy(), 'c0':c0.numpy(), 'h0':h0.numpy()}))
-
-","Basically implementing it in numpy and copying weights from your pytorch model can do the trick.  For your usecase you will only need to do a forward pass so we just need to implement that only
-#Set Parameters for a small LSTM network
-input_size  = 2 # size of one 'event', or sample, in our batch of data
-hidden_dim  = 3 # 3 cells in the LSTM layer
-output_size = 1 # desired model output
-
-num_layers=3
-torch_lstm = RNN( input_size, 
-                 hidden_dim ,
-                 output_size,
-                 num_layers,
-                 matching_in_out=True
-                 )
-
-state = torch_lstm.state_dict() # state will capture the weights of your model
-
-Now for LSTM in numpy these functions will be used:
-got the below code from this link: https://towardsdatascience.com/the-lstm-reference-card-6163ca98ae87
-### NOT MY CODE
-import numpy as np 
-from scipy.special import expit as sigmoid
-
-def forget_gate(x, h, Weights_hf, Bias_hf, Weights_xf, Bias_xf, prev_cell_state):
-    forget_hidden  = np.dot(Weights_hf, h) + Bias_hf
-    forget_eventx  = np.dot(Weights_xf, x) + Bias_xf
-    return np.multiply( sigmoid(forget_hidden + forget_eventx), prev_cell_state )
-
-def input_gate(x, h, Weights_hi, Bias_hi, Weights_xi, Bias_xi, Weights_hl, Bias_hl, Weights_xl, Bias_xl):
-    ignore_hidden  = np.dot(Weights_hi, h) + Bias_hi
-    ignore_eventx  = np.dot(Weights_xi, x) + Bias_xi
-    learn_hidden   = np.dot(Weights_hl, h) + Bias_hl
-    learn_eventx   = np.dot(Weights_xl, x) + Bias_xl
-    return np.multiply( sigmoid(ignore_eventx + ignore_hidden), np.tanh(learn_eventx + learn_hidden) )
-
-
-def cell_state(forget_gate_output, input_gate_output):
-    return forget_gate_output + input_gate_output
-
-  
-def output_gate(x, h, Weights_ho, Bias_ho, Weights_xo, Bias_xo, cell_state):
-    out_hidden = np.dot(Weights_ho, h) + Bias_ho
-    out_eventx = np.dot(Weights_xo, x) + Bias_xo
-    return np.multiply( sigmoid(out_eventx + out_hidden), np.tanh(cell_state) )
-
-
-We would need the sigmoid function as well so
-def sigmoid(x):
-    return 1/(1 + np.exp(-x))
-
-Because pytorch stores weights in stacked manner so we need to break it up for that we would need the below function
-def get_slices(hidden_dim):
-    slices=[]
-    breaker=(hidden_dim*4)
-    slices=[[i,i+3] for i in range(0, breaker, breaker//4)]
-    return slices
-
-Now we have the functions ready for lstm, now we create an lstm class to copy the weights from pytorch class and get the output from it.
-class numpy_lstm:
-    def __init__( self, layer_num=0, hidden_dim=1, matching_in_out=False):
-        self.matching_in_out=matching_in_out
-        self.layer_num=layer_num
-        self.hidden_dim=hidden_dim
-        
-    def init_weights_from_pytorch(self, state):
-        slices=get_slices(self.hidden_dim)
-        print (slices)
-
-        #Event (x) Weights and Biases for all gates
-        
-        lstm_weight_ih='lstm.weight_ih_l'+str(self.layer_num)
-        self.Weights_xi = state[lstm_weight_ih][slices[0][0]:slices[0][1]].numpy()  # shape  [h, x]
-        self.Weights_xf = state[lstm_weight_ih][slices[1][0]:slices[1][1]].numpy()  # shape  [h, x]
-        self.Weights_xl = state[lstm_weight_ih][slices[2][0]:slices[2][1]].numpy()  # shape  [h, x]
-        self.Weights_xo = state[lstm_weight_ih][slices[3][0]:slices[3][1]].numpy() # shape  [h, x]
-
-        
-        lstm_bias_ih='lstm.bias_ih_l'+str(self.layer_num)
-        self.Bias_xi = state[lstm_bias_ih][slices[0][0]:slices[0][1]].numpy()  #shape is [h, 1]
-        self.Bias_xf = state[lstm_bias_ih][slices[1][0]:slices[1][1]].numpy()  #shape is [h, 1]
-        self.Bias_xl = state[lstm_bias_ih][slices[2][0]:slices[2][1]].numpy()  #shape is [h, 1]
-        self.Bias_xo = state[lstm_bias_ih][slices[3][0]:slices[3][1]].numpy() #shape is [h, 1]
-        
-        
-        lstm_weight_hh='lstm.weight_hh_l'+str(self.layer_num)
-
-        #Hidden state (h) Weights and Biases for all gates
-        self.Weights_hi = state[lstm_weight_hh][slices[0][0]:slices[0][1]].numpy()  #shape is [h, h]
-        self.Weights_hf = state[lstm_weight_hh][slices[1][0]:slices[1][1]].numpy()  #shape is [h, h]
-        self.Weights_hl = state[lstm_weight_hh][slices[2][0]:slices[2][1]].numpy()  #shape is [h, h]
-        self.Weights_ho = state[lstm_weight_hh][slices[3][0]:slices[3][1]].numpy() #shape is [h, h]
-        
-        
-        lstm_bias_hh='lstm.bias_hh_l'+str(self.layer_num)
-
-        self.Bias_hi = state[lstm_bias_hh][slices[0][0]:slices[0][1]].numpy()  #shape is [h, 1]
-        self.Bias_hf = state[lstm_bias_hh][slices[1][0]:slices[1][1]].numpy()  #shape is [h, 1]
-        self.Bias_hl = state[lstm_bias_hh][slices[2][0]:slices[2][1]].numpy()  #shape is [h, 1]
-        self.Bias_ho = state[lstm_bias_hh][slices[3][0]:slices[3][1]].numpy() #shape is [h, 1]
-    def forward_lstm_pass(self,input_data):
-        h = np.zeros(self.hidden_dim)
-        c = np.zeros(self.hidden_dim)
-        
-        output_list=[]
-        for eventx in input_data:
-            f = forget_gate(eventx, h, self.Weights_hf, self.Bias_hf, self.Weights_xf, self.Bias_xf, c)
-            i =  input_gate(eventx, h, self.Weights_hi, self.Bias_hi, self.Weights_xi, self.Bias_xi, 
-                        self.Weights_hl, self.Bias_hl, self.Weights_xl, self.Bias_xl)
-            c = cell_state(f,i)
-            h = output_gate(eventx, h, self.Weights_ho, self.Bias_ho, self.Weights_xo, self.Bias_xo, c)
-            if self.matching_in_out: # doesnt make sense but it was as it was in main code :(
-                output_list.append(h)
-        if self.matching_in_out:
-            return output_list
-        else:
-            return h
-
-
-Similarly for fully connected layer,
-    
-    
-class fully_connected_layer:
-    def __init__(self,state, dict_name='fc', ):
-        self.fc_Weight = state[dict_name+'.weight'][0].numpy()
-        self.fc_Bias = state[dict_name+'.bias'][0].numpy() #shape is [,output_size]
-        
-    def forward(self,lstm_output, is_sigmoid=True):
-        res=np.dot(self.fc_Weight, lstm_output)+self.fc_Bias
-        print (res)
-        if is_sigmoid:
-            return sigmoid(res)
-        else:
-            return res
-        
-
-Now we would need one class to call all of them together and generalise them with respect to multiple layers
-You can modify the below class if you need more Fully connected layers or want to set false condition for sigmoid etc.
-        
-class RNN_model_Numpy:
-    def __init__(self, state, input_size, hidden_dim, output_size, num_layers, matching_in_out=True):
-        self.lstm_layers=[]
-        for i in range(0, num_layers):
-            lstm_layer_obj=numpy_lstm(layer_num=i, hidden_dim=hidden_dim, matching_in_out=True)
-            lstm_layer_obj.init_weights_from_pytorch(state) 
-            self.lstm_layers.append(lstm_layer_obj)
-        
-        self.hidden2out=fully_connected_layer(state, dict_name='hidden2out')
-        
-    def forward(self, feature_list):
-        for x in self.lstm_layers:
-            lstm_output=x.forward_lstm_pass(feature_list)
-            feature_list=lstm_output
-            
-        return self.hidden2out.forward(feature_list, is_sigmoid=False)
-
-Sanity check on a numpy variable:
-data = np.array(
-           [[1,1],
-            [2,2],
-            [3,3]])
-
-
-
-check=RNN_model_Numpy(state, input_size, hidden_dim, output_size, num_layers)
-check.forward(data)
-
-EXPLANATION:
-Since we just need forward pass, we would need certain functions that are required in LSTM, for that we have the forget gate, input gate, cell gate and output gate. They are just some operations that are done on the input that you give.
-For get_slices function, this is used to break down the weight matrix that we get from pytorch state dictionary (state dictionary) is the dictionary which contains the weights of all the layers that we have in our network.
-For LSTM particularly have it in this order  ignore, forget, learn, output. So for that we would need to break it up for different LSTM cells.
-For numpy_lstm class, we have init_weights_from_pytorch function which must be called, what it will do is that it will extract the weights from state dictionary which we got earlier from pytorch model object and then populate the numpy array weights with the pytorch weights. You can first train your model and then save the state dictionary through pickle and then use it.
-The fully connected layer class just implements the hidden2out neural network.
-Finally our rnn_model_numpy class is there to ensure that if you have multiple layers then it is able to send the output of one layer of lstm to other layer of lstm.
-Lastly there is a small sanity check on data variable.
-IMPORTANT NOTE: PLEASE NOTE THAT YOU MIGHT GET DIMENSION ERROR AS PYTORCH WAY OF HANDLING INPUT IS COMPLETELY DIFFERENT SO PLEASE ENSURE THAT YOU INPUT NUMPY IS OF SIMILAR SHAPE AS DATA VARIABLE.
-Important references:
-https://pytorch.org/docs/stable/generated/torch.nn.LSTM.html
-https://christinakouridi.blog/2019/06/19/backpropagation-lstm/
-",
-SciPy strange issue,https://stackoverflow.com/questions/54671752,"Why does glmnet.py throw a TypeError at cvglmnet when I provide floats, if glmnet does require floats?",,3,973,"I was having a similar problem but with X data, and I solve it by putting
-cvglmnet(x=X.astype(np.float64), y=y,family = ""gaussian"",alpha=1)
-
-","Does this work? 
-
-cvglmnet(x = fold1_sp.copy(), y = np.int64(y.values), family = 'binomial', ptype = 'class')
-
-",
-SciPy strange issue,https://stackoverflow.com/questions/20061141,pymc 3.0 Predictive Posterior Distribution,,2,1176,"There has been a lot of development activity on PyMC3 recently, so I thought I'd post a little answer to your question, even though you figured this out yourself over a year ago.
-
-First, the pymc3.find_MAP function now tries to handle discrete variables, so to find a MAP you should just have to do this:
-
-import pymc3 as pm
-
-m = pm.Model()
-with m:
-    p        = pm.Beta('p',2,2)
-    surv_sim = pm.Binomial('surv_sim', n=20, p=p)
-    surv     = pm.Binomial('surv', n=20, p=p, observed=15)
-
-    map_est = pm.find_MAP()
-
-map_est
-
-
-For me, this results in the following
-
-{'p': array(0.6190476210094416), 'surv_sim': 10.0} 
-
-
-which does not seem to be correct.  Perhaps this is worthy of a bug report.
-
-Sampling from the posterior distribution now requires selecting a step method explicitly, and for a discrete variable pymc3.step_methods.Metropolis is an acceptable choice. It works fine for the continuous variable in this example as well:
-
-with m:
-    step1 = pm.step_methods.Metropolis(vars=[p])
-    step2 = pm.step_methods.Metropolis(vars=[surv_sim])
-    trace = pm.sample(10000, [step1, step2])
-
-",,
-SciPy strange issue,https://stackoverflow.com/questions/47931749,Why is Scipy&#39;s percentileofscore returning a different result than Excel&#39;s PERCENTRANK.INC?,,2,972,"The Excel function PERCENTILERANK.INC excludes the max value (in my case 45). Which is why it shows 0 versus 6.25 like scipy does.
-
-To rectify this, I modified my function to remove the max values of the array like so:
-
-array = list(filter(lambda a: a != max(array), array))
-
-return 100 - int(stats.percentileofscore(array, score, kind='strict'))
-
-
-This gave me the correct results, and all my other tests passed.
-
-Additional information based on Brian Pendleton's comment. Here is a link to the Excel functions explaining PERCENTILERANK.INC as well as other ranking functions. Thanks for this.
 ",,
 SciPy strange issue,https://stackoverflow.com/questions/20600527,Python deadlock related to packaging and mayavi?,"I have a curious problem that I hope someone can shed some light on.
 
@@ -25719,73 +24199,6 @@ $ sudo rm -rf /Library/Frameworks/Python.framework/Versions/2.7
 
 You might consider using another approach like the binary numpy/scipy installers or install using MacPorts.  A better source of advice might be found on one of the project's mailing lists.  Good luck!
 ",,
-SciPy strange issue,https://stackoverflow.com/questions/31685156,Normalizing vector produces nan in Numpy,,1,5875,"It looks like this is a bug in numpy.  I can reproduce the problem if the data type of the array is np.int16:
-
-In [1]: np.__version__
-Out[1]: '1.9.2'
-
-In [2]: x = np.array([ -91, -119, -137, -132], dtype=np.int16)
-
-In [3]: x
-Out[3]: array([ -91, -119, -137, -132], dtype=int16)
-
-In [4]: np.linalg.norm(x)
-/Users/warren/anaconda/lib/python2.7/site-packages/numpy/linalg/linalg.py:2061: RuntimeWarning: invalid value encountered in sqrt
-  return sqrt(sqnorm)
-Out[4]: nan
-
-
-The problem also occurs in the master branch of the development version of numpy.  I created an issue here: https://github.com/numpy/numpy/issues/6128
-
-If p_frame is, in fact, a 16 bit integer array, a simple work-around is something like:
-
-x = np.asarray(p_frame, dtype=np.float64)
-pf = x / norm(x)
-
-","Following one of Warren's links, I get this warning:
-
-In [1016]: np.linalg.norm(100000*np.ones(2).astype('int16'))
-/usr/local/lib/python2.7/site-packages/numpy/linalg/linalg.py:2051: RuntimeWarning: invalid value encountered in sqrt
-  return sqrt(add.reduce((x.conj() * x).real, axis=None))
-
-
-For this x2, the inner expression is negative - the result of overflow in a small dtype.
-
-In [1040]: x2=100000*np.ones(2).astype('int16')
-In [1041]: np.add.reduce((x2.conj()*x2).real,axis=None)
-Out[1041]: -1474836480
-
-
-similarly with an x1:
-
-In [1042]: x1
-Out[1042]: array([ -9100, -11900, -13700, -13200], dtype=int16)
-In [1043]: np.add.reduce((x1.conj()*x1).real,axis=None)
-Out[1043]: -66128
-
-
-If the sum of the 'dot' becomes too large for the dtype, it can be negative, producing a nan when passed through sqrt.
-
-(I'm using 1.8.2 and 1.9.0 under linux).
-",
-SciPy strange issue,https://stackoverflow.com/questions/74073866,SciPy Minimize doesn&#39;t pass all guesses on?,,1,37,"The function that you pass to scipy.minimize must use a singular argument for all the numerical inputs.
-Imaging you wrote your function like:
-def current_optimization_f(next_capital, labour):
-   return optimization_f(3, next_capital, labour, initial_value)
-
-scipy will call:
-current_optimization([2, 0.3])
-
-rather than
-current_optimization(2, 0.3)
-
-You can use an additional lambda to unpack the arguments:
-obj_func = lambda x: current_optimization(*x)
-
-rtn = optimize.minimize(obj_func, [2, 0.3])
-
-And also, unrelated to your question, you should look at CasADI to solve these types of questions
-",,
 SciPy strange issue,https://stackoverflow.com/questions/41049834,Global Modules are not available in VirtualEnv,"I'm using WinPython to work with libraries such as Scipy. I can not install those inside my virtual environment because blas/lapack is not available. The solution was to use the modules (theano/scipy/numpy) which are already installed on my system inside my virtual environment. 
 Here is what I tried:
 
@@ -25885,8 +24298,6 @@ I've checked all my variable/function assignments and there are no overlaps. Any
 
 Thanks
 ",1,2393,"Do you have something like from matplotlib.pylab import * in one of your files?  You might be getting a namespace collision with the matplotlib version of griddata.
-",,
-SciPy strange issue,https://stackoverflow.com/questions/64392302,"Scipy, Numpy, Django, Docker Issue",,0,146,"Even though OOMKIlled is false (Killed due to Out of memory), I increased the memory from 2 to 8 GB on docker desktop and voila my app worked!
 ",,
 SciPy strange issue,https://stackoverflow.com/questions/77434232,Scipy sosfilt ValueError ndarray is not C-contiguous,"sosfilt from the scipy=1.9.3 library is giving me a strange ValueError when inputting a numpy=1.23.4 array.
 MWE:

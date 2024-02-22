@@ -1,6 +1,7 @@
 import yargs, { alias } from 'yargs';
 import { hideBin } from 'yargs/helpers';
 import { collectData } from './collect-data'
+import { removeRepetition } from './remove-repetition';
 
 const argv = await (yargs(hideBin(process.argv))
   .option('collect', {
@@ -12,6 +13,11 @@ const argv = await (yargs(hideBin(process.argv))
     alias: 'a',
     type: 'boolean',
     description: 'Analyze data',
+  })
+  .option('removeRepetition', {
+    alias: 'r',
+    type: 'boolean',
+    description: 'Remove repetition',
   })
   .option('outFile', {
     alias: 'o',
@@ -32,6 +38,14 @@ const argv = await (yargs(hideBin(process.argv))
     alias: 'e',
     type: 'number',
     description: 'End page'
+  })
+  .option('startAnalyzeIndex', {
+    type: 'number',
+    description: 'Start analyze index'
+  })
+  .option('endAnalyzeIndex', {
+    type: 'number',
+    description: 'End analyze index'
   })
   .parse());
 
@@ -58,6 +72,11 @@ if (argv.collect) {
   }
 
   collectData(argv.outFile, argv.startPage, argv.endPage);
+}
+
+if (argv.removeRepetition) {
+  console.log('Removing repetition');
+  removeRepetition(argv.inFile || DEFAULT_IN_FILE);
 }
 
 if (argv.analyze) {
