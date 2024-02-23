@@ -55,3 +55,20 @@ export const searchPhrases: string[] = generateCombinations(
   adjectives,
   nouns
 );
+
+
+type AnalysisResult = {
+  analysis_results: Array<{
+    issue_link: string; // URL of the issue on the platform
+    problematic_api_exist: boolean; // Indicates whether a problematic API is involved
+    reason: string; // Explanation of why the API is considered problematic or not
+    api_details?: {
+      library_name: string; // Name of the library or framework containing the API
+      api_name: string; // Specific API or function name, if applicable
+      issue_description?: string; // A concise explanation of the issue encountered with the API, including any error messages or incorrect behavior observed
+      expected_vs_actual_behavior?: string; // Description of what the API is supposed to do under normal conditions contrasted with what actually happens
+      trigger_conditions?: string; // Specific runtime conditions or sequences of events that lead to the issue
+      reason_for_difficulty_in_detection?: string; // Why this issue might be challenging to detect during development and testing
+    };
+  }>;
+};

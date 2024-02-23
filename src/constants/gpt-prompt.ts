@@ -73,37 +73,33 @@ If the issue involves a problematic API, provide a detailed analysis in JSON for
 Input Format:
 Receive input as a JSON object with the following structure:
 
-[
-  {
-    "issue_link": "URL of the issue on the platform",
-    "issue_title": "Title of the issue",
-    "issue_body": "Detailed description of the issue",
-    "answer_1"?: "First answer or response related to the issue",
-    "answer_2"?: "Second answer or response related to the issue",
-    "answer_3"?: "Third answer or response related to the issue"
-  }
-]
+type IssueList = Array<{
+  issue_link: string; // URL of the issue on the platform
+  issue_title: string; // Title of the issue
+  issue_body: string; // Detailed description of the issue
+  answer_1?: string; // First answer or response related to the issue
+  answer_2?: string; // Second answer or response related to the issue
+  answer_3?: string; // Third answer or response related to the issue
+}>;
 
 Output Format for Each Issue:
 Provide output as a JSON object with the following structure:
 
-{
-  analysis_results: [
-    {
-      "issue_link": "URL of the issue on the platform",
-      "problematic_api_exist": Boolean,
-      "reason": "Explanation of why the API is considered problematic or not",
-      "api_details": {
-        "library_name": "Name of the library or framework containing the API",
-        "api_name": "Specific API or function name, if applicable",
-        "issue_description": "A concise explanation of the issue encountered with the API, including any error messages or incorrect behavior observed",
-        "expected_vs_actual_behavior": "Description of what the API is supposed to do under normal conditions contrasted with what actually happens",
-        "trigger_conditions": "Specific runtime conditions or sequences of events that lead to the issue",
-        "reason_for_difficulty_in_detection": "Why this issue might be challenging to detect during development and testing"
-      }
-    }
-  ]
-}
+type AnalysisResult = {
+  analysis_results: Array<{
+    issue_link: string; // URL of the issue on the platform
+    problematic_api_exist: boolean; // Indicates whether a problematic API is involved
+    reason: string; // Explanation of why the API is considered problematic or not
+    api_details?: {
+      library_name: string; // Name of the library or framework containing the API
+      api_name: string; // Specific API or function name, if applicable
+      issue_description?: string; // A concise explanation of the issue encountered with the API, including any error messages or incorrect behavior observed
+      expected_vs_actual_behavior?: string; // Description of what the API is supposed to do under normal conditions contrasted with what actually happens
+      trigger_conditions?: string; // Specific runtime conditions or sequences of events that lead to the issue
+      reason_for_difficulty_in_detection?: string; // Why this issue might be challenging to detect during development and testing
+    };
+  }>;
+};
 
 Approach:
 
@@ -116,5 +112,5 @@ Conciseness and Clarity: Aim to provide clear and concise information in JSON fo
 Examples:
 ${AFEW_SHOT_EXAMPLES}
 
-Get ready, I will provide the list of issues in JSON format in subsequent messages.
+Get ready, I will provide the list of issues in JSON format in subsequent messages. reply with nothing but json.
 `;

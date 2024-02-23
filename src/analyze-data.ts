@@ -220,6 +220,18 @@ const makeRetriableOnFailure = (fn: Function, retryCount: number) => {
   return wrappedFunction;
 };
 
+const parseGptJsonResponse = (jsonLikeAnalysis: string) => {
+    const jsonRegex = /```json(.*?)```/s;
+    const jsonMatch = jsonRegex.exec(jsonLikeAnalysis);
+    if (jsonMatch) {
+        console.log('found code block in response, parsing it')
+      return JSON.parse(jsonMatch[1]);
+    } else {
+        console.log('no code block found in response, parsing it as is')
+        return JSON.parse(jsonLikeAnalysis);
+    }
+}
+
 export const analyzeData = async (
   inputPath: string,
   outputPath: string,
@@ -231,8 +243,8 @@ export const analyzeData = async (
   let analyzedSoFar = 0;
 
   for (let chunk of issueChunks) {
-    const currentChunkFirstIndex = analyzedSoFar + 1;
-    const currentChunkLastIndex = analyzedSoFar + chunk.numberOfIssues;
+    const currentChunkFirstIndex = startIndex + analyzedSoFar + 1;
+    const currentChunkLastIndex = startIndex + analyzedSoFar + chunk.numberOfIssues;
     console.log(
       `Processing issues ${currentChunkFirstIndex}-${currentChunkLastIndex} of ${issuesToAnalyze.length}`
     );
@@ -259,7 +271,7 @@ export const analyzeData = async (
       }
 
       try {
-        return JSON.parse(jsonLikeAnalysis);
+        return parseGptJsonResponse(jsonLikeAnalysis);
       } catch (error) {
         console.log(`Failing JSON\n`, jsonLikeAnalysis);
         console.error(
