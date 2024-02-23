@@ -243,18 +243,18 @@ export const analyzeData = async (
   let analyzedSoFar = 0;
 
   for (let chunk of issueChunks) {
-    const currentChunkFirstIndex = startIndex + analyzedSoFar + 1;
-    const currentChunkLastIndex = startIndex + analyzedSoFar + chunk.numberOfIssues;
+    const currentChunkFirstIndex = analyzedSoFar;
+    const currentChunkLastIndex = analyzedSoFar + chunk.numberOfIssues - 1;
     console.log(
-      `Processing issues ${currentChunkFirstIndex}-${currentChunkLastIndex} of ${issuesToAnalyze.length}`
+      `Processing issues ${currentChunkFirstIndex}-${currentChunkLastIndex} of ${issuesToAnalyze.length} (indices ${startIndex + currentChunkFirstIndex}-${startIndex + currentChunkLastIndex})`
     );
-    console.log(`Chunk ${chunk.index} of ${issueChunks.length}`);
+    console.log(`Chunk ${chunk.index + 1} of ${issueChunks.length}`);
     analyzedSoFar += chunk.numberOfIssues;
 
     const parsedAnalysis: GPTOutput = await makeRetriableOnFailure(async () => {
       console.log(
         "Posting to OpenAI chunk:",
-        chunk.index,
+        chunk.index + 1,
         "of",
         issueChunks.length,
         "with",
