@@ -8,6 +8,8 @@ import { createObjectCsvWriter } from "csv-writer";
 
 import { CUSTOM_INSTRUCTIONS_PROMPT } from "./constants";
 
+const MAX_RETRY_COUNT = 2;
+
 const history: Array<OpenAI.Chat.Completions.ChatCompletionMessageParam> = [
   {
     role: "user",
@@ -200,6 +202,24 @@ async function saveIssuesToCSV(
   }
 }
 
+const makeRetriableOnFailure = (fn: Function, retryCount: number) => {
+  let retries = 0;
+  const wrappedFunction = async (...args: any[]) => {
+    while (retries < retryCount) {
+      try {
+        return await fn(...args);
+      } catch (error) {
+        console.error(`Error on attempt ${retries + 1}:`, error);
+        retries++;
+      }
+    }
+
+    return null;
+  };
+
+  return wrappedFunction;
+};
+
 export const analyzeData = async (
   inputPath: string,
   outputPath: string,
@@ -218,41 +238,60 @@ export const analyzeData = async (
     );
     console.log(`Chunk ${chunk.index} of ${issueChunks.length}`);
     analyzedSoFar += chunk.numberOfIssues;
-    const jsonLikeAnalysis = await analyzeIssueChunk(chunk);
 
-    try {
-        // TODO: implement a retry mechanism if json fails to parse. maybe retry only once or twice.
-      if (jsonLikeAnalysis) {
-        const parsedAnalysis: GPTOutput = JSON.parse(jsonLikeAnalysis);
-        const analyzedIssuesFromChunk: Array<AnalyzedIssue> =
-          parsedAnalysis.analysis_results.map((analyzedIssue) => {
-            const correspondingIssue = issuesToAnalyze.find(
-              (originalIssue) =>
-                originalIssue.issue_link === analyzedIssue.issue_link
-            );
-
-            return {
-              ...(correspondingIssue || {
-                issue_link: "",
-                issue_title: "",
-                issue_body: "",
-                answer_1: "",
-                answer_2: "",
-                answer_3: "",
-              }),
-              ...analyzedIssue,
-              human_classification: false,
-              human_reason: "",
-            };
-          });
-        await saveIssuesToCSV(analyzedIssuesFromChunk, outputPath);
-      }
-    } catch (error) {
-      console.error(error);
-      console.log(`Failing JSON\n`, jsonLikeAnalysis);
-      console.error(
-        `Error parsing JSON of issues ${currentChunkFirstIndex}-${currentChunkLastIndex}`
+    const parsedAnalysis: GPTOutput = await makeRetriableOnFailure(async () => {
+      console.log(
+        "Posting to OpenAI chunk:",
+        chunk.index,
+        "of",
+        issueChunks.length,
+        "with",
+        chunk.numberOfIssues,
+        "issues"
       );
+      const jsonLikeAnalysis = await analyzeIssueChunk(chunk);
+
+      if (!jsonLikeAnalysis) {
+        console.error(
+          `Error analyzing issues ${currentChunkFirstIndex}-${currentChunkLastIndex}`
+        );
+        return null;
+      }
+
+      try {
+        return JSON.parse(jsonLikeAnalysis);
+      } catch (error) {
+        console.log(`Failing JSON\n`, jsonLikeAnalysis);
+        console.error(
+          `Error parsing JSON of issues ${currentChunkFirstIndex}-${currentChunkLastIndex}`
+        );
+        throw error;
+      }
+    }, MAX_RETRY_COUNT)();
+
+    if (parsedAnalysis) {
+      const analyzedIssuesFromChunk: Array<AnalyzedIssue> =
+        parsedAnalysis.analysis_results.map((analyzedIssue) => {
+          const correspondingIssue = issuesToAnalyze.find(
+            (originalIssue) =>
+              originalIssue.issue_link === analyzedIssue.issue_link
+          );
+
+          return {
+            ...(correspondingIssue || {
+              issue_link: "",
+              issue_title: "",
+              issue_body: "",
+              answer_1: "",
+              answer_2: "",
+              answer_3: "",
+            }),
+            ...analyzedIssue,
+            human_classification: false,
+            human_reason: "",
+          };
+        });
+      await saveIssuesToCSV(analyzedIssuesFromChunk, outputPath);
     }
   }
 };

@@ -93,8 +93,6 @@ if (argv.analyze) {
     argv.outFile = DEFAULT_ANALYZE_OUT_FILE;
   }
 
-  console.log('argv', argv)
-
   if (argv.startAnalyzeIndex === undefined || argv.endAnalyzeIndex === undefined) {
     throw new Error('Start and end analyze index must be specified');
   }
