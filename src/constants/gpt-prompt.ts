@@ -20,20 +20,20 @@ output:
   "analysis_results": [
     {
       "issue_link": "https://stackoverflow.com/questions/63206407/rgb-to-grayscale-with-tensorflow-2-3-getting-dimensions-must-be-equal-error",
-      "problematic_api_exist": true,
+      "ai_verdict": true,
       "reason": "The issue stems from attempting to apply tf.image.rgb_to_grayscale on a tensor that does not have the expected three channels. This API is designed to work with RGB images, but an error occurs when it is used on an image or mask with a different number of channels.",
       "api_details": {
         "library_name": "TensorFlow",
         "api_name": "tf.image.rgb_to_grayscale",
         "issue_description": "When applying tf.image.rgb_to_grayscale on a segmentation mask (which typically has a single channel), TensorFlow raises a \\"dimensions must be equal\\" error. This is because the API expects an input tensor with three channels (RGB), but the input mask only has one channel.",
-        "expected_vs_actual_behavior": "The expected behavior is for rgb_to_grayscale to convert a 3-channel RGB image to a single-channel grayscale image. However, applying it to a single-channel input leads to a dimensionality error.",
+        "normal_conditions": "The tf.image.rgb_to_grayscale is applied to a tensor with a shape that ends in 3 (i.e., an RGB image).",
         "trigger_conditions": "The issue is triggered when tf.image.rgb_to_grayscale is applied to a tensor with a shape that does not end in 3 (i.e., not an RGB image).",
         "reason_for_difficulty_in_detection": "This issue might be challenging to detect for users unfamiliar with the specific requirements of the tf.image.rgb_to_grayscale function or those who assume that it can handle inputs with any number of channels."
       }
     },
     {
       "issue_link": "https://stackoverflow.com/questions/22591174/pandas-multiple-conditions-while-indexing-data-frame-unexpected-behavior",
-      "problematic_api_exist": false,
+      "ai_verdict": false,
       "reason": "The behavior is due to a misunderstanding of logical operators and conditions in pandas rather than a problem with the API itself."
     }
   ]
@@ -41,7 +41,7 @@ output:
 `
 export const CUSTOM_INSTRUCTIONS_PROMPT = `
 Objective:
-Classify and analyze provided software development issues to identify if they involve a problematic API exhibiting unexpected failures or unpredictable behaviors under specific runtime conditions. The goal is to ascertain whether an issue involves such an API and, if so, provide detailed information about the API and the conditions under which it fails.
+Classify and analyze provided software development issues to identify if they involve some API exhibiting unexpected failures or unpredictable behaviors under specific runtime conditions. The goal is to ascertain whether an issue involves such an API and, if so, provide detailed information about the API and the conditions under which it fails.
 
 Task Instructions:
 
@@ -49,26 +49,24 @@ For each issue provided in JSON format, follow these steps:
 
 Classify the Issue:
 
-
 1. Read the issue description and any accompanying code snippets and figure out the api in question.
-2. Read the answers and figure out if the issue is related to a problematic API.
-3. Determine if the API meets the following criteria, the issue must meet all of the following criteria to be considered relevant for deeper analysis:
+2. Determine if the API meets the following criteria, the issue must meet all of the following criteria to be considered relevant for deeper analysis:
 
-a. The issue description directly mentions or implies a problem with an API that behaves unexpectedly under certain runtime conditions.
-b. The issue description indicates that the API works as expected under normal conditions but exhibits unexpected behavior under specific runtime conditions.
-c. The issue does not stem from a misunderstanding of logical operators, conditions, or other non-API-related factors.
-d. The issue is not a general programming question or a request for debugging assistance without a clear indication of API-related problems.
-e. The issue is not a feature request or a discussion of potential improvements to an API.
-f. The issue is not a request for general advice or best practices without a specific API-related problem.
-g. The issue is not a discussion of theoretical or conceptual topics unrelated to specific API behavior.
-h. The issue is not a request for general guidance on software development processes or methodologies.
-i. The issue is not a request for help with non-technical aspects of software development, such as project management or team collaboration.
-j. The issue is not related to hardware or infrastructure problems, such as server configuration or network issues.
+a. The issue description or answers indicates that the API works as expected under normal conditions but exhibits unexpected behavior under specific runtime conditions.
+b. The issue does not stem from a misunderstanding of logical operators, conditions, or other non-API-related factors.
+c. The issue is not a general programming question or a request for debugging assistance without a clear indication of API-related problems.
+d. The issue is not a feature request or a discussion of potential improvements to an API.
+e. The issue is not a request for general advice or best practices without a specific API-related problem.
+f. The issue is not a discussion of theoretical or conceptual topics unrelated to specific API behavior.
+g. The issue is not a request for general guidance on software development processes or methodologies.
+h. The issue is not a request for help with non-technical aspects of software development, such as project management or team collaboration.
+i. The issue is not related to hardware or infrastructure problems, such as server configuration or network issues.
+j. The issue is not related to dependency management, build tools, or other non-API-specific aspects of software development.
 
-If the issue meets the above criteria, proceed to the next step. Otherwise, provide a brief explanation of why the issue does not involve a problematic API and move on to the next issue.
+If the issue meets the above criteria, proceed to the next step. Otherwise, provide a brief explanation of why the issue is not of interest and move on to the next issue.
 
 Analysis and Documentation (if applicable):
-If the issue involves a problematic API, provide a detailed analysis in JSON format, including the API name, library/framework, and a description of the runtime condition that leads to the unexpected behavior.
+If the issue involves such an API, provide a detailed analysis, including the API name, library/framework, and a description of the runtime conditions that leads to the unexpected behavior.
 
 Input Format:
 Receive input as a JSON object with the following structure:
@@ -82,30 +80,30 @@ type IssueList = Array<{
   answer_3?: string; // Third answer or response related to the issue
 }>;
 
-Output Format for Each Issue:
+Output Format:
 Provide output as a JSON object with the following structure:
 
 type AnalysisResult = {
   analysis_results: Array<{
     issue_link: string; // URL of the issue on the platform
-    problematic_api_exist: boolean; // Indicates whether a problematic API is involved
-    reason: string; // Explanation of why the API is considered problematic or not
     api_details?: {
+      normal_conditions: string; // Description of the conditions under which the API works as expected
+      trigger_conditions: string; // Specific runtime conditions or sequences of events that lead to the issue
+      reason_for_difficulty_in_detection: string; // Why this issue might be challenging to detect during development and testing
+      issue_description: string; // A concise explanation of the issue encountered with the API, including any error messages or incorrect behavior observed
       library_name: string; // Name of the library or framework containing the API
       api_name: string; // Specific API or function name, if applicable
-      issue_description?: string; // A concise explanation of the issue encountered with the API, including any error messages or incorrect behavior observed
-      expected_vs_actual_behavior?: string; // Description of what the API is supposed to do under normal conditions contrasted with what actually happens
-      trigger_conditions?: string; // Specific runtime conditions or sequences of events that lead to the issue
-      reason_for_difficulty_in_detection?: string; // Why this issue might be challenging to detect during development and testing
     };
+    ai_verdict: boolean; // Indicates whether such an api exist
+    reason: string; // Explanation of why the API is considered as such
   }>;
 };
 
 Approach:
 
-Initial Classification: Quickly review the issue description in the input JSON to ascertain whether it directly mentions or implies a problem with an API that behaves unexpectedly under certain conditions. This initial filter is crucial to identify relevant issues for deeper analysis.
+Initial Classification: Quickly review the issue description in the input JSON to ascertain whether it directly mentions or implies that the api behaves unexpectedly under certain conditions. This initial filter is crucial to identify relevant issues for deeper analysis.
 
-Detailed Analysis for Relevant Issues: For issues classified as involving a problematic API, conduct a thorough investigation to fill out the detailed analysis section in the output JSON. This may involve examining the issue description, any provided code snippets, error messages, and related discussion or documentation that can shed light on the API's behavior.
+Detailed Analysis for Relevant Issues: For issues classified to be of interest, conduct a thorough investigation to fill out the detailed analysis section in the output JSON. This may involve examining the issue description, any provided code snippets, error messages, and related discussion or documentation that can shed light on the API's behavior.
 
 Conciseness and Clarity: Aim to provide clear and concise information in JSON format. Avoid unnecessary technical jargon and ensure that the analysis is accessible to developers who might not be familiar with the specific API or framework.
 

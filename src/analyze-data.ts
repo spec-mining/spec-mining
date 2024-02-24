@@ -38,7 +38,7 @@ interface Issue {
 
 interface GPTAnalysis {
   issue_link: string;
-  problematic_api_exist: Boolean;
+  ai_verdict: Boolean;
   reason: string;
   api_details: {
     library_name: string;
@@ -168,14 +168,14 @@ async function saveIssuesToCSV(
     path: outputPath,
     header: [
       { id: "issue_link", title: "ISSUE_LINK" },
-      { id: "problematic_api_exist", title: "PROBLEMATIC_API_EXIST" },
+      { id: "ai_verdict", title: "AI_VERDICT" },
       { id: "reason", title: "REASON" },
       { id: "api_details.library_name", title: "LIBRARY_NAME" },
       { id: "api_details.api_name", title: "API_NAME" },
       { id: "api_details.issue_description", title: "ISSUE_DESCRIPTION" },
       {
-        id: "api_details.expected_vs_actual_behavior",
-        title: "EXPECTED_VS_ACTUAL_BEHAVIOR",
+        id: "api_details.normal_conditions",
+        title: "NORMAL_CONDITIONS",
       },
       { id: "api_details.trigger_conditions", title: "TRIGGER_CONDITIONS" },
       {
