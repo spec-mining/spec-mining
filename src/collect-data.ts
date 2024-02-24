@@ -103,6 +103,7 @@ const searchIssues = async (searchPhrase: string, currentPage: string): Promise<
         order: 'desc',
         sort: 'votes',
         answers: '1',
+        views: '200',
     });
 
     return (await fetch(`${SEARCH_API_URL}?${params}`)).json() as Promise<SearchResult>;
@@ -142,7 +143,12 @@ const sanitizeHTMLContent = (htmlContent: string): string => {
 const fetchData = async (searchPhrase: string, currentPage: string): Promise<SearchResults> => {
     const searchResult = await searchIssues(searchPhrase, currentPage.toString());
 
-    const questionIds = searchResult.items.map((item: StackoverflowSearchResult) => item.question_id);
+    const questionIds = searchResult.items
+    // remove questions with negative score
+    .filter((item: StackoverflowSearchResult) => item.score >= 0)
+    // make sure an answer exists
+    .filter((item: StackoverflowSearchResult) => item.answer_count > 0)
+    .map((item: StackoverflowSearchResult) => item.question_id);
 
     if (questionIds.length === 0) {
         console.log('No questions found for search phrase:', searchPhrase);
