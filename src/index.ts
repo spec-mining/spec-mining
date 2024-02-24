@@ -74,6 +74,7 @@ if (argv.collect) {
   }
 
   collectData(argv.outFile, argv.startPage, argv.endPage);
+  removeRepetition(argv.outFile);
 }
 
 if (argv.removeRepetition) {
