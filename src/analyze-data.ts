@@ -34,6 +34,8 @@ interface Issue {
   answer_1: string;
   answer_2: string;
   answer_3: string;
+  issue_score?: number;
+  issue_views?: number;
 }
 
 interface GPTAnalysis {
@@ -80,6 +82,8 @@ const readData = async (
           issue_link: data.issue_link,
           issue_title: data.issue_title,
           issue_body: data.issue_body,
+          issue_score: data.issue_score,
+          issue_views: data.issue_views,
           answer_1: data.answer_1,
           answer_2: data.answer_2,
           answer_3: data.answer_3,
@@ -108,9 +112,23 @@ const makeIssueChunks = (issues: Array<Issue>, chunkSize: number) => {
     index: 0,
     numberOfIssues: 0,
   };
+  const skippedIssues = []
 
   for (let issue of issues) {
+    // remove issue_score and issue_views from the issue object because gpt is not expecting them
+    delete issue.issue_score;
+    delete issue.issue_views;
     const stringifiedIssue = JSON.stringify(issue, null, 2);
+
+    // make sure stringified issue is less than or equal 1/3 of chunkSize
+    if (stringifiedIssue.length > chunkSize / 3) {
+      skippedIssues.push(issue.issue_link);
+      console.error(
+        `Issue ${issue.issue_link} is too large to fit in a chunk. Skipping it.`
+      );
+      continue;
+    }
+
     if (currentChunk.content.length + stringifiedIssue.length <= chunkSize) {
       currentChunk = {
         content: `${currentChunk.content}${stringifiedIssue},`,
@@ -135,7 +153,7 @@ const makeIssueChunks = (issues: Array<Issue>, chunkSize: number) => {
 
   issueChunks.push(currentChunk);
 
-  return issueChunks;
+  return {issueChunks, skippedIssues};
 };
 
 const analyzeIssueChunk = async (
@@ -189,6 +207,8 @@ async function saveIssuesToCSV(
       { id: "answer_3", title: "ANSWER_3" },
       { id: "human_classification", title: "HUMAN_CLASSIFICATION" },
       { id: "human_reason", title: "HUMAN_REASON" },
+      { id: 'issue_score', title: 'ISSUE_SCORE' },
+      { id: 'issue_views', title: 'ISSUE_VIEWS' }
     ] as CsvHeader<AnalyzedIssue>,
     headerIdDelimiter: ".",
     append: fileExists, // Set to true if you want to append to an existing file
@@ -239,7 +259,7 @@ export const analyzeData = async (
   endIndex: number
 ) => {
   const issuesToAnalyze = await readData(inputPath, startIndex, endIndex);
-  const issueChunks = makeIssueChunks(issuesToAnalyze, 20_000);
+  const {issueChunks, skippedIssues} = makeIssueChunks(issuesToAnalyze, 20_000);
   let analyzedSoFar = 0;
 
   for (let chunk of issueChunks) {
@@ -283,7 +303,7 @@ export const analyzeData = async (
 
     if (parsedAnalysis) {
       const analyzedIssuesFromChunk: Array<AnalyzedIssue> =
-        parsedAnalysis.analysis_results.map((analyzedIssue) => {
+        parsedAnalysis.analysis_results?.map((analyzedIssue) => {
           const correspondingIssue = issuesToAnalyze.find(
             (originalIssue) =>
               originalIssue.issue_link === analyzedIssue.issue_link
@@ -306,4 +326,7 @@ export const analyzeData = async (
       await saveIssuesToCSV(analyzedIssuesFromChunk, outputPath);
     }
   }
+
+  console.log('Done analyzing all chunks')
+  console.log(`Skipped ${skippedIssues.length} issues:\n`, JSON.stringify(skippedIssues, null, 2));
 };
