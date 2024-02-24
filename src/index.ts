@@ -73,8 +73,9 @@ if (argv.collect) {
     argv.endPage = DEFAULT_END_PAGE;
   }
 
-  collectData(argv.outFile, argv.startPage, argv.endPage);
-  removeRepetition(argv.outFile);
+  collectData(argv.outFile, argv.startPage, argv.endPage).finally(() => {
+    argv.outFile && removeRepetition(argv.outFile);
+  })
 }
 
 if (argv.removeRepetition) {
