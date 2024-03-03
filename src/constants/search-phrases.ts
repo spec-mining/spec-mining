@@ -1,7 +1,7 @@
 const libraryLists = [
-  // ["scikit-learn", "SQLAlchemy", "NLTK", "SciPy"],
-  // ["tensorflow", "PyTorch", "Keras", "Altair"],
-  ["Flask", "Django", "FastAPI", "requests"],
+  ["scikit-learn", "SQLAlchemy", "NLTK", "SciPy"],
+  ["tensorflow", "PyTorch", "Keras", "Altair"],
+  // ["Flask", "Django", "FastAPI", "requests"],
   // ["Seaborn", "Plotly", "Bokeh", "matplotlib"],
   // ["SpaCy", "Gensim", "BeautifulSoup", "Tornado"],
   // ["PyGame", "Celery", "Pillow", "Folium"],
