@@ -1,9 +1,9 @@
 const libraryLists = [
-  ["scikit-learn", "SQLAlchemy", "NLTK", "SciPy"],
-  ["tensorflow", "PyTorch", "Keras", "Altair"],
+  // ["scikit-learn", "SQLAlchemy", "NLTK", "SciPy"],
+  // ["tensorflow", "PyTorch", "Keras", "Altair"],
   // ["Flask", "Django", "FastAPI", "requests"],
   // ["Seaborn", "Plotly", "Bokeh", "matplotlib"],
-  // ["SpaCy", "Gensim", "BeautifulSoup", "Tornado"],
+  ["SpaCy", "Gensim", "BeautifulSoup", "Tornado"],
   // ["PyGame", "Celery", "Pillow", "Folium"],
   // ["Plotnine", "pandas", "Streamlit", "Dash"],
   // ["PySpark", "numpy"],
@@ -19,7 +19,8 @@ const adjectives: string[] = [
   // "random",
   // "bizarre",
   // "odd",
-  "inconsistent"
+  "inconsistent",
+  // "tricky",
 ];
 
 const nouns: string[] = [
