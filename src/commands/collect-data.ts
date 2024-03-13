@@ -3,7 +3,7 @@ import fetch from 'node-fetch';
 import sanitizeHtml from 'sanitize-html';
 import { createObjectCsvWriter } from 'csv-writer';
 
-import { searchPhrases } from './constants/search-phrases'
+import { searchPhrases } from '../constants/search-phrases'
 import path from 'path';
 
 const SEARCH_API_URL = 'https://api.stackexchange.com/2.3/search/advanced';

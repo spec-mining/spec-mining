@@ -6,7 +6,7 @@ import csv from "csv-parser";
 import OpenAI from "openai";
 import { createObjectCsvWriter } from "csv-writer";
 
-import { CUSTOM_INSTRUCTIONS_PROMPT } from "./constants";
+import { CUSTOM_INSTRUCTIONS_PROMPT } from "../constants";
 
 const MAX_RETRY_COUNT = 2;
 
@@ -23,7 +23,7 @@ const history: Array<OpenAI.Chat.Completions.ChatCompletionMessageParam> = [
 ];
 
 const openai = new OpenAI({
-  apiKey: process.env["OPENAI_API_KEY_2"], // This is the default and can be omitted
+  apiKey: process.env["OPENAI_API_KEY"], // This is the default and can be omitted
   organization: "org-OzVBy55bI74K0Y2WSivPTmsG",
 });
 

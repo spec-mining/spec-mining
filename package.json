@@ -6,11 +6,13 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "@octokit/core": "^6.0.1",
     "@types/yargs": "^17.0.32",
     "csv-parse": "^5.5.3",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
     "dotenv": "^16.4.4",
+    "fs-extra": "^11.2.0",
     "json2csv": "^6.0.0-alpha.2",
     "langchain": "^0.1.19",
     "node-fetch": "^3.3.2",
@@ -19,6 +21,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.19",
     "@types/sanitize-html": "^2.11.0",
     "tsc": "^2.0.4",
