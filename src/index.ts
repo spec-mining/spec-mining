@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { collectData, removeRepetition, analyzeData, collectGithubLibs } from './commands'
+import { collectData, removeRepetition, analyzeData, collectGithubLibs, collectGithubIssues } from './commands'
 
 const DEFAULT_COLLECT_IN_FILE = './out/collected_issues.csv';
 const DEFAULT_COLLECT_OUT_FILE = './out/collected_issues.csv';
@@ -9,6 +9,7 @@ const DEFAULT_START_PAGE = 1;
 const DEFAULT_END_PAGE = 1;
 
 const DEFAULT_GH_LIBS_OUT_FILE = './out/github/github_libs/';
+const DEFAULT_GH_ISSUES_OUT_DIR = './out/github/github_issues/';
 
 const collectGithubData = async (libName: string, outDir?: string, startPage?: number, endPage?: number) => {
   collectGithubLibs(outDir || DEFAULT_GH_LIBS_OUT_FILE, libName, startPage || DEFAULT_START_PAGE, endPage || DEFAULT_END_PAGE);
@@ -86,6 +87,20 @@ const argv = await (yargs(hideBin(process.argv))
         description: 'Library name',
       }).demandOption('lib-name')
     }, (argv) => collectGithubData(argv.libName, argv.outDir, argv.startPage, argv.endPage))
+    .command('collect_issues', 'Collect github issues', (_yargs) => {
+      return _yargs
+      .option('outDir', {
+        alias: 'o',
+        type: 'string',
+        description: 'Output dir',
+      })
+      .option('repo-list-file', {
+        alias: 'r',
+        type: 'string',
+        description: 'Library name',
+      })
+      .demandOption('repo-list-file')
+    }, (argv) => collectGithubIssues(argv.repoListFile, argv.outDir || DEFAULT_GH_ISSUES_OUT_DIR))
     .command('analyze', 'Analyze data' , (_yargs) => {
       return _yargs  .option('outFile', {
         alias: 'o',

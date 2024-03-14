@@ -19,12 +19,12 @@ const MANIFEST_FILES = [
     "environment.yml"
 ]
 
-interface BaseRepository {
+export interface BaseRepository {
     owner: string,
     repoName: string
 }
 
-interface DependantRepoDetails extends BaseRepository {
+export interface DependantRepoDetails extends BaseRepository {
     repoLink: string,
     stars: number,
     forks: number,
@@ -36,11 +36,23 @@ interface DependantRepoDetails extends BaseRepository {
     created_at: string
 }
 
-type WithRateLimitMetaData<T> = {
+export type WithRateLimitMetaData<T> = {
     data: T,
     rateLimitReset?: string,
     remainingRateLimit?: string
+}
 
+export const sleepTillRateLimitResets = async (remainingRateLimit?: string, rateLimitReset?: string) => {
+    console.log('Rate limit reset:', rateLimitReset, 'Remaining rate limit:', remainingRateLimit);
+
+    if (remainingRateLimit !== undefined && rateLimitReset !== undefined && Number.parseInt(remainingRateLimit) < 2) {
+        const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds since epoch
+        const delaySeconds = Number.parseInt(rateLimitReset) - currentTime + 10; // Time to wait until reset (10 seconds added to be safe)
+
+        console.log('Rate limit reached, will wait for ', delaySeconds, ' seconds');
+        await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000));
+        console.log('Resuming after rate limit reset');
+    }
 }
 
 const searchForFiles = async (fileNames: Array<string>, dependencyName: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
@@ -204,16 +216,8 @@ export const collectGithubLibs = async (outDir: string, dependencyName: string, 
             }))
 
             removeRepetition(filePath, 'Repository Link')
-            console.log('Rate limit reset:', rateLimitReset, 'Remaining rate limit:', remainingRateLimit);
     
-            if (remainingRateLimit !== undefined && rateLimitReset !== undefined && Number.parseInt(remainingRateLimit) < 2) {
-                const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds since epoch
-                const delaySeconds = Number.parseInt(rateLimitReset) - currentTime + 10; // Time to wait until reset (10 seconds added to be safe)
-    
-                console.log('Rate limit reached, will wait for ', delaySeconds, ' seconds');
-                await new Promise(resolve => setTimeout(resolve, delaySeconds * 1000));
-                console.log('Resuming after rate limit reset');
-            }
+            await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
         }
     }
 }
