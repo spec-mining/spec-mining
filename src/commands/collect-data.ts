@@ -133,7 +133,7 @@ const fetchAnswerBodies = async (questionIds: Array<number>): Promise<AnswerBody
     return (await fetch(`${ANSWER_API_URL}/${questionIds.join(';')}/answers?${params}`)).json() as Promise<AnswerBodyResult>;
 }
 
-const sanitizeHTMLContent = (htmlContent: string): string => {
+export const sanitizeHTMLContent = (htmlContent: string): string => {
     return sanitizeHtml(htmlContent, {
         allowedTags: [], // No allowed tags (remove all)
         allowedAttributes: {} // No allowed attributes (remove all)

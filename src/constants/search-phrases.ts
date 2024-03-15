@@ -1,4 +1,4 @@
-const libraryLists = [
+export const libraryLists = [
   // ["scikit-learn", "SQLAlchemy", "NLTK", "SciPy"],
   // ["tensorflow", "PyTorch", "Keras", "Altair"],
   // ["Flask", "Django", "FastAPI", "requests"],
@@ -11,26 +11,26 @@ const libraryLists = [
 
 const libraryNames: string[] = libraryLists[0];
 
-const adjectives: string[] = [
+export const adjectives: string[] = [
   "unexpected",
   "strange",
-  // "confusing",
-  // "weird",
-  // "random",
-  // "bizarre",
-  // "odd",
+  "confusing",
+  "weird",
+  "random",
+  "bizarre",
+  "odd",
   "inconsistent",
-  // "tricky",
+  "tricky",
 ];
 
-const nouns: string[] = [
+export const nouns: string[] = [
   "behavior",
   "output",
   "result",
   // "error",
   // "crash",
   // "failure",
-  "issue",
+  // "issue",
 ];
 
 // Function to generate all combinations
