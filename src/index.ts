@@ -11,7 +11,7 @@ const DEFAULT_END_PAGE = 1;
 const DEFAULT_GH_LIBS_OUT_FILE = './out/github/github_libs/';
 const DEFAULT_GH_ISSUES_OUT_DIR = './out/github/github_issues/';
 
-const collectGithubData = async (libName: string, outDir?: string, startPage?: number, endPage?: number) => {
+const collectGithubData = async (libName: Array<string>, outDir?: string, startPage?: number, endPage?: number) => {
   collectGithubLibs(outDir || DEFAULT_GH_LIBS_OUT_FILE, libName, startPage || DEFAULT_START_PAGE, endPage || DEFAULT_END_PAGE);
 }
 
@@ -83,10 +83,10 @@ const argv = await (yargs(hideBin(process.argv))
       })
       .option('lib-name', {
         alias: 'l',
-        type: 'string',
+        type: 'array',
         description: 'Library name',
       }).demandOption('lib-name')
-    }, (argv) => collectGithubData(argv.libName, argv.outDir, argv.startPage, argv.endPage))
+    }, (argv) => collectGithubData(argv.libName as Array<string>, argv.outDir, argv.startPage, argv.endPage))
     .command('collect_issues', 'Collect github issues', (_yargs) => {
       return _yargs
       .option('outDir', {

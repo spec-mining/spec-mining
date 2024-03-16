@@ -6,7 +6,7 @@ interface CsvRecord {
   [key: string]: string;
 }
 
-export const removeRepetition = async (inFilePath: string, uniqueFieldName: string) => {
+export const removeRepetition = async (inFilePath: string, uniqueFieldName: string, mergeFieldNames: Array<string> = []) => {
   console.log('Removing Repetition in ', inFilePath);
   let headersDetected = false;
   let csvHeaders: { id: string; title: string }[] = [];
@@ -31,6 +31,21 @@ export const removeRepetition = async (inFilePath: string, uniqueFieldName: stri
         if (uniqueFieldValue && !seenRecords.has(uniqueFieldValue)) {
           seenRecords.add(uniqueFieldValue);
           records.push(data);
+        } else {
+          if (mergeFieldNames.length > 0) {
+            const existingRecord = records.find((record) => record[uniqueFieldName] === uniqueFieldValue);
+            if (existingRecord) {
+              mergeFieldNames.forEach((fieldName) => {
+                if (data[fieldName]) {
+                  const existingValueList = existingRecord[fieldName].split('|');
+                  if (!existingValueList.includes(data[fieldName])) {
+                    existingValueList.push(data[fieldName]);
+                    existingRecord[fieldName] = existingValueList.join('|');
+                  }
+                }
+              });
+            }
+          }
         }
       })
       .on("end", () => {

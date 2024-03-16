@@ -7,6 +7,7 @@ import path from "path";
 import { createObjectCsvWriter } from "csv-writer";
 import { sleep } from "openai/core";
 import { removeRepetition } from "./remove-repetition";
+import { sortList } from "../utils/sortList";
 
 const GH_ACCESS_TOKEN = process.env['GH_ACCESS_TOKEN'];
 const octokit = new Octokit({ auth: GH_ACCESS_TOKEN });
@@ -16,7 +17,8 @@ const MANIFEST_FILES = [
     "Pipfile",
     "Pipfile.lock",
     "pyproject.toml",
-    "environment.yml"
+    "environment.yml",
+    "tox.ini"
 ]
 
 export interface BaseRepository {
@@ -102,7 +104,7 @@ const constructRepoDetailsQuery = (repositories: Array<BaseRepository>) => {
       }
     `).join('\n');
 
-    fs.outputFileSync('repoQueries.txt', repoQueries)
+    // fs.outputFileSync('repoQueries.txt', repoQueries)
   
     // Return the complete query
     return `
@@ -169,55 +171,90 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
         append: fileExists
     });
 
-    await csvWriterInstance.writeRecords(data);
+    // escape commas to avoid issues
+    await csvWriterInstance.writeRecords(data.map((record) => ({
+        description: record.description?.replace(/,/g, ' ')?.replace(/;/g, ' ') || '',
+        dependencyName: record.dependencyName || '',
+        owner: record.owner || 'N/A',
+        repoName: record.repoName || 'N/A',
+        repoLink: record.repoLink || 'N/A',
+        stars: record.stars || 0,
+        forks: record.forks || 0,
+        created_at: new Date(record.created_at).toLocaleDateString(),
+        manifestFileName: record.manifestFileName || '',
+        issues: record.issues || 0,
+        pullRequests: record.pullRequests || 0
+    })));
 }
 
 /**
  * Collect information about python libraries that depend on a given library from GitHub
  */
-export const collectGithubLibs = async (outDir: string, dependencyName: string, startPage: number, endPage: number) => {
+export const collectGithubLibs = async (outDir: string, dependencyNames: Array<string>, startPage: number, endPage: number) => {
     if (endPage > 10) {
         console.warn('End page is greater than 10, which is the maximum number of pages allowed by GitHub code search API. Setting end page to 10');
         endPage = 10;
     }
 
-    const filePath = path.resolve(outDir, `${dependencyName}_dependant_repos.csv`)
+    const depNames = dependencyNames.join('_');
+    const filePath = path.resolve(outDir, `${depNames}_dependant_repos.csv`)
+
     const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+    for (const dependencyName of dependencyNames) {
+        for (const file of MANIFEST_FILES) { // this is done to overcome github's limit of 1000 results per search
+            for (const page of pages) {
+                console.log('File: ', file, 'Page:', page, ' - Fetching details for', dependencyName, 'from GitHub');
+                const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForFiles([file], dependencyName, page)
 
-    for (const file of MANIFEST_FILES) { // this is done to overcome github's limit of 1000 results per search
-        for (const page of pages) {
-            console.log('File: ', file, 'Page:', page, ' - Fetching details for', dependencyName, 'from GitHub');
-            const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForFiles([file], dependencyName, page)
+                const chunks = [baseRepoInfo.slice(0, baseRepoInfo.length/2), baseRepoInfo.slice(baseRepoInfo.length/2, baseRepoInfo.length)]
+        
+                await Promise.all(chunks.map(async (chunk, i) => {
+                    if (chunk.length < 1) return;
+
+                    const response = await fetchRepositoriesDetails(chunk);
+                
+                    const repoDetails: Array<DependantRepoDetails> = chunk.map((repo, index) => {
+                        const repoDetails = response[`repo${index}`].repository;
+                        return {
+                            ...repo,
+                            repoLink: repoDetails.url,
+                            stars: repoDetails.stargazers.totalCount,
+                            forks: repoDetails.forks.totalCount,
+                            issues: repoDetails.issues.totalCount,
+                            pullRequests: repoDetails.pullRequests.totalCount,
+                            description: repoDetails.description,
+                            manifestFileName: chunk[index].fileName,
+                            dependencyName,
+                            created_at: repoDetails.createdAt
+                        }
+                    });
+                
+                    console.log('File: ', file, 'Page:', page, ' - ',i + 1, '. Fetched details for', repoDetails.length, 'repos.');
     
-            const chunks = [baseRepoInfo.slice(0, 50), baseRepoInfo.slice(50, 100)]
+                    await saveData(filePath, repoDetails);
+                }))
     
-            await Promise.all(chunks.map(async (chunk, i) => {
-                const response = await fetchRepositoriesDetails(chunk);
-            
-                const repoDetails: Array<DependantRepoDetails> = chunk.map((repo, index) => {
-                    const repoDetails = response[`repo${index}`].repository;
-                    return {
-                        ...repo,
-                        repoLink: repoDetails.url,
-                        stars: repoDetails.stargazers.totalCount,
-                        forks: repoDetails.forks.totalCount,
-                        issues: repoDetails.issues.totalCount,
-                        pullRequests: repoDetails.pullRequests.totalCount,
-                        description: repoDetails.description,
-                        manifestFileName: chunk[index].fileName,
-                        dependencyName,
-                        created_at: repoDetails.createdAt
+                removeRepetition(filePath, 'Repository Link', ['Dependency Name'])
+                sortList(filePath, {
+                    sortField: 'Stars',
+                    customFunction: (a, b) => {
+                        // make an array of strings from dep1;dep2;dep3
+                        const aStars = Number.parseInt(a['Stars']);
+                        const bStars = Number.parseInt(b['Stars']);
+                        const aDependencyCount = (a['Dependency Name']?.split('|')?.length || 1) * 10;
+                        const bDependencyCount = (b['Dependency Name']?.split('|')?.length || 1) * 10;
+                        let result = bDependencyCount * bStars - aDependencyCount * aStars;
+
+                        if (result === 0) {
+                            result = bStars - aStars;
+                        }
+                        
+                        return result;
                     }
-                });
-            
-                console.log('File: ', file, 'Page:', page, ' - ',i + 1, '. Fetched details for', repoDetails.length, 'repos.');
-
-                await saveData(filePath, repoDetails);
-            }))
-
-            removeRepetition(filePath, 'Repository Link')
-    
-            await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
+                })
+        
+                await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
+            }
         }
     }
 }
