@@ -8,6 +8,8 @@
   "dependencies": {
     "@octokit/core": "^6.0.1",
     "@types/yargs": "^17.0.32",
+    "axios": "^1.6.8",
+    "cheerio": "^1.0.0-rc.12",
     "csv-parse": "^5.5.3",
     "csv-parser": "^3.0.0",
     "csv-writer": "^1.6.0",
@@ -21,6 +23,8 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/cheerio": "^0.22.35",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^20.11.19",
     "@types/sanitize-html": "^2.11.0",

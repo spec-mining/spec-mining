@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { collectData, removeRepetition, analyzeData, collectGithubLibs, collectGithubIssues } from './commands'
+import { collectData, removeRepetition, analyzeData, collectGithubLibs, collectGithubIssues, scanDocs } from './commands'
 
 const DEFAULT_COLLECT_IN_FILE = './out/collected_issues.csv';
 const DEFAULT_COLLECT_OUT_FILE = './out/collected_issues.csv';
@@ -10,6 +10,8 @@ const DEFAULT_END_PAGE = 1;
 
 const DEFAULT_GH_LIBS_OUT_FILE = './out/github/github_libs/';
 const DEFAULT_GH_ISSUES_OUT_DIR = './out/github/github_issues/';
+
+const DEFAULT_DOCS_OUT_DIR = './out/docs/';
 
 const collectGithubData = async (libName: Array<string>, outDir?: string, startPage?: number, endPage?: number) => {
   collectGithubLibs(outDir || DEFAULT_GH_LIBS_OUT_FILE, libName, startPage || DEFAULT_START_PAGE, endPage || DEFAULT_END_PAGE);
@@ -58,6 +60,21 @@ const analyzeStackOverflowData = async (inFile?: string, outFile?: string, start
 }
 
 const argv = await (yargs(hideBin(process.argv))
+  .command('docs', 'Command to scan documentation links', (_yargs) => {
+    return _yargs.option('linksFile', {
+      alias: 'l',
+      type: 'string',
+      description: 'File containing links to scan',
+    })
+    .option('outDir', {
+      alias: 'o',
+      type: 'string',
+      description: 'Output directory',
+    })
+    .demandOption(['linksFile'])
+  }, (argv) => {
+    scanDocs(argv.linksFile, argv.outDir || DEFAULT_DOCS_OUT_DIR);
+  })
   .command('gh', 'Commands for GitHub', (_yargs) => {
     return _yargs.command('collect', 'Collect data', (_yargs) => {
       return _yargs
