@@ -1,0 +1,17 @@
+https://www.crummy.com/software/BeautifulSoup/bs4/doc
+https://pandas.pydata.org/docs/
+https://scikit-learn.org/0.21/documentation.html
+https://www.nltk.org/
+https://docs.scipy.org/doc/scipy/
+https://www.tensorflow.org/api_docs
+https://pytorch.org/docs/stable/index.html
+https://keras.io/api/
+https://altair-viz.github.io/
+https://seaborn.pydata.org/
+https://plotly.com/python/
+https://docs.bokeh.org/en/latest/
+https://matplotlib.org/stable/index.html
+https://spacy.io/api/doc
+https://www.tornadoweb.org/en/stable/
+https://pandas.pydata.org/docs/
+https://numpy.org/doc/
