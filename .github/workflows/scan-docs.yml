@@ -6,7 +6,6 @@ on:
 jobs:
   crawl:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
@@ -21,6 +20,9 @@ jobs:
 
       - name: Crawl Documentation
         run: yarn start docs -l out/docs/links.txt
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
