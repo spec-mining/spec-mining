@@ -2,6 +2,10 @@ name: Scan Docs
 
 on:
   workflow_dispatch:
+    inputs:
+      inFile:
+        type: string
+        required: true
 
 jobs:
   crawl:
@@ -19,7 +23,7 @@ jobs:
         run: yarn install
 
       - name: Crawl Documentation
-        run: yarn start docs -l out/docs/links.txt
+        run: yarn start docs -l out/docs/${{inputs.inFile}}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}

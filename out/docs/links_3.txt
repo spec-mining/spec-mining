@@ -1,0 +1,4 @@
+https://altair-viz.github.io/
+https://seaborn.pydata.org/
+https://plotly.com/python/
+https://docs.bokeh.org/en/latest/

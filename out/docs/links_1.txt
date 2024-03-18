@@ -1,0 +1,4 @@
+https://www.crummy.com/software/BeautifulSoup/bs4/doc
+https://pandas.pydata.org/docs/
+https://scikit-learn.org/0.21/documentation.html
+https://www.nltk.org/

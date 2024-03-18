@@ -1,0 +1,4 @@
+https://docs.scipy.org/doc/scipy/
+https://pytorch.org/docs/stable/index.html
+https://keras.io/api/
+https://numpy.org/doc/
