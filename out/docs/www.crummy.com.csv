@@ -1,0 +1,180 @@
+KEYWORD,MATCHING SENTENCE,PAGE URL
+only,"It commonly saves programmers
+hours or days of work.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"If so, you should know that Beautiful Soup 3 is no longer being
+developed and that all support for it was dropped on December
+31, 2020.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"Lots of software uses
+BS3, so it’s still available, but if you’re writing new code you
+should install beautifulsoup4.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"10 to develop Beautiful Soup, but it should work with
+other recent versions.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"The only currently supported
+XML parser",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"The only currently supported
+XML parser",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+note,"Note that if a document is invalid, different parsers will generate
+different Beautiful Soup trees for it.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"But you’ll only ever have to deal with about four
+kinds of objects: Tag, NavigableString, BeautifulSoup,
+and Comment.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"If you want to use a NavigableString outside of Beautiful Soup,
+you should call unicode() on it to turn it into a normal Python
+Unicode string.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+note,"Note that Beautiful Soup strings don’t support any of these
+attributes, because a string can’t have children.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"find() (and its convenience equivalent) gives you only the first tag
+by that name:",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"children attributes consider only a tag’s
+direct children.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"The <head> tag has only one child, but it has two descendants: the
+<title> tag and the <title> tag’s child.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If a tag has only one child, and that child is a NavigableString,
+the child is made available as .",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If a tag’s only child is another tag, and that tag has a
+.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"string should refer to, so .",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,You should get the idea by now.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If none of the other matches work for you, define a function that
+takes an element as its only argument.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"The function should return
+True if the argument matches, and False otherwise.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,This function picks up only the <p> tags.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"Some of these should look familiar, but others are new.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Pass in a value for name and you’ll tell Beautiful Soup to only
+consider tags with certain names.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"For more complex matches, you can define a function that takes an attribute
+value as its only argument.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"The function should return True if the value
+matches, and False otherwise.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"There are three links in the “three sisters” document, but this code
+only finds the first two:",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"To consider only direct
+children, you can pass in recursive=False.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"The find_all() method scans the entire document looking for
+results, but sometimes you only want to find one result.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If you know a
+document has only one <body> tag, it’s a waste of time to scan the
+entire document looking for more.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"The only difference is that find_all() returns a list containing
+the single result, and find() just returns the result.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"The only differences are in how they move from
+one part of the tree to another.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"This shouldn’t be too surprising: we’re looking at all the tags
+that show up earlier in the document in document order than the one we started with.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+must,"A
+<p> tag that contains an <a> tag must have shown up before the <a>
+tag it contains.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,Find the next sibling tag (but only if it matches):,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"There’s also a method called select_one(), which finds only the
+first tag that matches a selector:",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"If CSS selectors are all you need, you should skip Beautiful Soup
+altogether and parse the document with lxml: it’s a lot
+faster.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Prior to this,
+only the .",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"select() method, but only the most commonly-used
+CSS selectors were supported.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Only the first argument, the tag name, is required.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"The behavior of a decomposed Tag or NavigableString is not
+defined and you should not use it for anything.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"Since it adds whitespace (in the form of newlines), prettify()
+changes the meaning of an HTML document and should not be used to
+reformat one.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"By default, the only characters that are escaped upon output are bare
+ampersands and angle brackets.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If you only want the human-readable text inside a document or tag, you can use the
+get_text() method.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"It will
+either return the object itself, or nothing, so the only reason to do
+this is when you’re iterating over a mixed list.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Right now, the only
+supported XML parser is lxml.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+note,"Note that the standalone <b/> tag is left alone, and
+that the document is given an XML declaration instead of being put
+into an <html> tag.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"If you’re planning
+on distributing your script to other people, or running it on multiple
+machines, you should specify a parser in the BeautifulSoup
+constructor.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Sometimes it guesses correctly, but only after a
+byte-by-byte search of the document that takes a very long time.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"In rare cases (usually when a UTF-8 document contains text written in
+a completely different encoding), the only way to get Unicode may be
+to replace some characters with the special Unicode character
+“REPLACEMENT CHARACTER” (U+FFFD, �).",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+note,"Note that the <meta> tag has been rewritten to reflect the fact that
+the document is now in UTF-8.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"detwingle() only knows how to handle Windows-1252
+embedded in UTF-8 (or vice versa, I suppose), but this is the most
+common case.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+note,Note that you must know to call UnicodeDammit.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+must,Note that you must know to call UnicodeDammit.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+note,"Note that the two parsers mean slightly different things by
+sourceline and sourcepos.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"The only real difference is that the copy is completely detached from
+the original Beautiful Soup object tree, just as if extract() had
+been called on it:",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"This section covers the most commonly
+used customization techniques.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,Parsing only part of a document¶,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"You just create a SoupStrainer and pass it in
+to the BeautifulSoup constructor as the parse_only argument.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+note,(Note that this feature won’t work if you’re using the html5lib parser.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"For example,
+you may have developed the script on a computer that has lxml
+installed, and then tried to run it on a computer that only has
+html5lib installed.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"For example,
+you may have developed the script on a computer that has lxml
+installed, and then tried to run it on a computer that only has
+html5lib installed.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+not support,")
+Second, when you’re writing to a file and you pass in a Unicode
+character that’s not supported by your default encoding.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+not support,")
+Second, when you’re writing to a file and you pass in a Unicode
+character that’s not supported by your default encoding.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Or, if you really only
+want one result, you need to use find() instead of
+find_all().",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Or, if you really only
+want one result, you need to use find() instead of
+find_all().",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"If response time is critical, if you’re paying for computer time
+by the hour, or if there’s any other reason why computer time is more
+valuable than programmer time, you should forget about Beautiful Soup
+and work directly atop lxml.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Parsing only part of a document won’t save you much time parsing
+the document, but it can save a lot of memory, and it’ll make
+searching the document much faster.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"Translations should be licensed under the MIT license,
+just like Beautiful Soup and its English documentation are.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+should,"All you should have to do is change the
+package name from BeautifulSoup to bs4.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If you get the ImportError “No module named BeautifulSoup”, your
+problem is that you’re trying to run Beautiful Soup 3 code, but you
+only have Beautiful Soup 4 installed.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If you get the ImportError “No module named BeautifulSoup”, your
+problem is that you’re trying to run Beautiful Soup 3 code, but you
+only have Beautiful Soup 4 installed.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If you get the ImportError “No module named bs4”, your problem
+is that you’re trying to run Beautiful Soup 4 code, but you only
+have Beautiful Soup 3 installed.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"If you get the ImportError “No module named bs4”, your problem
+is that you’re trying to run Beautiful Soup 4 code, but you only
+have Beautiful Soup 3 installed.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,BeautifulSoup(parseOnlyThese=.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,) -> BeautifulSoup(parse_only=.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,BeautifulSoup(parseOnlyThese=.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,) -> BeautifulSoup(parse_only=.,https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Advanced parser customization
+Parsing only part of a document
+SoupStrainer
+
+
+Customizing multi-valued attributes
+Handling duplicate attributes
+Instantiating custom subclasses",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+only,"Parsing only part of a document
+SoupStrainer",https://www.crummy.com/software/BeautifulSoup/bs4/doc
