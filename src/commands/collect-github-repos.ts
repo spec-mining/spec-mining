@@ -185,7 +185,8 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
         created_at: new Date(record.created_at).toLocaleDateString(),
         manifestFileName: record.manifestFileName || '',
         issues: record.issues || 0,
-        pullRequests: record.pullRequests || 0
+        pullRequests: record.pullRequests || 0,
+        testingFramework: record.testingFramework,
     })));
 }
 
