@@ -198,8 +198,9 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
         endPage = 10;
     }
 
-    const libNamesStr = libNames.join('_').replace('', '_');
-    const filePath = path.resolve(outDir, `${libNamesStr}_dependant_repos.csv`)
+    const timestamp = Date.now()
+    const libNamesStr = libNames.join('_');
+    const filePath = path.resolve(outDir, `${libNamesStr}_dependant_repos_${{timestamp}}.csv`)
 
     const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
     for (const libName of libNames) {
