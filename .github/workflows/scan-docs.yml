@@ -34,11 +34,10 @@ jobs:
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
       - name: Create Pull Request
-        uses: devops-infra/action-pull-request@v0.5.5
+        uses: peter-evans/create-pull-request@v6
         with:
-          target_branch: main
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
           commit-message: "data: add crawled docs"
           branch: docs-data-${{github.run_id}}
           title: "data: add crawled docs"
