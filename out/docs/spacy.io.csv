@@ -1,0 +1,12 @@
+KEYWORD,MATCHING SENTENCE,PAGE URL
+must,"doc[start : end : step])
+are not supported, as Span objects must be contiguous (cannot have gaps).",https://spacy.io/api/doc
+not support,"doc[start : end : step])
+are not supported, as Span objects must be contiguous (cannot have gaps).",https://spacy.io/api/doc
+note,"Note that this is format differs from the
+deprecated JSON training format.",https://spacy.io/api/doc
+should,"The heads are required
+to specify how the new subtokens should be integrated into the dependency tree.",https://spacy.io/api/doc
+only,"This property is only available when
+sentence boundaries have been set on the
+document by the parser, senter, sentencizer or some custom function.",https://spacy.io/api/doc

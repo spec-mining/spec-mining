@@ -1,0 +1,1513 @@
+KEYWORD,MATCHING SENTENCE,PAGE URL
+note,Release notes,https://www.tornadoweb.org/en/stable/
+only,"It is not based
+on WSGI, and it is
+typically run with only one thread per process.",https://www.tornadoweb.org/en/stable/
+should,"wsgi module,
+it is not a focus of development and most applications should be
+written to use Tornado’s own interfaces (such as tornado.",https://www.tornadoweb.org/en/stable/
+only,"The only method in
+Tornado that is safe to call from other threads is
+IOLoop.",https://www.tornadoweb.org/en/stable/
+note,"run_in_executor to
+asynchronously run a blocking function on another thread, but note
+that the function passed to run_in_executor should avoid
+referencing any Tornado objects.",https://www.tornadoweb.org/en/stable/
+should,"run_in_executor to
+asynchronously run a blocking function on another thread, but note
+that the function passed to run_in_executor should avoid
+referencing any Tornado objects.",https://www.tornadoweb.org/en/stable/
+note,"Note that the source distribution
+includes demo applications that are not present when Tornado is
+installed in this way, so you may wish to download a copy of the
+source tarball or clone the git repository as well.",https://www.tornadoweb.org/en/stable/
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/
+note,Release notes,https://www.tornadoweb.org/en/stable/guide.html
+note,Release notes,https://www.tornadoweb.org/en/stable/webframework.html
+note,"web — RequestHandler and Application classes
+Thread-safety notes
+Request handlers
+RequestHandler
+Entry points
+RequestHandler.",https://www.tornadoweb.org/en/stable/webframework.html
+should,"should_return_304()
+StaticFileHandler.",https://www.tornadoweb.org/en/stable/webframework.html
+note,Thread-safety notes,https://www.tornadoweb.org/en/stable/webframework.html
+should,"should_return_304()
+StaticFileHandler.",https://www.tornadoweb.org/en/stable/webframework.html
+should,"should_return_304()
+StaticFileHandler.",https://www.tornadoweb.org/en/stable/webframework.html
+note,Release notes,https://www.tornadoweb.org/en/stable/networking.html
+note,Release notes,https://www.tornadoweb.org/en/stable/coroutine.html
+note,Release notes,https://www.tornadoweb.org/en/stable/integration.html
+note,Release notes,https://www.tornadoweb.org/en/stable/utilities.html
+note,Release notes,https://www.tornadoweb.org/en/stable/faq.html
+must,"No matter what the real code is doing, to achieve concurrency blocking
+code must be replaced with non-blocking equivalents.",https://www.tornadoweb.org/en/stable/faq.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases.html
+note,Release notes¶,https://www.tornadoweb.org/en/stable/releases.html
+note,Release notes,https://www.tornadoweb.org/en/stable/wsgi.html#module-tornado.wsgi
+not support,"The reverse is not supported; the Tornado
+Application and RequestHandler classes are designed for use with
+the Tornado HTTPServer and cannot be used in a generic WSGI
+container.",https://www.tornadoweb.org/en/stable/wsgi.html#module-tornado.wsgi
+warning,Warning,https://www.tornadoweb.org/en/stable/wsgi.html#module-tornado.wsgi
+only,"WSGI-only applications are likely to be better off
+with a dedicated WSGI server such as gunicorn or uwsgi.",https://www.tornadoweb.org/en/stable/wsgi.html#module-tornado.wsgi
+must,This must be an instance of concurrent.,https://www.tornadoweb.org/en/stable/wsgi.html#module-tornado.wsgi
+not support,"Executor,
+typically a ThreadPoolExecutor (ProcessPoolExecutor is not supported).",https://www.tornadoweb.org/en/stable/wsgi.html#module-tornado.wsgi
+warning,Warning,https://www.tornadoweb.org/en/stable/wsgi.html#module-tornado.wsgi
+note,Release notes,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,Thread-safety notes¶,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"In particular, methods such as
+write(), finish(), and
+flush() must only be called from the main thread.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"In particular, methods such as
+write(), finish(), and
+flush() must only be called from the main thread.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"Subclasses must define at least one of the methods defined in the
+“Entry points” section below.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Applications should not construct RequestHandler objects
+directly and subclasses should not override __init__ (override
+initialize instead).",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that this method does not apply to multi-valued headers
+set by add_header.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that setting such headers in the normal flow of request
+processing may not do what you want, since headers may be reset
+during error handling.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that lists are not converted to JSON because of a potential
+cross-site security vulnerability.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"All JSON output should be
+wrapped in a dictionary.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that this exception may not be
+the “current” exception for purposes of methods like
+sys.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,This method only returns cookies that were present in the request.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"0 this will be changed to only accept lowercase
+arguments.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"Due to
+limitations of the cookie protocol, it is impossible to determine on the
+server side which values are necessary for the domain, path,
+samesite, or secure arguments, this method can only be
+successful if you consistently use the same values for these arguments
+when setting cookies.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Applications
+should generally use clear_cookie one at a time instead.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"Similar to get_cookie, this method only returns cookies that
+were present in the request.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"You must specify the cookie_secret setting in your Application
+to use this method.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"It should be a long, random sequence of bytes
+to be used as the HMAC secret for the signature.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that the expires_days parameter sets the lifetime of the
+cookie in the browser, but is independent of the max_age_days
+parameter to get_signed_cookie.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Returns True if the request’s Etag matches and a 304 should be
+returned.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"The Etag header should be set
+(perhaps with set_etag_header) before calling this method.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"get_current_user() will only be called once per request,
+and is cached for future access:
+def get_current_user(self):
+    user_cookie = self.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that prepare() may be a coroutine while get_current_user()
+may not, so the latter form is necessary if loading the user requires
+asynchronous operations.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,This method is only supported when HTTP/1.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,This method should return a tornado.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+warning,"By default logs instances of HTTPError as warnings without
+stack traces (on the tornado.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that this method is called only if
+the connection was closed during asynchronous processing; if you
+need to do cleanup after every request override on_finish
+instead.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"Note that this method is called only if
+the connection was closed during asynchronous processing; if you
+need to do cleanup after every request override on_finish
+instead.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,Note: no header will be set if compute_etag() returns None.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"If you have set
+the xsrf_cookies application setting, you must include this
+HTML within all of your HTML forms.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"In a template, this method should be called with {% module
+xsrf_form_html() %}",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"This property is of type bytes, but it contains only ASCII
+characters.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"For example,
+xsrf_cookie_kwargs=dict(httponly=True, secure=True)
+will set the secure and httponly flags on the
+_xsrf cookie.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+warning,Warning,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"This attack is especially
+relevant to applications that only listen on 127.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"Appropriate host patterns must be used
+(instead of the default of r'.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"The
+default_host argument must not be used in applications that
+may be vulnerable to DNS rebinding.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Should generally be left
+at the default (which will always be the highest supported
+version), but may be set to a lower value temporarily
+during version transitions.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Should generally be left
+at the default (which will always be the highest supported
+version), but may be set to a lower value temporarily
+during version transitions.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"May be set to None to disable escaping, or to the name
+of a function that all output should be passed through.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"May be set to None to disable escaping, or to the name
+of a function that all output should be passed through.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"static_handler_args, if set,
+should be a dictionary of keyword arguments to be passed to the
+handler’s initialize method.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"static_handler_args, if set,
+should be a dictionary of keyword arguments to be passed to the
+handler’s initialize method.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+not support,"Keyword arguments not supported by
+HTTPServer.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that after calling this method you still need to call
+IOLoop.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,The handler must be added to the application as a named URLSpec.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Your request handler mapping should use a regular expression
+like r'/foo/?",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Your request handler mapping should use a regular expression
+like r'/foo/*' in conjunction with using the decorator.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"The subclass must define a method data_received(self, data):, which
+will be called zero or more times as data is available.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that
+if the request has an empty body, data_received may not be called.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"The subclass must define a method data_received(self, data):, which
+will be called zero or more times as data is available.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that
+if the request has an empty body, data_received may not be called.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"Must be listed in
+httplib.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,"Must be listed in
+httplib.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,reason (str) – Keyword-only argument.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,reason (str) – Keyword-only argument.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+must,Subclasses of UIModule must override the render method.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"You should provide the keyword argument url to the handler, e.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that a capture group in the regex is required to parse the value for
+the path argument to the get() method (different than the constructor
+argument above); see URLSpec for details.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,Subclassing notes,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"Subclasses should only override methods discussed in this section;
+overriding other methods is error-prone.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Subclasses should only override methods discussed in this section;
+overriding other methods is error-prone.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,Returns True if the headers indicate that we should return 304.,https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"This method may modify the path before returning it, but note that
+any such modifications will not be understood by make_static_url.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"Note that its
+signature is different from other overridable class methods
+(no settings argument); this is deliberate to ensure that
+abspath is able to stand on its own as a cache key.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"This method should either return a byte string or an iterator
+of byte strings.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"0: This method is now always called, instead of only when
+partial results are requested.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"Should return a datetime
+object or None.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,"This method may be overridden in subclasses (but note that it
+is a class method rather than an instance method).",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+only,"Subclasses
+are only required to implement the signature
+make_static_url(cls, settings, path); other keyword
+arguments may be passed through static_url
+but are not standard.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"The url returned should be
+relative to the current host.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"include_version determines whether the generated URL should
+include the query string containing the version hash of the
+file corresponding to the given path.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"The return value should be
+filesystem path relative to static_path.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+should,"The returned value should be a string, or None if no version
+could be determined.",https://www.tornadoweb.org/en/stable/web.html#module-tornado.web
+note,Release notes,https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+should,"The IOLoop interface is now provided primarily
+for backwards compatibility; new code should generally use the asyncio event
+loop interface directly.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+should,"Most applications should not attempt to construct an IOLoop directly,
+and instead initialize the asyncio event loop and use IOLoop.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,"When multiple processes are being used, each process should
+create its own IOLoop, which also implies that any objects which depend on
+the IOLoop (such as AsyncHTTPClient) must also be created in the child
+processes.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+should,"When multiple processes are being used, each process should
+create its own IOLoop, which also implies that any objects which depend on
+the IOLoop (such as AsyncHTTPClient) must also be created in the child
+processes.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+should,"process and multiprocessing modules) should do so as early as
+possible, ideally the first thing the application does after loading its
+configuration, and before any calls to IOLoop.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+note,"Note that even after stop has been called, the IOLoop is not
+completely stopped until IOLoop.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,"The function must return either an awaitable object or
+None.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+only,"The keyword-only argument timeout may be used to set
+a maximum duration for the function.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+only,"Many applications will only use a single IOLoop that runs for the
+entire lifetime of the process.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,An IOLoop must be completely stopped before it can be closed.,https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,stop() must be called and IOLoop.,https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,"start() must
+be allowed to return before attempting to call IOLoop.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+should,"Applications
+using the cross-thread communications aspect of
+instance() should instead set their own global variable
+to point to the IOLoop they want to use.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+note,"Note that this is the only
+method in IOLoop that makes this thread-safety guarantee; all
+other interaction with the IOLoop must be done from that
+IOLoop’s thread.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,"Note that this is the only
+method in IOLoop that makes this thread-safety guarantee; all
+other interaction with the IOLoop must be done from that
+IOLoop’s thread.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+only,"Note that this is the only
+method in IOLoop that makes this thread-safety guarantee; all
+other interaction with the IOLoop must be done from that
+IOLoop’s thread.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+should,"Intended to be afe for use from a Python signal handler; should not be
+used otherwise.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+only,"This method only accepts Future objects and not other
+awaitables (unlike most of Tornado where the two are
+interchangeable).",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+note,Note that it is not safe to call add_timeout from other threads.,https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,"Instead, you must use add_callback to transfer control to the
+IOLoop’s thread, and then call add_timeout from there.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,"Subclasses of IOLoop must implement either add_timeout or
+call_at; the default implementations of each will call
+the other.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,0 must use add_timeout instead.,https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,"when must be a number using the same reference point as
+IOLoop.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+note,"Note that unlike the asyncio method of the same
+name, the returned object does not have a cancel() method.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+note,"Note that unlike the asyncio method of the same
+name, the returned object does not have a cancel() method.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+note,"Note that the timeout is given in
+milliseconds, while most other time-related functions in Tornado use
+seconds.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+should,"The window is centered on callback_time so the total number of calls
+within a given interval should not be significantly affected by adding
+jitter.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+must,start must be called after the PeriodicCallback is created.,https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+only,"Previously this was only true for regular functions, not coroutines,
+which were “fire-and-forget” for PeriodicCallback.",https://www.tornadoweb.org/en/stable/ioloop.html#tornado.ioloop.IOLoop.add_callback
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/intro.html
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/async.html
+only,"This means that all application code
+should aim to be asynchronous and non-blocking because only one
+operation can be active at a time.",https://www.tornadoweb.org/en/stable/guide/async.html
+should,"This means that all application code
+should aim to be asynchronous and non-blocking because only one
+operation can be active at a time.",https://www.tornadoweb.org/en/stable/guide/async.html
+must,"In fact, every function blocks, at least a
+little bit, while it is running and using the CPU (for an extreme
+example that demonstrates why CPU blocking must be taken as seriously
+as other kinds of blocking, consider password hashing functions like
+bcrypt, which by design use
+hundreds of milliseconds of CPU time, far more than a typical network
+or disk access).",https://www.tornadoweb.org/en/stable/guide/async.html
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/coroutines.html
+only,"Only use
+decorated coroutines when compatibility with older versions of Python
+is required.",https://www.tornadoweb.org/en/stable/guide/coroutines.html
+note,"Note that for both kinds of
+coroutines it is important to use await or yield so that
+any exceptions have somewhere to go.",https://www.tornadoweb.org/en/stable/guide/coroutines.html
+note,"Note that for both kinds of
+coroutines it is important to use await or yield so that
+any exceptions have somewhere to go.",https://www.tornadoweb.org/en/stable/guide/coroutines.html
+note,"Note that for both kinds of
+coroutines it is important to use await or yield so that
+any exceptions have somewhere to go.",https://www.tornadoweb.org/en/stable/guide/coroutines.html
+must,"In nearly all cases, any function that calls a coroutine must be a
+coroutine itself, and use the await or yield keyword in the
+call.",https://www.tornadoweb.org/en/stable/guide/coroutines.html
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/queues.html
+only,"In the web-spider example here, the queue begins containing only base_url.",https://www.tornadoweb.org/en/stable/guide/queues.html
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/structure.html
+warning,"However, this pattern produces deprecation
+warnings starting in Python 3.",https://www.tornadoweb.org/en/stable/guide/structure.html
+should,"When the main function returns, the program exits, so most of the time for a
+web server main should run forever.",https://www.tornadoweb.org/en/stable/guide/structure.html
+only,"The files
+object is only present if the files were uploaded with a form wrapper
+(i.",https://www.tornadoweb.org/en/stable/guide/structure.html
+should,"initialize
+should typically just save the arguments passed into member
+variables; it may not produce any output or call methods like
+send_error.",https://www.tornadoweb.org/en/stable/guide/structure.html
+should,"initialize
+should typically just save the arguments passed into member
+variables; it may not produce any output or call methods like
+send_error.",https://www.tornadoweb.org/en/stable/guide/structure.html
+note,"All methods designed to be overridden are noted as such in the
+RequestHandler documentation.",https://www.tornadoweb.org/en/stable/guide/structure.html
+note,"Note that there is no guarantee that a closed
+connection can be detected promptly.",https://www.tornadoweb.org/en/stable/guide/structure.html
+note,"Note that there is no guarantee that a closed
+connection can be detected promptly.",https://www.tornadoweb.org/en/stable/guide/structure.html
+note,"If the error was caused by an exception, an exc_info triple will
+be passed as a keyword argument (note that this exception is not
+guaranteed to be the current exception in sys.",https://www.tornadoweb.org/en/stable/guide/structure.html
+must,"exc_info, so
+write_error must use e.",https://www.tornadoweb.org/en/stable/guide/structure.html
+should,"This handler should override
+prepare instead of a more specific method like
+get() so it works with any HTTP method.",https://www.tornadoweb.org/en/stable/guide/structure.html
+should,"It should produce its
+error page as described above: either by raising a HTTPError(404)
+and overriding write_error, or calling self.",https://www.tornadoweb.org/en/stable/guide/structure.html
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/templates.html
+note,"(Note that this list applies to templates
+rendered using RequestHandler.",https://www.tornadoweb.org/en/stable/guide/templates.html
+note,"Note that while Tornado’s automatic escaping is helpful in avoiding
+XSS vulnerabilities, it is not sufficient in all cases.",https://www.tornadoweb.org/en/stable/guide/templates.html
+must,"Additionally, either care must be taken to always
+use double quotes and xhtml_escape in HTML attributes that may contain
+untrusted content, or a separate escaping function must be used for
+attributes (see e.",https://www.tornadoweb.org/en/stable/guide/templates.html
+only,"The set_resources function is only available in templates invoked
+via {% module Template(.",https://www.tornadoweb.org/en/stable/guide/templates.html
+only,"%}
+directive, template modules have a distinct namespace from their
+containing template - they can only see the global template namespace
+and their own keyword arguments.",https://www.tornadoweb.org/en/stable/guide/templates.html
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/security.html
+must,"The cookie_secret is a symmetric key and must be kept secret –
+anyone who obtains the value of this key could produce their own signed
+cookies.",https://www.tornadoweb.org/en/stable/guide/security.html
+must,"cookie_secret then must be a dict with integer key versions
+as keys and the corresponding secrets as values.",https://www.tornadoweb.org/en/stable/guide/security.html
+must,"The currently used
+signing key must then be set as key_version application setting
+but all other keys in the dict are allowed for cookie signature validation,
+if the correct key version is set in the cookie.",https://www.tornadoweb.org/en/stable/guide/security.html
+warning,"Applications that use TLS are not vulnerable to this attack (because
+the browser will display certificate mismatch warnings that block
+automated access to the target site).",https://www.tornadoweb.org/en/stable/guide/security.html
+only,"1 can
+only be accessed by the local machine) should guard against DNS
+rebinding by validating the Host HTTP header.",https://www.tornadoweb.org/en/stable/guide/security.html
+should,"1 can
+only be accessed by the local machine) should guard against DNS
+rebinding by validating the Host HTTP header.",https://www.tornadoweb.org/en/stable/guide/security.html
+must,"In addition, the default_host argument to Application and the
+DefaultHostMatches router must not be used in applications that may
+be vulnerable to DNS rebinding, because it has a similar effect to a
+wildcard host pattern.",https://www.tornadoweb.org/en/stable/guide/security.html
+note,Release notes,https://www.tornadoweb.org/en/stable/guide/running.html
+note,"Please note that it may be necessary to increase the number
+of open files per process (to avoid “Too many open files”-Error).",https://www.tornadoweb.org/en/stable/guide/running.html
+note,"Tornado also has the ability to start multiple processes from a single parent
+process (note that this does not work on Windows).",https://www.tornadoweb.org/en/stable/guide/running.html
+must,You must not give HTTPServer.,https://www.tornadoweb.org/en/stable/guide/running.html
+note,Release notes,https://www.tornadoweb.org/en/stable/template.html
+should,"Variable names beginning with _tt_ are reserved by the template
+system and should not be used by application code.",https://www.tornadoweb.org/en/stable/template.html
+note,"Note that as an implementation detail apply blocks are implemented
+as nested functions and thus may interact strangely with variables
+set via {% set %}, or the use of {% break %} or {% continue %}
+within loops.",https://www.tornadoweb.org/en/stable/template.html
+note,"Note that
+autoescaping can also be configured globally, at the Application
+or Loader.",https://www.tornadoweb.org/en/stable/template.html
+note,"Note that
+there is no {% end %} tag; the comment goes from the word comment
+to the closing %} tag.",https://www.tornadoweb.org/en/stable/template.html
+should,"Templates that use extends should
+contain one or more block tags to replace content from the parent
+template.",https://www.tornadoweb.org/en/stable/template.html
+must,"You must use a template loader to use template constructs like
+{% extends %} and {% include %}.",https://www.tornadoweb.org/en/stable/template.html
+note,Release notes,https://www.tornadoweb.org/en/stable/routing.html
+must,"Router subclass must implement a find_handler method to provide
+a suitable HTTPMessageDelegate instance to handle the
+request:",https://www.tornadoweb.org/en/stable/routing.html
+must,"Must be implemented to return an appropriate instance of HTTPMessageDelegate
+that can serve the request.",https://www.tornadoweb.org/en/stable/routing.html
+should,"matcher (Matcher) – a Matcher instance used for determining
+whether the rule should be considered a match for a specific
+request.",https://www.tornadoweb.org/en/stable/routing.html
+should,"matcher (Matcher) – a Matcher instance used for determining
+whether the rule should be considered a match for a specific
+request.",https://www.tornadoweb.org/en/stable/routing.html
+must,None must be returned to indicate that there is no match.,https://www.tornadoweb.org/en/stable/routing.html
+note,Release notes,https://www.tornadoweb.org/en/stable/escape.html
+must,"When used in attribute values the escaped strings must be enclosed
+in quotes.",https://www.tornadoweb.org/en/stable/escape.html
+note,"Note that the default of plus=True is effectively the
+reverse of Python’s urllib module.",https://www.tornadoweb.org/en/stable/escape.html
+must,"If plus is true (the default), plus signs will be interpreted as spaces (literal plus signs
+must be represented as “%2B”).",https://www.tornadoweb.org/en/stable/escape.html
+note,"Note that this default is the reverse of Python’s
+urllib module.",https://www.tornadoweb.org/en/stable/escape.html
+must,Otherwise it must be a unicode string and is encoded as utf8.,https://www.tornadoweb.org/en/stable/escape.html
+must,Otherwise it must be a byte string and is decoded as utf8.,https://www.tornadoweb.org/en/stable/escape.html
+only,require_protocol: Only linkify urls which include a protocol.,https://www.tornadoweb.org/en/stable/escape.html
+only,require_protocol: Only linkify urls which include a protocol.,https://www.tornadoweb.org/en/stable/escape.html
+should,"permitted_protocols: List (or set) of protocols which should be
+linkified, e.",https://www.tornadoweb.org/en/stable/escape.html
+should,"permitted_protocols: List (or set) of protocols which should be
+linkified, e.",https://www.tornadoweb.org/en/stable/escape.html
+note,Release notes,https://www.tornadoweb.org/en/stable/locale.html
+should,"Applications should call one of load_translations (which uses a simple
+CSV format) or load_gettext_translations (which uses the .",https://www.tornadoweb.org/en/stable/locale.html
+should,The directory should have translation files of the form LOCALE.,https://www.tornadoweb.org/en/stable/locale.html
+should,"The CSV files should have two or three columns: string,
+translation, and an optional plural indicator.",https://www.tornadoweb.org/en/stable/locale.html
+should,"Plural indicators should
+be one of “plural” or “singular”.",https://www.tornadoweb.org/en/stable/locale.html
+should,"There should be two rows in the CSV file for
+that string, one with plural indicator “singular”, and one “plural”.",https://www.tornadoweb.org/en/stable/locale.html
+should,In this format there should not be spaces after the commas.,https://www.tornadoweb.org/en/stable/locale.html
+not support,"If it is not supported, we raise an exception.",https://www.tornadoweb.org/en/stable/locale.html
+must,"If plural_message is given, you must also provide
+count.",https://www.tornadoweb.org/en/stable/locale.html
+note,Release notes,https://www.tornadoweb.org/en/stable/websocket.html
+only,"The only communication
+methods available to you are write_message(), ping(), and
+close().",https://www.tornadoweb.org/en/stable/websocket.html
+should,"Likewise, your request handler class should implement
+open() method rather than get() or post().",https://www.tornadoweb.org/en/stable/websocket.html
+must,"You must first visit a regular HTML page using the same certificate
+to accept it before the websocket connection will succeed.",https://www.tornadoweb.org/en/stable/websocket.html
+must,This method must be overridden.,https://www.tornadoweb.org/en/stable/websocket.html
+must,"The list may be empty, in which case this method must return
+None.",https://www.tornadoweb.org/en/stable/websocket.html
+should,"Should return True to accept the request or False to
+reject it.",https://www.tornadoweb.org/en/stable/websocket.html
+warning,Warning,https://www.tornadoweb.org/en/stable/websocket.html
+must,"In
+particular, if your authentication is cookie-based, you
+must either restrict the origins allowed by
+check_origin() or implement your own XSRF-like
+protection for websocket connections.",https://www.tornadoweb.org/en/stable/websocket.html
+note,"Note that not
+all websocket implementations expose this data to
+applications.",https://www.tornadoweb.org/en/stable/websocket.html
+should,"This class should not be instantiated directly; use the
+websocket_connect function instead.",https://www.tornadoweb.org/en/stable/websocket.html
+note,"Note that not
+all websocket implementations expose this data to
+applications.",https://www.tornadoweb.org/en/stable/websocket.html
+note,Release notes,https://www.tornadoweb.org/en/stable/iostream.html
+must,"Subclasses must implement fileno, close_fd, write_to_fd,
+read_from_fd, and optionally get_fd_error.",https://www.tornadoweb.org/en/stable/iostream.html
+must,buf must be a writable buffer into which data will be read.,https://www.tornadoweb.org/en/stable/iostream.html
+only,This flag is currently defined only for TCP-based IOStreams.,https://www.tornadoweb.org/en/stable/iostream.html
+should,"close_fd is called by BaseIOStream and should not be called
+elsewhere; other users should call close instead.",https://www.tornadoweb.org/en/stable/iostream.html
+should,"This method is called after the IOLoop has signaled an error on the
+file descriptor, and should return an Exception (such as socket.",https://www.tornadoweb.org/en/stable/iostream.html
+only,"May only be called if the socket passed to the constructor was
+not previously connected.",https://www.tornadoweb.org/en/stable/iostream.html
+note,Note that it is safe to call IOStream.,https://www.tornadoweb.org/en/stable/iostream.html
+must,"This means it must generally be used
+immediately after reading or writing the last clear-text
+data.",https://www.tornadoweb.org/en/stable/iostream.html
+should,"If the socket passed to the constructor is already connected,
+it should be wrapped with:",https://www.tornadoweb.org/en/stable/iostream.html
+should,"start_tls; it should not be used
+with IOStream.",https://www.tornadoweb.org/en/stable/iostream.html
+only,It may only be called once per stream.,https://www.tornadoweb.org/en/stable/iostream.html
+only,PipeIOStream is only available on Unix-based platforms.,https://www.tornadoweb.org/en/stable/iostream.html
+note,"Note that the close callback is scheduled to run after other
+callbacks on the stream (to allow for buffered data to be processed),
+so you may see this error before you see the close callback.",https://www.tornadoweb.org/en/stable/iostream.html
+note,Release notes,https://www.tornadoweb.org/en/stable/netutil.html
+note,"Note that this signature
+is different from the callback(fd, events) signature used for
+IOLoop handlers.",https://www.tornadoweb.org/en/stable/netutil.html
+warning,"Omitting this argument will
+result in a DeprecationWarning on Python 3.",https://www.tornadoweb.org/en/stable/netutil.html
+warning,"Omitting this argument will
+result in a DeprecationWarning on Python 3.",https://www.tornadoweb.org/en/stable/netutil.html
+note,Release notes,https://www.tornadoweb.org/en/stable/tcpclient.html
+note,Release notes,https://www.tornadoweb.org/en/stable/tcpserver.html
+note,"Note that when using this pattern, nothing that touches the event loop
+can be run before fork_processes.",https://www.tornadoweb.org/en/stable/tcpserver.html
+note,"Note that when using this pattern, nothing that touches the event loop
+can be run before fork_processes.",https://www.tornadoweb.org/en/stable/tcpserver.html
+note,"Note that multiple processes are not compatible with the autoreload
+module (or the autoreload=True option to tornado.",https://www.tornadoweb.org/en/stable/tcpserver.html
+not support,Values of num_processes other than 1 are not supported on Windows.,https://www.tornadoweb.org/en/stable/tcpserver.html
+note,Release notes,https://www.tornadoweb.org/en/stable/gen.html
+note,Note,https://www.tornadoweb.org/en/stable/gen.html
+should,"Applications that do not
+require compatibility with older versions of Python should use
+native coroutines instead.",https://www.tornadoweb.org/en/stable/gen.html
+warning,Warning,https://www.tornadoweb.org/en/stable/gen.html
+must,"You must
+examine the result of the Future object, or the exception
+may go unnoticed by your code.",https://www.tornadoweb.org/en/stable/gen.html
+note,"Note that calling this function on its own does nothing; you must
+wait on the Future it returns (usually by yielding it).",https://www.tornadoweb.org/en/stable/gen.html
+must,"Note that calling this function on its own does nothing; you must
+wait on the Future it returns (usually by yielding it).",https://www.tornadoweb.org/en/stable/gen.html
+note,"Note that this Future will not be the same object as any of
+the inputs.",https://www.tornadoweb.org/en/stable/gen.html
+only,"3: This function only handles Futures, not other yieldable objects.",https://www.tornadoweb.org/en/stable/gen.html
+note,Release notes,https://www.tornadoweb.org/en/stable/locks.html
+warning,Warning,https://www.tornadoweb.org/en/stable/locks.html
+note,"Note that these primitives are not actually thread-safe and cannot
+be used in place of those from the standard library’s threading
+module–they are meant to coordinate Tornado coroutines in a
+single-threaded app, not to protect shared objects in a
+multithreaded app.",https://www.tornadoweb.org/en/stable/locks.html
+note,Release notes,https://www.tornadoweb.org/en/stable/queues.html
+warning,Warning,https://www.tornadoweb.org/en/stable/queues.html
+note,Note,https://www.tornadoweb.org/en/stable/queues.html
+note,Release notes,https://www.tornadoweb.org/en/stable/process.html
+note,"Note that multiple processes are not compatible with the autoreload
+module (or the autoreload=True option to tornado.",https://www.tornadoweb.org/en/stable/process.html
+note,"Note that the IOLoop used for signal handling need not be the
+same one used by individual Subprocess objects (as long as the
+IOLoops are each running in separate threads).",https://www.tornadoweb.org/en/stable/process.html
+note,Release notes,https://www.tornadoweb.org/en/stable/auth.html
+should,"The degree of customization required will vary, but in most cases
+overriding the class attributes (which are named beginning with
+underscores for historical reasons) should be sufficient.",https://www.tornadoweb.org/en/stable/auth.html
+should,"This method should be called by the handler that receives the
+redirect from the authenticate_redirect() method (which is
+often the same as the one that calls it; in that case you would
+call get_authenticated_user if the openid.",https://www.tornadoweb.org/en/stable/auth.html
+must,"Subclasses must also override the _oauth_get_user_future and
+_oauth_consumer_token methods.",https://www.tornadoweb.org/en/stable/auth.html
+must,"For
+some services, you must use a previously-registered callback
+URI and cannot specify a callback via this method.",https://www.tornadoweb.org/en/stable/auth.html
+must,"This method is asynchronous and must be called with await
+or yield (This is different from other auth*_redirect
+methods defined in this module).",https://www.tornadoweb.org/en/stable/auth.html
+should,"finish for you so you should not write any
+other response after it returns.",https://www.tornadoweb.org/en/stable/auth.html
+should,"This method should be called from the handler for your
+OAuth callback URL to complete the registration process.",https://www.tornadoweb.org/en/stable/auth.html
+must,Subclasses must override this to return their OAuth consumer keys.,https://www.tornadoweb.org/en/stable/auth.html
+should,The return value should be a dict with keys key and secret.,https://www.tornadoweb.org/en/stable/auth.html
+must,"Subclasses must override this to get basic information about the
+user.",https://www.tornadoweb.org/en/stable/auth.html
+should,"Should be a coroutine whose result is a dictionary
+containing information about the user, which may have been
+retrieved by using access_token to make a request to the
+service.",https://www.tornadoweb.org/en/stable/auth.html
+should,"You
+should call this method to log the user in, and then call
+get_authenticated_user in the handler for your
+redirect URL to complete the authorization process.",https://www.tornadoweb.org/en/stable/auth.html
+should,"If the request is a POST, post_args should be provided.",https://www.tornadoweb.org/en/stable/auth.html
+should,"Query
+string arguments should be given as keyword arguments.",https://www.tornadoweb.org/en/stable/auth.html
+must,"You must register the redirect_uri you plan to use with this class
+on the Credentials page.",https://www.tornadoweb.org/en/stable/auth.html
+must,"You must register the redirect_uri you plan to use with this class
+on the Credentials page.",https://www.tornadoweb.org/en/stable/auth.html
+should,"This field should
+be used like int(user['session_expires']); in a future version of
+Tornado it will change from a string to an integer.",https://www.tornadoweb.org/en/stable/auth.html
+should,"This field should
+be used like int(user['session_expires']); in a future version of
+Tornado it will change from a string to an integer.",https://www.tornadoweb.org/en/stable/auth.html
+should,"If the request is a POST, post_args should be provided.",https://www.tornadoweb.org/en/stable/auth.html
+should,"Query
+string arguments should be given as keyword arguments.",https://www.tornadoweb.org/en/stable/auth.html
+only,"oauth2_request;
+the only difference is that this method takes a relative path,
+while oauth2_request takes a complete url.",https://www.tornadoweb.org/en/stable/auth.html
+should,The path should not include the format or API version number.,https://www.tornadoweb.org/en/stable/auth.html
+should,"If the request is a POST, post_args should be provided.",https://www.tornadoweb.org/en/stable/auth.html
+should,"Query
+string arguments should be given as keyword arguments.",https://www.tornadoweb.org/en/stable/auth.html
+note,Release notes,https://www.tornadoweb.org/en/stable/caresresolver.html
+only,"c-ares fails to resolve some names when family is AF_UNSPEC,
+so it is only recommended for use in AF_INET (i.",https://www.tornadoweb.org/en/stable/caresresolver.html
+note,Release notes,https://www.tornadoweb.org/en/stable/twisted.html
+should,"Instead of using
+direct integration between Tornado and Twisted, new applications should
+rely on the integration with asyncio provided by both packages.",https://www.tornadoweb.org/en/stable/twisted.html
+should,"1: This function is provided for backwards compatibility; code
+that does not require compatibility with older versions of
+Tornado should use
+twisted.",https://www.tornadoweb.org/en/stable/twisted.html
+only,"It is
+recommended only when threads cannot be used, since it has
+limitations compared to the standard getaddrinfo-based
+Resolver and
+DefaultExecutorResolver.",https://www.tornadoweb.org/en/stable/twisted.html
+note,Release notes,https://www.tornadoweb.org/en/stable/asyncio.html
+should,"0: While the code in this module is still used, it is now enabled
+automatically when asyncio is available, so applications should
+no longer need to refer to this module directly.",https://www.tornadoweb.org/en/stable/asyncio.html
+note,Note,https://www.tornadoweb.org/en/stable/asyncio.html
+only,"The default asyncio event loop policy only automatically creates
+event loops in the main threads.",https://www.tornadoweb.org/en/stable/asyncio.html
+must,"Other threads must create event
+loops explicitly or asyncio.",https://www.tornadoweb.org/en/stable/asyncio.html
+should,"This class is used automatically by Tornado; applications should not need
+to refer to it directly.",https://www.tornadoweb.org/en/stable/asyncio.html
+only,"It is safe to wrap any event loop with this class, although it only makes sense
+for event loops that do not implement the add_reader family of methods
+themselves (i.",https://www.tornadoweb.org/en/stable/asyncio.html
+note,Release notes,https://www.tornadoweb.org/en/stable/autoreload.html
+should,Most applications should not access this module directly.,https://www.tornadoweb.org/en/stable/autoreload.html
+note,"Note that restarting is a destructive operation and any
+requests in progress will be aborted when the process restarts.",https://www.tornadoweb.org/en/stable/autoreload.html
+note,"Note that for open file and socket handles it is generally
+preferable to set the FD_CLOEXEC flag (using fcntl or
+os.",https://www.tornadoweb.org/en/stable/autoreload.html
+note,Release notes,https://www.tornadoweb.org/en/stable/concurrent.html
+only,"Future objects can only be created while there is a
+current IOLoop",https://www.tornadoweb.org/en/stable/concurrent.html
+only,"Future objects can only be created while there is a
+current IOLoop",https://www.tornadoweb.org/en/stable/concurrent.html
+only,Cancellation is now partially supported (only on Python 3),https://www.tornadoweb.org/en/stable/concurrent.html
+only,Cancellation is now partially supported (only on Python 3),https://www.tornadoweb.org/en/stable/concurrent.html
+should,"This decorator should not be confused with the similarly-named
+IOLoop.",https://www.tornadoweb.org/en/stable/concurrent.html
+should,"If
+this logging is not desired, the caller should explicitly check
+the state of the Future and call Future.",https://www.tornadoweb.org/en/stable/concurrent.html
+note,Release notes,https://www.tornadoweb.org/en/stable/log.html
+warning,"general: General-purpose logging, including any errors
+or warnings from Tornado itself.",https://www.tornadoweb.org/en/stable/log.html
+warning,"general: General-purpose logging, including any errors
+or warnings from Tornado itself.",https://www.tornadoweb.org/en/stable/log.html
+not support,"Color support on Windows versions that do not support ANSI color codes is
+enabled by use of the colorama library.",https://www.tornadoweb.org/en/stable/log.html
+must,"Applications that wish to use
+this must first initialize colorama with a call to colorama.",https://www.tornadoweb.org/en/stable/log.html
+only,"These options are present automatically on the default options instance;
+this method is only necessary if you have created your own OptionParser.",https://www.tornadoweb.org/en/stable/log.html
+note,Release notes,https://www.tornadoweb.org/en/stable/options.html
+must,Options must be defined with tornado.,https://www.tornadoweb.org/en/stable/options.html
+must,"However, all modules that define options
+must have been imported before the command line is parsed.",https://www.tornadoweb.org/en/stable/options.html
+note,Note,https://www.tornadoweb.org/en/stable/options.html
+note,Note,https://www.tornadoweb.org/en/stable/options.html
+note,Note,https://www.tornadoweb.org/en/stable/options.html
+should,"parse_command_line or parse_config_file function should called after
+logging configuration and user-defined command line flags using the
+callback option definition, or these configurations will not take effect.",https://www.tornadoweb.org/en/stable/options.html
+must,Command line option names must be unique globally.,https://www.tornadoweb.org/en/stable/options.html
+note,"Note that args[0] is ignored since it is the program name
+in sys.",https://www.tornadoweb.org/en/stable/options.html
+note,Note,https://www.tornadoweb.org/en/stable/options.html
+note,Release notes,https://www.tornadoweb.org/en/stable/testing.html
+must,"The unittest framework is synchronous, so the test must be
+complete by the time the test method returns.",https://www.tornadoweb.org/en/stable/testing.html
+must,"This means that
+asynchronous code cannot be used in quite the same way as usual
+and must be adapted to fit.",https://www.tornadoweb.org/en/stable/testing.html
+must,"The test method itself
+must call self.",https://www.tornadoweb.org/en/stable/testing.html
+should,"wait(), and asynchronous callbacks should call
+self.",https://www.tornadoweb.org/en/stable/testing.html
+should,"If the code being tested requires a
+reused global IOLoop, subclasses should override get_new_ioloop to return it,
+although this is deprecated as of Tornado 6.",https://www.tornadoweb.org/en/stable/testing.html
+should,"The IOLoop’s start and stop methods should not be
+called directly.",https://www.tornadoweb.org/en/stable/testing.html
+must,"Subclasses must override get_app(), which returns the
+tornado.",https://www.tornadoweb.org/en/stable/testing.html
+should,"Should be overridden by subclasses to return a
+tornado.",https://www.tornadoweb.org/en/stable/testing.html
+only,"HTTPError will be
+passed through, and raise_error=False will only
+suppress errors that would be raised due to non-200
+response codes.",https://www.tornadoweb.org/en/stable/testing.html
+should,"@gen_test should be applied to test methods
+on subclasses of AsyncTestCase.",https://www.tornadoweb.org/en/stable/testing.html
+note,Note that @gen_test is incompatible with AsyncTestCase.,https://www.tornadoweb.org/en/stable/testing.html
+only,"If this parameter is provided, only log messages
+at this level will be considered to match.",https://www.tornadoweb.org/en/stable/testing.html
+only,"If this parameter is provided, only log messages
+at this level will be considered to match.",https://www.tornadoweb.org/en/stable/testing.html
+warning,"0, only WARNING and higher logging levels will be
+matched by default.",https://www.tornadoweb.org/en/stable/testing.html
+only,"0, only WARNING and higher logging levels will be
+matched by default.",https://www.tornadoweb.org/en/stable/testing.html
+must,"To match INFO and lower levels, the level
+argument must be used.",https://www.tornadoweb.org/en/stable/testing.html
+should,"This script should define a method
+all() which returns a test suite and then call
+tornado.",https://www.tornadoweb.org/en/stable/testing.html
+only,"0: This function produces no output of its own; only that produced
+by the unittest module (previously it would add a PASS or FAIL
+log message).",https://www.tornadoweb.org/en/stable/testing.html
+note,Release notes,https://www.tornadoweb.org/en/stable/util.html
+must,"Some data may be buffered for later processing; flush must
+be called when there is no more input data to ensure that
+all data was processed.",https://www.tornadoweb.org/en/stable/util.html
+must,"If max_length is given, some input data may be left over
+in unconsumed_tail; you must retrieve this value and pass
+it back to a future call to decompress if it is not empty.",https://www.tornadoweb.org/en/stable/util.html
+must,"Configurable subclasses must define the class methods
+configurable_base and configurable_default, and use the instance
+method initialize instead of __init__.",https://www.tornadoweb.org/en/stable/util.html
+should,Configurable classes should use initialize instead of __init__.,https://www.tornadoweb.org/en/stable/util.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,"12 but may log
+deprecation warnings.",https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,"12 but may log
+deprecation warnings.",https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,"This
+prevents premature garbage collection which could cause warnings like “Task was destroyed but it
+is pending!",https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,"This
+prevents premature garbage collection which could cause warnings like “Task was destroyed but it
+is pending!",https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,Unclosed client connections now reliably log a warning.,https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,"Previously the warning was dependent on
+garbage collection and whether the ping_interval option was used.",https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,Unclosed client connections now reliably log a warning.,https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+warning,"Previously the warning was dependent on
+garbage collection and whether the ping_interval option was used.",https://www.tornadoweb.org/en/stable/releases/v6.4.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.3.3.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.3.3.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.3.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.3.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.3.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.3.1.html
+only,"0 only lowercase
+arguments will be accepted.",https://www.tornadoweb.org/en/stable/releases/v6.3.1.html
+only,"0 only lowercase
+arguments will be accepted.",https://www.tornadoweb.org/en/stable/releases/v6.3.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+note,"Note that this feature
+currently only works when HTTPS is used.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+only,"Note that this feature
+currently only works when HTTPS is used.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+note,"Note that this feature
+currently only works when HTTPS is used.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+only,"Note that this feature
+currently only works when HTTPS is used.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+warning,"To avoid spurious deprecation warnings, users of Python 3.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+should,"10 should upgrade
+to at least version 3.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+should,"11 should upgrade to at least
+version 3.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+warning,"To avoid spurious deprecation warnings, users of Python 3.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+should,"10 should upgrade
+to at least version 3.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+should,"11 should upgrade to at least
+version 3.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+warning,"ExpectLog will match WARNING
+and above regardless of the current logging configuration, unless the
+level argument is used.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+warning,"ExpectLog will match WARNING
+and above regardless of the current logging configuration, unless the
+level argument is used.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+should,"clear_cookie should be used on individual
+cookies.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+should,"clear_cookie should be used on individual
+cookies.",https://www.tornadoweb.org/en/stable/releases/v6.3.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.2.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.2.0.html
+warning,"get_event_loop may
+now raise DeprecationWarning if no event loop is running.",https://www.tornadoweb.org/en/stable/releases/v6.2.0.html
+warning,"get_event_loop may
+now raise DeprecationWarning if no event loop is running.",https://www.tornadoweb.org/en/stable/releases/v6.2.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.1.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.1.0.html
+only,"AnyThreadEventLoopPolicy now also configures a selector event loop for
+these threads (the proactor event loop only works on the main thread)",https://www.tornadoweb.org/en/stable/releases/v6.1.0.html
+only,"AnyThreadEventLoopPolicy now also configures a selector event loop for
+these threads (the proactor event loop only works on the main thread)",https://www.tornadoweb.org/en/stable/releases/v6.1.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.4.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.0.4.html
+note,"Note that it is
+still necessary to use
+asyncio.",https://www.tornadoweb.org/en/stable/releases/v6.0.4.html
+note,"Note that it is
+still necessary to use
+asyncio.",https://www.tornadoweb.org/en/stable/releases/v6.0.4.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.3.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.0.3.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.0.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.0.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"All removed APIs emitted
+DeprecationWarning when used in Tornado 5.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"1, so running your
+application with the -Wd Python command-line flag or the
+environment variable PYTHONWARNINGS=d should tell you whether
+your application is ready to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+should,"1, so running your
+application with the -Wd Python command-line flag or the
+environment variable PYTHONWARNINGS=d should tell you whether
+your application is ready to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"All removed APIs emitted
+DeprecationWarning when used in Tornado 5.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"1, so running your
+application with the -Wd Python command-line flag or the
+environment variable PYTHONWARNINGS=d should tell you whether
+your application is ready to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+should,"1, so running your
+application with the -Wd Python command-line flag or the
+environment variable PYTHONWARNINGS=d should tell you whether
+your application is ready to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+note,"get is now a coroutine and must be called
+accordingly in any subclasses that override this method (but note
+that overriding get is not recommended; either prepare or
+open should be used instead).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+must,"get is now a coroutine and must be called
+accordingly in any subclasses that override this method (but note
+that overriding get is not recommended; either prepare or
+open should be used instead).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+should,"get is now a coroutine and must be called
+accordingly in any subclasses that override this method (but note
+that overriding get is not recommended; either prepare or
+open should be used instead).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+note,"get is now a coroutine and must be called
+accordingly in any subclasses that override this method (but note
+that overriding get is not recommended; either prepare or
+open should be used instead).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+must,"get is now a coroutine and must be called
+accordingly in any subclasses that override this method (but note
+that overriding get is not recommended; either prepare or
+open should be used instead).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+should,"get is now a coroutine and must be called
+accordingly in any subclasses that override this method (but note
+that overriding get is not recommended; either prepare or
+open should be used instead).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+only,"Now only
+suppresses the errors raised due to completed responses with non-200
+status codes (previously it suppressed all errors).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+only,"Now only
+suppresses the errors raised due to completed responses with non-200
+status codes (previously it suppressed all errors).",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"Unrecognized Content-Encoding values now log warnings only for
+content types that we would otherwise attempt to parse.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+only,"Unrecognized Content-Encoding values now log warnings only for
+content types that we would otherwise attempt to parse.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"Unrecognized Content-Encoding values now log warnings only for
+content types that we would otherwise attempt to parse.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+only,"Unrecognized Content-Encoding values now log warnings only for
+content types that we would otherwise attempt to parse.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"AsyncTestCase now cancels all pending coroutines in tearDown,
+in an effort to reduce warnings from the python runtime about
+coroutines that were not awaited.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+note,"Note that this may cause
+asyncio.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+warning,"AsyncTestCase now cancels all pending coroutines in tearDown,
+in an effort to reduce warnings from the python runtime about
+coroutines that were not awaited.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+note,"Note that this may cause
+asyncio.",https://www.tornadoweb.org/en/stable/releases/v6.0.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.1.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v5.1.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+should,"All functions that had a callback argument
+removed now return a Future which should be used instead.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+should,"All functions that had a callback argument
+removed now return a Future which should be used instead.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"Where possible, deprecation warnings are emitted when any of these
+deprecated interfaces is used.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"However, Python does not display
+deprecation warnings by default.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"0, run Python with the -Wd argument or set the
+environment variable PYTHONWARNINGS to d.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"If your
+application runs on Python 3 without deprecation warnings, it should
+be able to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+should,"If your
+application runs on Python 3 without deprecation warnings, it should
+be able to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"Where possible, deprecation warnings are emitted when any of these
+deprecated interfaces is used.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"However, Python does not display
+deprecation warnings by default.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"0, run Python with the -Wd argument or set the
+environment variable PYTHONWARNINGS to d.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+warning,"If your
+application runs on Python 3 without deprecation warnings, it should
+be able to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+should,"If your
+application runs on Python 3 without deprecation warnings, it should
+be able to move to Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+only,"0 it will only suppress the errors
+raised due to completed responses with non-200 status codes.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+only,"0 it will only suppress the errors
+raised due to completed responses with non-200 status codes.",https://www.tornadoweb.org/en/stable/releases/v5.1.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.0.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v5.0.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.0.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v5.0.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+note,Backwards-compatibility notes¶,https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+only,"This results in a number of minor
+behavioral changes:
+
+
+Future objects can only be created while there is a current
+IOLoop
+The timing of callbacks scheduled with
+Future.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+only,"Future objects can only be created while there is a current
+IOLoop",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+only,"Future objects can only be created while there is a current
+IOLoop",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+should,"instance should use their own global variable
+instead.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+should,"instance should use their own global variable
+instead.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+note,Other notes¶,https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+note,"See “Backwards-compatibility notes” for
+more.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+note,"See “Backwards-compatibility notes” for
+more.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+only,"If more than one X-Scheme or X-Forwarded-Proto header is
+present, only the last is used.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+only,"If more than one X-Scheme or X-Forwarded-Proto header is
+present, only the last is used.",https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+not support,Future does not support await).,https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+not support,Future does not support await).,https://www.tornadoweb.org/en/stable/releases/v5.0.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.5.3.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.5.3.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.5.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.5.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.5.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.5.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.5.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.5.0.html
+warning,Backwards-compatibility warning¶,https://www.tornadoweb.org/en/stable/releases/v4.5.0.html
+should,"The session_expires field is currently a string; it should be accessed
+as int(user['session_expires']) because it will change from a string to
+an int in Tornado 5.",https://www.tornadoweb.org/en/stable/releases/v4.5.0.html
+should,"The session_expires field is currently a string; it should be accessed
+as int(user['session_expires']) because it will change from a string to
+an int in Tornado 5.",https://www.tornadoweb.org/en/stable/releases/v4.5.0.html
+warning,Subprocess no longer causes “subprocess still running” warnings on Python 3.,https://www.tornadoweb.org/en/stable/releases/v4.5.0.html
+warning,Subprocess no longer causes “subprocess still running” warnings on Python 3.,https://www.tornadoweb.org/en/stable/releases/v4.5.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.4.3.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.4.3.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.4.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.4.2.html
+note,Backwards-compatibility notes¶,https://www.tornadoweb.org/en/stable/releases/v4.4.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.4.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.4.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.4.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.4.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+not support,"coroutine and
+yield, but do not support some features including Callback/Wait or
+the ability to yield a Twisted Deferred.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+not support,"coroutine and
+yield, but do not support some features including Callback/Wait or
+the ability to yield a Twisted Deferred.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+note,"Note that PyPy3 will continue to be supported even though it implements
+a mix of Python 3.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+note,"Note that PyPy3 will continue to be supported even though it implements
+a mix of Python 3.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+must,"5, the backports_abc package must
+be installed for this functionality.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+must,"5, the backports_abc package must
+be installed for this functionality.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+only,"When following redirects, streaming_callback and
+header_callback will no longer be run on the redirect responses
+(only the final non-redirect).",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+only,"When following redirects, streaming_callback and
+header_callback will no longer be run on the redirect responses
+(only the final non-redirect).",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+only,"New Application setting xsrf_cookie_kwargs can be used to set
+additional attributes such as secure or httponly on the
+XSRF cookie.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+only,"New Application setting xsrf_cookie_kwargs can be used to set
+additional attributes such as secure or httponly on the
+XSRF cookie.",https://www.tornadoweb.org/en/stable/releases/v4.3.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.2.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.2.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+note,Backwards-compatibility notes¶,https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+must,"Both have a new keyword argument quiet_exceptions to suppress
+logging of certain exception types; to use this argument you must
+call Multi or multi_future directly instead of simply yielding
+a list.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+must,"Both have a new keyword argument quiet_exceptions to suppress
+logging of certain exception types; to use this argument you must
+call Multi or multi_future directly instead of simply yielding
+a list.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+should,"Third-party implementations of IOLoop should accept **kwargs
+in their IOLoop.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+should,"Third-party implementations of IOLoop should accept **kwargs
+in their IOLoop.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+must,"The
+current signing key then must be specified via key_version setting.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+must,"The
+current signing key then must be specified via key_version setting.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+only,"Passing secure=False or httponly=False to
+RequestHandler.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+only,"set_cookie now works as expected (previously only the
+presence of the argument was considered and its value was ignored).",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+only,"Passing secure=False or httponly=False to
+RequestHandler.",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+only,"set_cookie now works as expected (previously only the
+presence of the argument was considered and its value was ignored).",https://www.tornadoweb.org/en/stable/releases/v4.2.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.1.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.1.0.html
+note,Backwards-compatibility notes¶,https://www.tornadoweb.org/en/stable/releases/v4.1.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.0.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.0.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.0.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.0.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+note,Backwards-compatibility notes¶,https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+note,"If you are upgrading from an earlier
+version, see those versions’ release notes.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+note,"If you are upgrading from an earlier
+version, see those versions’ release notes.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,"Applications should use
+non-websocket workarounds for these browsers.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,"Applications should use
+non-websocket workarounds for these browsers.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,"Authors of alternative IOLoop implementations should see the changes
+to IOLoop.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,"Authors of alternative IOLoop implementations should see the changes
+to IOLoop.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+note,Other notes¶,https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,All old links should be redirected to the new location.,https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,All old links should be redirected to the new location.,https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,"This change should be transparent to application code, but
+allows Task to take advantage of the newly-optimized Future
+handling.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+should,"This change should be transparent to application code, but
+allows Task to take advantage of the newly-optimized Future
+handling.",https://www.tornadoweb.org/en/stable/releases/v4.0.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.2.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.2.2.html
+note,Backwards-compatibility notes¶,https://www.tornadoweb.org/en/stable/releases/v3.2.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.2.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.2.1.html
+note,Backwards-compatibility notes¶,https://www.tornadoweb.org/en/stable/releases/v3.2.1.html
+only,"set_secure_cookie to issue cookies that are
+backwards-compatible (but have a known weakness, so this option
+should only be used for a transitional period).",https://www.tornadoweb.org/en/stable/releases/v3.2.1.html
+should,"set_secure_cookie to issue cookies that are
+backwards-compatible (but have a known weakness, so this option
+should only be used for a transitional period).",https://www.tornadoweb.org/en/stable/releases/v3.2.1.html
+only,"set_secure_cookie to issue cookies that are
+backwards-compatible (but have a known weakness, so this option
+should only be used for a transitional period).",https://www.tornadoweb.org/en/stable/releases/v3.2.1.html
+should,"set_secure_cookie to issue cookies that are
+backwards-compatible (but have a known weakness, so this option
+should only be used for a transitional period).",https://www.tornadoweb.org/en/stable/releases/v3.2.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+note,"Note that there are some unofficial
+Python 3 ports of pycurl (Ubuntu has included one for its past
+several releases); these are not supported for use with Tornado.",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+not support,"Note that there are some unofficial
+Python 3 ports of pycurl (Ubuntu has included one for its past
+several releases); these are not supported for use with Tornado.",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+note,"Note that there are some unofficial
+Python 3 ports of pycurl (Ubuntu has included one for its past
+several releases); these are not supported for use with Tornado.",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+not support,"Note that there are some unofficial
+Python 3 ports of pycurl (Ubuntu has included one for its past
+several releases); these are not supported for use with Tornado.",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+warning,"Malformed x-www-form-urlencoded request bodies will now log a warning
+and continue instead of causing the request to fail (similar to the existing
+handling of malformed multipart/form-data bodies.",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+warning,"Malformed x-www-form-urlencoded request bodies will now log a warning
+and continue instead of causing the request to fail (similar to the existing
+handling of malformed multipart/form-data bodies.",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+only,"application
+loggers (previously it only looked at the root logger).",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+only,"application
+loggers (previously it only looked at the root logger).",https://www.tornadoweb.org/en/stable/releases/v3.2.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.1.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.1.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+must,"The Future these methods return must be
+yielded if they are called from a function decorated with gen.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+must,"The Future these methods return must be
+yielded if they are called from a function decorated with gen.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+only,"Digest authentication
+is only supported with tornado.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+only,"Digest authentication
+is only supported with tornado.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+only,"options and other OptionParser instances support some
+new dict-like methods: items(), iteration over keys,
+and (read-only) access to options with square braket syntax.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+only,"options and other OptionParser instances support some
+new dict-like methods: items(), iteration over keys,
+and (read-only) access to options with square braket syntax.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+only,"send_error will now only be called once per request,
+even if multiple exceptions are caught by the stack context.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+only,"send_error will now only be called once per request,
+even if multiple exceptions are caught by the stack context.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+should,"asynchronous decorator is not used with
+prepare; one of the Future-related decorators should be used instead.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+should,"asynchronous decorator is not used with
+prepare; one of the Future-related decorators should be used instead.",https://www.tornadoweb.org/en/stable/releases/v3.1.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.0.2.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.0.2.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.0.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.0.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+note,"Note that in some
+cases this will require that you add an explicit logging configuration
+in order to see any output (perhaps just calling logging.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+note,"Note that in some
+cases this will require that you add an explicit logging configuration
+in order to see any output (perhaps just calling logging.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+warning,"Starting autoreload on
+more than one IOLoop in the same process now logs a warning.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+warning,"Starting autoreload on
+more than one IOLoop in the same process now logs a warning.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+warning,"The
+Future interface is preferred as it offers better error handling
+(the previous interface just logged a warning and returned None).",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+warning,"The
+Future interface is preferred as it offers better error handling
+(the previous interface just logged a warning and returned None).",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"The latest
+official release of pycurl only supports Python 2, but Ubuntu has a
+port available in 12.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"This port
+currently has bugs that prevent it from handling arbitrary binary data
+but it should work for textual (utf8) resources.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"The latest
+official release of pycurl only supports Python 2, but Ubuntu has a
+port available in 12.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"This port
+currently has bugs that prevent it from handling arbitrary binary data
+but it should work for textual (utf8) resources.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"Python 2 behavior
+is unchanged but should be faster.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"Python 2 behavior
+is unchanged but should be faster.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"This argument should be a
+dictionary, and its values will be used in place of corresponding
+attributes of HTTPRequest that are not set.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"This argument should be a
+dictionary, and its values will be used in place of corresponding
+attributes of HTTPRequest that are not set.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"The max_clients argument to AsyncHTTPClient is now a keyword-only
+argument.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"The max_clients argument to AsyncHTTPClient is now a keyword-only
+argument.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"HTTPConnection now has a set_close_callback
+method that should be used instead of reaching into its stream
+attribute.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"HTTPConnection now has a set_close_callback
+method that should be used instead of reaching into its stream
+attribute.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+must,add_timeout must be either pass a datetime.,https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"time will
+continue to work only as long as the IOLoop’s time_func argument
+is not used).",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+must,add_timeout must be either pass a datetime.,https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"time will
+continue to work only as long as the IOLoop’s time_func argument
+is not used).",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"1) should make this
+unnecessary.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+should,"1) should make this
+unnecessary.",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"The {% apply %} directive now works properly with functions that return
+both unicode strings and byte strings (previously only byte strings were
+supported).",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,"The {% apply %} directive now works properly with functions that return
+both unicode strings and byte strings (previously only byte strings were
+supported).",https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,b (which was only intended for internal use) is gone.,https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+only,b (which was only intended for internal use) is gone.,https://www.tornadoweb.org/en/stable/releases/v3.0.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.4.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.4.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.4.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.4.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.3.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.3.0.html
+note,"Note that this means any existing methods named patch in
+RequestHandler subclasses will need to be renamed.",https://www.tornadoweb.org/en/stable/releases/v2.3.0.html
+note,"Note that this means any existing methods named patch in
+RequestHandler subclasses will need to be renamed.",https://www.tornadoweb.org/en/stable/releases/v2.3.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.2.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.2.1.html
+note,"Note that redirects, the most likely source of such bugs, are protected
+by a separate check in RequestHandler.",https://www.tornadoweb.org/en/stable/releases/v2.2.1.html
+note,"Note that redirects, the most likely source of such bugs, are protected
+by a separate check in RequestHandler.",https://www.tornadoweb.org/en/stable/releases/v2.2.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.2.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.2.0.html
+only,simple_httpclient only supports SSLv3.,https://www.tornadoweb.org/en/stable/releases/v2.2.0.html
+only,simple_httpclient only supports SSLv3.,https://www.tornadoweb.org/en/stable/releases/v2.2.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.1.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.1.1.html
+note,Backwards-compatibility note¶,https://www.tornadoweb.org/en/stable/releases/v2.1.1.html
+must,"ERROR must
+always be used in combination with READ or WRITE.",https://www.tornadoweb.org/en/stable/releases/v2.1.1.html
+must,"ERROR must
+always be used in combination with READ or WRITE.",https://www.tornadoweb.org/en/stable/releases/v2.1.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+note,"set_cookie now accepts a max_age keyword
+argument to set the max-age cookie attribute (note underscore vs dash)",https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+note,"set_cookie now accepts a max_age keyword
+argument to set the max-age cookie attribute (note underscore vs dash)",https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+should,"HTTPClient now have
+close() methods that should be used in applications that create
+and destroy many of these objects.",https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+should,"HTTPClient now have
+close() methods that should be used in applications that create
+and destroy many of these objects.",https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+should,"IOStream should now always call the close callback
+instead of the connect callback on a connection error.",https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+should,"IOStream should now always call the close callback
+instead of the connect callback on a connection error.",https://www.tornadoweb.org/en/stable/releases/v2.1.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v2.0.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v2.0.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v1.2.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v1.2.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v1.2.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v1.2.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v1.1.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v1.1.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v1.1.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v1.1.0.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v1.0.1.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v1.0.1.html
+note,"Release notes
+What’s new in Tornado 6.",https://www.tornadoweb.org/en/stable/releases/v1.0.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/releases/v1.0.0.html
+note,Release notes,https://www.tornadoweb.org/en/stable/genindex.html
+should,should_return_304() (tornado.,https://www.tornadoweb.org/en/stable/genindex.html
+note,Release notes,https://www.tornadoweb.org/en/stable/py-modindex.html
+note,Release notes,https://www.tornadoweb.org/en/stable/search.html
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/wsgi.html#WSGIContainer
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/web.html#RequestHandler
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/routing.html#URLSpec
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/ioloop.html#IOLoop
+note,Release notes,https://www.tornadoweb.org/en/stable/http.html
+note,Release notes,https://www.tornadoweb.org/en/stable/httpserver.html#tornado.httpserver.HTTPServer
+note,"Note that when using this pattern, nothing that touches the event loop
+can be run before fork_processes.",https://www.tornadoweb.org/en/stable/httpserver.html#tornado.httpserver.HTTPServer
+note,"Note that when using this pattern, nothing that touches the event loop
+can be run before fork_processes.",https://www.tornadoweb.org/en/stable/httpserver.html#tornado.httpserver.HTTPServer
+note,Note that this method is a coroutine and must be called with await.,https://www.tornadoweb.org/en/stable/httpserver.html#tornado.httpserver.HTTPServer
+must,Note that this method is a coroutine and must be called with await.,https://www.tornadoweb.org/en/stable/httpserver.html#tornado.httpserver.HTTPServer
+note,Release notes,https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,"Note that if you are using curl_httpclient, it is highly
+recommended that you use a recent version of libcurl and
+pycurl.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+must,"Applications that are
+running an IOLoop must use AsyncHTTPClient instead.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"Unless
+force_instance=True is used, no arguments should be passed to
+the AsyncHTTPClient constructor.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"close() is generally only necessary when either the
+IOLoop is also being closed, or the force_instance=True
+argument was used when creating the AsyncHTTPClient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+must,"Instead, you must check the response’s error attribute or
+call its rethrow method.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"The raise_error=False argument only affects the
+HTTPError raised when a non-200 response code is used,
+instead of suppressing all errors.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"It is called with one argument, a write function, and should
+return a Future.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"It should call the write function with new
+data as it becomes available.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"Only one of body and body_producer may
+be specified.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+not support,"body_producer is not supported on
+curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+not support,"When using body_producer it is recommended
+to pass a Content-Length in the headers as otherwise chunked
+encoding will be used, and many servers do not support chunked
+encoding on requests.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"It is called with one argument, a write function, and should
+return a Future.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"It should call the write function with new
+data as it becomes available.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"Only one of body and body_producer may
+be specified.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+not support,"body_producer is not supported on
+curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+not support,"When using body_producer it is recommended
+to pass a Content-Length in the headers as otherwise chunked
+encoding will be used, and many servers do not support chunked
+encoding on requests.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"follow_redirects (bool) – Should redirects be followed automatically
+or return the 3xx response?",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"follow_redirects (bool) – Should redirects be followed automatically
+or return the 3xx response?",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,See curl_httpclient note below.,https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,See curl_httpclient note below.,https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"0 200 OK\r\n, and a final line
+containing only \r\n.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"This is most useful in conjunction with
+streaming_callback, because it’s the only way to get access to
+header data while the request is in progress.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"0 200 OK\r\n, and a final line
+containing only \r\n.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"This is most useful in conjunction with
+streaming_callback, because it’s the only way to get access to
+header data while the request is in progress.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+must,"To use proxies,
+proxy_host and proxy_port must be set; proxy_username,
+proxy_pass and proxy_auth_mode are optional.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"Proxies are
+currently only supported with curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+must,"To use proxies,
+proxy_host and proxy_port must be set; proxy_username,
+proxy_pass and proxy_auth_mode are optional.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"Proxies are
+currently only supported with curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,"See note below when used with
+curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,"See note below when used with
+curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,"See
+note below when used with curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,"See
+note below when used with curl_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,See note below when used with curl_httpclient.,https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,See note below when used with curl_httpclient.,https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"Only supported with
+simple_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"Only supported with
+simple_httpclient.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,Note,https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+should,"If you use these
+options, you should pass them on every request (you don’t
+have to always use the same values, but it’s not possible
+to mix requests that specify these options with ones that
+use the defaults).",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"If redirects were followed, only includes
+the final request.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"If redirects were followed, only includes
+the final request.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,"Note that if follow_redirects is False, redirects become HTTPErrors,
+and you can look at error.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+not support,"In particular, proxies are not supported, connections
+are not reused, and callers cannot select the network interface to be
+used.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,"Note that time spent waiting in this queue still counts
+against the request_timeout.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+only,"Without a
+streaming_callback, the smaller of these two limits
+applies; with a streaming_callback only max_body_size
+does.",https://www.tornadoweb.org/en/stable/httpclient.html#tornado.httpclient.AsyncHTTPClient
+note,Release notes,https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+note,All attributes are type str unless otherwise noted.,https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+note,"Note that this is different from
+RequestHandler.",https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+only,"Same format as arguments, but contains only arguments extracted
+from the query string.",https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+only,"Same format as arguments, but contains only arguments extracted
+from the request body.",https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+must,"verify_mode field must be set, e.",https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+should,This method should return a HTTPMessageDelegate.,https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+only,"Some HTTPConnection methods can only be called during
+headers_received.",https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+should,"The content_type parameter should be
+a string and body should be a byte string.",https://www.tornadoweb.org/en/stable/httputil.html#tornado.httputil.HTTPServerRequest
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/template.html#Template
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/escape.html#xhtml_escape
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/locale.html#get
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/websocket.html#WebSocketHandler
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/iostream.html#BaseIOStream
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/netutil.html#bind_sockets
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/tcpclient.html#TCPClient
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/tcpserver.html#TCPServer
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/gen.html#coroutine
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/locks.html#Condition
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/queues.html#Queue
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/subprocess.html#CalledProcessError
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/process.html#cpu_count
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/auth.html#OpenIdMixin
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/platform/asyncio.html#AsyncIOMainLoop
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/autoreload.html#start
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/concurrent.html#run_on_executor
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/log.html#LogFormatter
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/options.html#define
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/testing.html#AsyncTestCase
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/asyncio/exceptions.html#TimeoutError
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/util.html#ObjectDict
+note,Release notes,https://www.tornadoweb.org/en/stable/http1connection.html#module-tornado.http1connection
+note,"Note that this callback is slightly different from
+HTTPMessageDelegate.",https://www.tornadoweb.org/en/stable/http1connection.html#module-tornado.http1connection
+only,"May only be called during
+HTTPMessageDelegate.",https://www.tornadoweb.org/en/stable/http1connection.html#module-tornado.http1connection
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/index.html
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/httpserver.html#HTTPServer
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/httpclient.html#HTTPClient
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/simple_httpclient.html#SimpleAsyncHTTPClient
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/httputil.html#HTTPHeaders
+note,Release notes,https://www.tornadoweb.org/en/stable/_modules/tornado/http1connection.html#HTTP1ConnectionParameters
