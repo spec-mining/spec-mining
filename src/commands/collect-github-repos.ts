@@ -57,9 +57,9 @@ export const sleepTillRateLimitResets = async (remainingRateLimit?: string, rate
     }
 }
 
-const searchForFiles = async (fileNames: Array<string>, dependencyName: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
+const searchForFiles = async (fileNames: Array<string>, searchPhrase: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
     const filePathList = fileNames.map(fileName => `filename:${fileName}`).join("+OR+");
-    const searchQuery = `${dependencyName}+in:file+${filePathList}`;
+    const searchQuery = `${searchPhrase}+in:file+${filePathList}`;
     const searchResults = await octokit.request('GET /search/code', {
         q: searchQuery,
         per_page: 100, // Adjust per_page as needed, up to a maximum of 100
@@ -190,21 +190,21 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
 /**
  * Collect information about python libraries that depend on a given library from GitHub
  */
-export const collectGithubLibs = async (outDir: string, dependencyNames: Array<string>, startPage: number, endPage: number) => {
+export const collectGithubRepos = async (outDir: string, searchPhrases: Array<string>, startPage: number, endPage: number) => {
     if (endPage > 10) {
         console.warn('End page is greater than 10, which is the maximum number of pages allowed by GitHub code search API. Setting end page to 10');
         endPage = 10;
     }
 
-    const depNames = dependencyNames.join('_');
-    const filePath = path.resolve(outDir, `${depNames}_dependant_repos.csv`)
+    const searchPhrasesStr = searchPhrases.join('_').replace('', '_');
+    const filePath = path.resolve(outDir, `${searchPhrasesStr}_dependant_repos.csv`)
 
     const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-    for (const dependencyName of dependencyNames) {
+    for (const searchPhrase of searchPhrases) {
         for (const file of MANIFEST_FILES) { // this is done to overcome github's limit of 1000 results per search
             for (const page of pages) {
-                console.log('File: ', file, 'Page:', page, ' - Fetching details for', dependencyName, 'from GitHub');
-                const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForFiles([file], dependencyName, page)
+                console.log('File: ', file, 'Page:', page, ' - Fetching details for', searchPhrase, 'from GitHub');
+                const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForFiles([file], searchPhrase, page)
 
                 const chunks = [baseRepoInfo.slice(0, baseRepoInfo.length/2), baseRepoInfo.slice(baseRepoInfo.length/2, baseRepoInfo.length)]
         
@@ -224,7 +224,7 @@ export const collectGithubLibs = async (outDir: string, dependencyNames: Array<s
                             pullRequests: repoDetails.pullRequests.totalCount,
                             description: repoDetails.description,
                             manifestFileName: chunk[index].fileName,
-                            dependencyName,
+                            dependencyName: searchPhrase,
                             created_at: repoDetails.createdAt
                         }
                     });

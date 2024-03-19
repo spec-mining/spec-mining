@@ -1,0 +1,51 @@
+name: Find Repos
+
+on:
+  workflow_dispatch:
+    inputs:
+      search_phrase:
+        description: phrase to look for in a manifest file (can include GitHub operators like OR, AND)
+        type: string
+        required: true
+      start_page:
+        description: the page to start collecting data from
+        type: number
+      end_page:
+        description: the page to end collecting data at
+        type: number
+
+jobs:
+  crawl:
+    permissions: 
+      pull-requests: write
+      contents: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Crawl Documentation
+        run: yarn start gh collect -q ${{inputs.search_phrase}} -s ${{inputs.start_page}} -e ${{inputs.end_page}}
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          commit-message: "data: add found repos"
+          branch: gh-repo-data-${{github.run_id}}
+          title: "data: add found GitHub repos"
+          body: "This PR adds more GitHub repo data."

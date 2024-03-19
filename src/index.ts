@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { collectData, removeRepetition, analyzeData, collectGithubLibs, collectGithubIssues, scanDocs } from './commands'
+import { collectData, removeRepetition, analyzeData, collectGithubRepos, collectGithubIssues, scanDocs } from './commands'
 
 const DEFAULT_COLLECT_IN_FILE = './out/collected_issues.csv';
 const DEFAULT_COLLECT_OUT_FILE = './out/collected_issues.csv';
@@ -13,9 +13,6 @@ const DEFAULT_GH_ISSUES_OUT_DIR = './out/github/github_issues/';
 
 const DEFAULT_DOCS_OUT_DIR = './out/docs/';
 
-const collectGithubData = async (libName: Array<string>, outDir?: string, startPage?: number, endPage?: number) => {
-  collectGithubLibs(outDir || DEFAULT_GH_LIBS_OUT_FILE, libName, startPage || DEFAULT_START_PAGE, endPage || DEFAULT_END_PAGE);
-}
 
 const collectStackOverflowData = async (outFile?: string, startPage?: number, endPage?: number) => {
   if (!outFile) {
@@ -83,11 +80,6 @@ const argv = await (yargs(hideBin(process.argv))
         type: 'string',
         description: 'Output dir',
       })
-      .option('inFile', {
-        alias: 'i',
-        type: 'string',
-        description: 'Input file',
-      })
       .option('startPage', {
         alias: 's',
         type: 'number',
@@ -98,12 +90,12 @@ const argv = await (yargs(hideBin(process.argv))
         type: 'number',
         description: 'End page'
       })
-      .option('lib-name', {
-        alias: 'l',
+      .option('search phrase', {
+        alias: 'q',
         type: 'array',
-        description: 'Library name',
-      }).demandOption('lib-name')
-    }, (argv) => collectGithubData(argv.libName as Array<string>, argv.outDir, argv.startPage, argv.endPage))
+        description: 'in manifest file search query',
+      }).demandOption('search phrase')
+    }, (argv) => collectGithubRepos(argv.outDir || DEFAULT_GH_LIBS_OUT_FILE, argv.libName as Array<string>, argv.startPage || DEFAULT_START_PAGE, argv.endPage || DEFAULT_END_PAGE))
     .command('collect_issues', 'Collect github issues', (_yargs) => {
       return _yargs
       .option('outDir', {

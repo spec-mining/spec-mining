@@ -1,6 +1,6 @@
 export * from './analyze-data'
 export * from './collect-data'
 export * from './remove-repetition'
-export * from './collect-github-libs'
+export * from './collect-github-repos'
 export * from './collect-github-issues'
 export * from './scan-docs'

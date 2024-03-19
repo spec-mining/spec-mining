@@ -2,7 +2,7 @@ import fs from 'fs';
 import csv from 'csv-parser';
 import { createObjectCsvWriter } from 'csv-writer';
 import { Octokit } from '@octokit/core';
-import { WithRateLimitMetaData, sleepTillRateLimitResets } from './collect-github-libs';
+import { WithRateLimitMetaData, sleepTillRateLimitResets } from './collect-github-repos';
 import path from 'path';
 import { sanitizeHTMLContent } from './collect-data';
 import { adjectives, nouns } from '../constants';
