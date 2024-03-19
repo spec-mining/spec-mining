@@ -198,7 +198,7 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
         endPage = 10;
     }
 
-    const timestamp = Date.now()
+    const timestamp = Date.now().toString()
     const libNamesStr = libNames.join('_');
     const filePath = path.resolve(outDir, `${libNamesStr}_dependant_repos_${{timestamp}}.csv`)
 
