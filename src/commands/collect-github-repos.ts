@@ -57,9 +57,9 @@ export const sleepTillRateLimitResets = async (remainingRateLimit?: string, rate
     }
 }
 
-const searchForFiles = async (fileNames: Array<string>, searchPhrase: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
+const searchForFiles = async (fileNames: Array<string>, libName: string, testingFramework: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
     const filePathList = fileNames.map(fileName => `filename:${fileName}`).join("+OR+");
-    const searchQuery = `${searchPhrase}+in:file+${filePathList}`;
+    const searchQuery = `${libName}+${testingFramework}+in:file+${filePathList}`;
     const searchResults = await octokit.request('GET /search/code', {
         q: searchQuery,
         per_page: 100, // Adjust per_page as needed, up to a maximum of 100
@@ -190,70 +190,72 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
 /**
  * Collect information about python libraries that depend on a given library from GitHub
  */
-export const collectGithubRepos = async (outDir: string, searchPhrases: Array<string>, startPage: number, endPage: number) => {
+export const collectGithubRepos = async (outDir: string, libNames: Array<string>, testFrameworks: Array<string>, startPage: number, endPage: number) => {
     if (endPage > 10) {
         console.warn('End page is greater than 10, which is the maximum number of pages allowed by GitHub code search API. Setting end page to 10');
         endPage = 10;
     }
 
-    const searchPhrasesStr = searchPhrases.join('_').replace('', '_');
-    const filePath = path.resolve(outDir, `${searchPhrasesStr}_dependant_repos.csv`)
+    const libNamesStr = libNames.join('_').replace('', '_');
+    const filePath = path.resolve(outDir, `${libNamesStr}_dependant_repos.csv`)
 
     const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
-    for (const searchPhrase of searchPhrases) {
+    for (const libName of libNames) {
         for (const file of MANIFEST_FILES) { // this is done to overcome github's limit of 1000 results per search
-            for (const page of pages) {
-                console.log('File: ', file, 'Page:', page, ' - Fetching details for', searchPhrase, 'from GitHub');
-                const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForFiles([file], searchPhrase, page)
-
-                const chunks = [baseRepoInfo.slice(0, baseRepoInfo.length/2), baseRepoInfo.slice(baseRepoInfo.length/2, baseRepoInfo.length)]
-        
-                await Promise.all(chunks.map(async (chunk, i) => {
-                    if (chunk.length < 1) return;
-
-                    const response = await fetchRepositoriesDetails(chunk);
-                
-                    const repoDetails: Array<DependantRepoDetails> = chunk.map((repo, index) => {
-                        const repoDetails = response[`repo${index}`].repository;
-                        return {
-                            ...repo,
-                            repoLink: repoDetails.url,
-                            stars: repoDetails.stargazers.totalCount,
-                            forks: repoDetails.forks.totalCount,
-                            issues: repoDetails.issues.totalCount,
-                            pullRequests: repoDetails.pullRequests.totalCount,
-                            description: repoDetails.description,
-                            manifestFileName: chunk[index].fileName,
-                            dependencyName: searchPhrase,
-                            created_at: repoDetails.createdAt
-                        }
-                    });
-                
-                    console.log('File: ', file, 'Page:', page, ' - ',i + 1, '. Fetched details for', repoDetails.length, 'repos.');
+            for (const testFramework of testFrameworks) {
+                for (const page of pages) {
+                    console.log('File: ', file, 'Page:', page, ' - Fetching details for', libName, 'from GitHub', 'with test framework:', testFramework);
+                    const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForFiles([file], libName, testFramework, page)
     
-                    await saveData(filePath, repoDetails);
-                }))
+                    const chunks = [baseRepoInfo.slice(0, baseRepoInfo.length/2), baseRepoInfo.slice(baseRepoInfo.length/2, baseRepoInfo.length)]
+            
+                    await Promise.all(chunks.map(async (chunk, i) => {
+                        if (chunk.length < 1) return;
     
-                removeRepetition(filePath, 'Repository Link', ['Dependency Name'])
-                sortList(filePath, {
-                    sortField: 'Stars',
-                    customFunction: (a, b) => {
-                        // make an array of strings from dep1;dep2;dep3
-                        const aStars = Number.parseInt(a['Stars']);
-                        const bStars = Number.parseInt(b['Stars']);
-                        const aDependencyCount = (a['Dependency Name']?.split('|')?.length || 1) * 10;
-                        const bDependencyCount = (b['Dependency Name']?.split('|')?.length || 1) * 10;
-                        let result = bDependencyCount * bStars - aDependencyCount * aStars;
-
-                        if (result === 0) {
-                            result = bStars - aStars;
-                        }
-                        
-                        return result;
-                    }
-                })
+                        const response = await fetchRepositoriesDetails(chunk);
+                    
+                        const repoDetails: Array<DependantRepoDetails> = chunk.map((repo, index) => {
+                            const repoDetails = response[`repo${index}`].repository;
+                            return {
+                                ...repo,
+                                repoLink: repoDetails.url,
+                                stars: repoDetails.stargazers.totalCount,
+                                forks: repoDetails.forks.totalCount,
+                                issues: repoDetails.issues.totalCount,
+                                pullRequests: repoDetails.pullRequests.totalCount,
+                                description: repoDetails.description,
+                                manifestFileName: chunk[index].fileName,
+                                dependencyName: libName,
+                                created_at: repoDetails.createdAt
+                            }
+                        });
+                    
+                        console.log('File: ', file, 'Page:', page, ' - ',i + 1, '. Fetched details for', repoDetails.length, 'repos.');
         
-                await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
+                        await saveData(filePath, repoDetails);
+                    }))
+        
+                    removeRepetition(filePath, 'Repository Link', ['Dependency Name'])
+                    sortList(filePath, {
+                        sortField: 'Stars',
+                        customFunction: (a, b) => {
+                            // make an array of strings from dep1;dep2;dep3
+                            const aStars = Number.parseInt(a['Stars']);
+                            const bStars = Number.parseInt(b['Stars']);
+                            const aDependencyCount = (a['Dependency Name']?.split('|')?.length || 1) * 10;
+                            const bDependencyCount = (b['Dependency Name']?.split('|')?.length || 1) * 10;
+                            let result = bDependencyCount * bStars - aDependencyCount * aStars;
+    
+                            if (result === 0) {
+                                result = bStars - aStars;
+                            }
+                            
+                            return result;
+                        }
+                    })
+            
+                    await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
+                }
             }
         }
     }

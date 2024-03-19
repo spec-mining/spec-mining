@@ -90,12 +90,17 @@ const argv = await (yargs(hideBin(process.argv))
         type: 'number',
         description: 'End page'
       })
-      .option('search phrase', {
-        alias: 'q',
+      .option('testingFramework', {
+        alias: 't',
         type: 'array',
-        description: 'in manifest file search query',
-      }).demandOption('search phrase')
-    }, (argv) => collectGithubRepos(argv.outDir || DEFAULT_GH_LIBS_OUT_FILE, argv.libName as Array<string>, argv.startPage || DEFAULT_START_PAGE, argv.endPage || DEFAULT_END_PAGE))
+        description: 'list of testing frameworks to find in manifest files'
+      })
+      .option('libName', {
+        alias: 'l',
+        type: 'array',
+        description: 'list of library names to find dependants for',
+      }).demandOption('libName')
+    }, (argv) => collectGithubRepos(argv.outDir || DEFAULT_GH_LIBS_OUT_FILE, argv.libName as Array<string>,argv.testingFramework as Array<string>, argv.startPage || DEFAULT_START_PAGE, argv.endPage || DEFAULT_END_PAGE))
     .command('collect_issues', 'Collect github issues', (_yargs) => {
       return _yargs
       .option('outDir', {
