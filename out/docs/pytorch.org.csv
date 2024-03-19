@@ -1,0 +1,15 @@
+KEYWORD,MATCHING SENTENCE,PAGE URL
+note,Developer Notes,https://pytorch.org/docs/stable/index.html
+should,"Stable:  These features will be maintained long-term and there should generally
+be no major performance limitations or gaps in documentation.",https://pytorch.org/docs/stable/index.html
+note,Developer Notes,https://pytorch.org/docs/stable/index.html
+note,"Distributed RPC Framework
+Basics
+RPC
+RRef
+RemoteModule
+Distributed Autograd Framework
+Distributed Optimizer
+Design Notes
+Tutorials",https://pytorch.org/docs/stable/index.html
+note,Design Notes,https://pytorch.org/docs/stable/index.html
