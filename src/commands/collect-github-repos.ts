@@ -35,6 +35,7 @@ export interface DependantRepoDetails extends BaseRepository {
     description: string,
     manifestFileName: string,
     dependencyName: string,
+    testingFramework: string,
     created_at: string
 }
 
@@ -166,6 +167,7 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
             { id: 'description', title: 'Description' },
             { id: 'manifestFileName', title: 'Manifest File Name' },
             { id: 'dependencyName', title: 'Dependency Name' },
+            { id: 'testingFramework', title: 'Testing Framework' },
             { id: 'created_at', title: 'Created At' }
         ],
         append: fileExists
@@ -226,6 +228,7 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
                                 description: repoDetails.description,
                                 manifestFileName: chunk[index].fileName,
                                 dependencyName: libName,
+                                testingFramework: testFramework,
                                 created_at: repoDetails.createdAt
                             }
                         });
@@ -235,7 +238,7 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
                         await saveData(filePath, repoDetails);
                     }))
         
-                    removeRepetition(filePath, 'Repository Link', ['Dependency Name'])
+                    removeRepetition(filePath, 'Repository Link', ['Dependency Name', 'Testing Framework'])
                     sortList(filePath, {
                         sortField: 'Stars',
                         customFunction: (a, b) => {
