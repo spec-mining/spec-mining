@@ -37,7 +37,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      - name: Crawl Documentation
+      - name: Find Repos
         run: yarn start gh collect -l ${{inputs.dependencyNames}} -t ${{inputs.testFramework}} -s ${{inputs.start_page}} -e ${{inputs.end_page}}
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
