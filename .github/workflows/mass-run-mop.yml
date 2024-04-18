@@ -1,0 +1,55 @@
+name: Matrix GitHub Repos Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      google_sheet_url:
+        description: 'Google Sheet URL containing GitHub repository links'
+        required: true
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Extract spreadsheet ID from URL
+      id: extract-id
+      run: echo "::set-output name=id::$(echo '${{ github.event.inputs.google_sheet_url }}' | grep -o 'spreadsheets/d/[^/]*' | cut -d'/' -f 3)"
+
+    - name: Fetch Google Sheet data
+      id: fetch-data
+      uses: bradbase/fetch-google-sheets@v1.0.1
+      with:
+        url: ${{ github.event.inputs.google_sheet_url }}
+
+    - name: Set up matrix for job
+      id: set-matrix
+      run: echo "::set-output name=matrix::$(jq -r '.[] | .links' ${{ steps.fetch-data.outputs.result-path }})"
+
+  run-jobs:
+    needs: prepare
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        repo: ${{ fromJson(needs.prepare.outputs.matrix) }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+      with:
+        repository: ${{ matrix.repo }}
+
+    - name: Run installation script
+      run: |
+        chmod +x install.sh
+        ./scripts/install.sh ${{ matrix.repo }}
+
+    - name: Execute mop script
+      run: |
+        ./scripts/run-mop-new.sh ./${{ github.repository }}
