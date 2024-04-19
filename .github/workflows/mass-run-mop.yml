@@ -1,55 +1,115 @@
-name: Matrix GitHub Repos Workflow
+name: Run Scripts on Multiple Repositories
+
+
+permissions:
+  contents: write
+
 
 on:
   workflow_dispatch:
     inputs:
-      google_sheet_url:
-        description: 'Google Sheet URL containing GitHub repository links'
+      google_sheet_id:
+        description: 'ID of the Google Sheet containing repository links'
         required: true
 
 jobs:
-  prepare:
+  fetch_data:
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Fetch Repository Links
+        id: fetch-repos
+        uses: jroehl/gsheet.action@v2.0.0
+        with:
+          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
+          commands: |
+            [
+              { "command": "getData", "args": { "range": "links!A2:A" }}
+            ]
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
 
-    - name: Extract spreadsheet ID from URL
-      id: extract-id
-      run: echo "::set-output name=id::$(echo '${{ github.event.inputs.google_sheet_url }}' | grep -o 'spreadsheets/d/[^/]*' | cut -d'/' -f 3)"
+      - name: Set up matrix for job
+        id: set-matrix
+        run: |
+          # Base64 encode the results to avoid shell parsing issues
+          ENCODED_RESULTS=$(echo '${{ steps.fetch-repos.outputs.results }}' | base64)
+          # Decode and parse using jq
+          JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -c '[.results[].result.rawData[][]]')
+          echo "Extracted JSON String:"
+          echo "$JSON_STRING"
+          echo "::set-output name=matrix::$JSON_STRING"
 
-    - name: Fetch Google Sheet data
-      id: fetch-data
-      uses: bradbase/fetch-google-sheets@v1.0.1
-      with:
-        url: ${{ github.event.inputs.google_sheet_url }}
-
-    - name: Set up matrix for job
-      id: set-matrix
-      run: echo "::set-output name=matrix::$(jq -r '.[] | .links' ${{ steps.fetch-data.outputs.result-path }})"
-
-  run-jobs:
-    needs: prepare
+  run_jobs:
+    needs: fetch_data
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        repo: ${{ fromJson(needs.prepare.outputs.matrix) }}
-
+        repo: ${{ fromJson(needs.fetch_data.outputs.matrix) }}
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+    - uses: actions/checkout@v4
       with:
-        repository: ${{ matrix.repo }}
+        fetch-depth: 0
 
-    - name: Run installation script
+    - name: Prepare Working Directory
       run: |
-        chmod +x install.sh
-        ./scripts/install.sh ${{ matrix.repo }}
+          mkdir ./projects
+          cd ./projects
 
-    - name: Execute mop script
+
+    - name: clone SoftEngResearch/mop-with-dynapt
       run: |
-        ./scripts/run-mop-new.sh ./${{ github.repository }}
+        cd ./projects
+        git clone https://${{ secrets.GH_ACCESS_TOKEN }}@github.com/SoftEngResearch/mop-with-dynapt.git
+        cd mop-with-dynapt
+        git checkout add_statistics_new
+
+    - name: Create projects directory and copy scripts from ../scripts there
+      run: |
+        cd ./projects
+        cp ../scripts/* .
+        ls -l
+
+    - name: Install Dependencies and Run MOP
+      run: |
+        echo "================== Installing Dependencies =================="
+        cd ./projects
+        ls -l
+        chmod +x ./install.sh
+        ./install.sh ${{ matrix.repo }}
+
+        echo "================== Running MOP =================="
+        REPO_URL="${{ matrix.repo }}"
+        REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+        echo "Repository Name: $REPO_NAME"
+        chmod +x ./run-mop-new.sh
+        ./run-mop-new.sh ./$REPO_NAME
+
+    - name: Setup repository name and zip file name
+      run: |
+          REPO_URL="${{ matrix.repo }}"
+          REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+          ZIP_FILE="${REPO_NAME}.zip"
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+          echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+      shell: bash
+
+    - name: Zip report files
+      run: |
+        cd ./projects/reports/$REPO_NAME
+        zip -r ../../$ZIP_FILE .  # Create a zip file in the projects directory
+        ls -l ../../
+      shell: bash
+
+    - name: Upload report to GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: ./projects/${{env.ZIP_FILE}}
+        tag_name: mass-run-mop-${{ github.run_id }}
+        name: mass-run-mop-${{ github.run_id }}
+        draft: false
+        prerelease: true
+        token: ${{ secrets.GITHUB_TOKEN }}

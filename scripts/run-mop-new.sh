@@ -17,7 +17,7 @@ call_pymop(){
 
     #run and print this command
     set -x
-    timeout 10800 pytest -p pythonmop -p monitor -rA  --path=/projects/mop-with-dynapt/specs-new/ --algo $algo \
+    timeout 10800 pytest -p pythonmop -p monitor -rA  --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo \
     --continue-on-collection-errors --json-report --json-report-indent=2  --description ALGO_$algo --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
     # if process stop by timeout, then print timeout
     if [ $? -eq 124 ]; then
@@ -25,6 +25,8 @@ call_pymop(){
     fi
     set +x
     
+
+    ls -l
 
     mv .report.json $report/$algo.report.json
     mv "$algo"-full.json $report/$algo-full.json
@@ -69,5 +71,6 @@ cp .pymon $report/db.pymon
 gzip $report/db.pymon
 deactivate
 
+ls -l $report
 
 echo "--->END"
