@@ -9,7 +9,10 @@ on:
   workflow_dispatch:
     inputs:
       google_sheet_id:
-        description: 'ID of the Google Sheet containing repository links'
+        description: 'ID of the Google Sheet containing repository links. Id is located in the URL of the Google Sheet https://docs.google.com/spreadsheets/d/<ID>/edit. The sheet should have a tab named "links" with the links in column A and the first row should be a header row. The sheet should either be public or add mass-run-mop@mohas-filemap-cloud.iam.gserviceaccount.com as an editor'
+        required: true
+      output_google_sheet_id:
+        description: 'ID of the Google Sheet where results will be appended. The sheet should have a tab names "results". you need to add mass-run-mop@mohas-filemap-cloud.iam.gserviceaccount.com as an editor to this sheet'
         required: true
 
 jobs:
@@ -59,6 +62,14 @@ jobs:
           mkdir ./projects
           cd ./projects
 
+    - name: Setup variables
+      run: |
+          REPO_URL="${{ matrix.repo }}"
+          REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+          ZIP_FILE="${REPO_NAME}.zip"
+          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+          echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+      shell: bash
 
     - name: clone SoftEngResearch/mop-with-dynapt
       run: |
@@ -88,20 +99,32 @@ jobs:
         chmod +x ./run-mop-new.sh
         ./run-mop-new.sh ./$REPO_NAME
 
-    - name: Setup repository name and zip file name
+    - name: Generate report csv
       run: |
-          REPO_URL="${{ matrix.repo }}"
-          REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
-          ZIP_FILE="${REPO_NAME}.zip"
-          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
-          echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+        # extract all .gz files
+        cd ./projects/reports/$REPO_NAME
+        find . -type f -name "*.gz" -exec gunzip {} \;
+        echo "Files within ./projects/reports/$REPO_NAME:"
+        ls -l
+
+        # move ../../../scripts/parse-reports.py to ./projects/reports
+        cd ../
+        cp ../../scripts/parse-reports.py .
+        
+        ls -l
+        # run the python script
+        python3 parse-reports.py
+        ls -l
+
+        cp results.csv ./$REPO_NAME/
       shell: bash
+      continue-on-error: true
 
     - name: Zip report files
       run: |
         cd ./projects/reports/$REPO_NAME
         zip -r ../../$ZIP_FILE .  # Create a zip file in the projects directory
-        ls -l ../../
+        ls -l ../
       shell: bash
 
     - name: Upload report to GitHub Release
@@ -113,3 +136,73 @@ jobs:
         draft: false
         prerelease: true
         token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Read rows from results.csv
+      id: read_csv_rows
+      run: |
+        # Read the first 3 rows from results.csv
+        ROWS=$(head -n 3 ./projects/reports/$REPO_NAME/results.csv)
+        ROW1=$(echo "$ROWS" | sed -n '1p' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
+        ROW2=$(echo "$ROWS" | sed -n '2p' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
+        ROW3=$(echo "$ROWS" | sed -n '3p' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
+        echo "::set-output name=row1::$ROW1"
+        echo "::set-output name=row2::$ROW2"
+        echo "::set-output name=row3::$ROW3"
+
+
+    - name: Append results to Google Sheet
+      uses: jroehl/gsheet.action@v2.0.0
+      with:
+        spreadsheetId: ${{ github.event.inputs.output_google_sheet_id }}
+        commands: |
+          [
+            {
+              "command": "updateData",
+              "args": {
+                "minCol": 1,
+                "minRow": 1,
+                "worksheetTitle": "results",
+                "data": [
+                  [${{ steps.read_csv_rows.outputs.row1 }}]
+                ]
+              }
+            },
+            {
+              "command": "appendData",
+              "args": {
+                "minCol": 1,
+                "minRow": 2,
+                "worksheetTitle": "results",
+                "data": [
+                  [${{ steps.read_csv_rows.outputs.row2 }}],
+                  [${{ steps.read_csv_rows.outputs.row3 }}]
+                ]
+              }
+            }
+          ]
+      env:
+        GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+        GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+
+    - name: Action failed for some reason
+      if: failure()
+      uses: jroehl/gsheet.action@v2.0.0
+      with:
+        spreadsheetId: ${{ github.event.inputs.output_google_sheet_id }}
+        commands: |
+          [
+            {
+              "command": "appendData",
+              "args": {
+                "minCol": 1,
+                "minRow": 1,
+                "worksheetTitle": "results",
+                "data": [
+                  ["${{ env.REPO_NAME }}", "Action failed for some reason"]
+                ]
+              }
+            }
+          ]
+      env:
+        GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+        GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
