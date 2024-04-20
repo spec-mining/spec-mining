@@ -38,7 +38,7 @@ jobs:
                 "command": "getData",
                 "args": {
                   "worksheetTitle": "${{ github.event.inputs.links_worksheetTitle }}",
-                  "range": "links!A1:A"
+                  "range": "${{ github.event.inputs.links_worksheetTitle }}!A1:A"
                 }
               }
             ]
