@@ -158,13 +158,12 @@ jobs:
       run: |
         # Read the first 3 rows from results.csv
         ROWS=$(head -n 3 ./projects/reports/$REPO_NAME/results.csv)
-        ROW1=$(echo "$ROWS" | sed -n '1p' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
-        ROW2=$(echo "$ROWS" | sed -n '2p' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
-        ROW3=$(echo "$ROWS" | sed -n '3p' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
+        ROW1=$(echo "$ROWS" | sed -n '1p' | sed 's/"/'\''/g' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
+        ROW2=$(echo "$ROWS" | sed -n '2p' | sed 's/"/'\''/g' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
+        ROW3=$(echo "$ROWS" | sed -n '3p' | sed 's/"/'\''/g' | sed 's/,/","/g' | sed 's/^/"/' | sed 's/$/"/')
         echo "::set-output name=row1::$ROW1"
         echo "::set-output name=row2::$ROW2"
         echo "::set-output name=row3::$ROW3"
-
 
     - name: Append results to Google Sheet
       uses: jroehl/gsheet.action@v2.0.0
