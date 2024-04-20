@@ -15,11 +15,11 @@ on:
       links_worksheetTitle:
         description: 'Title of the tab containing the links. Default is "links". The first column should contain the links to the repositories. a maximum of 256 links can be added.'
         required: false
-        default: 'links'
+        default: 'links-1'
       results_worksheetTitle:
         description: 'Title of the tab where results will be appended. Default is "results"'
         required: false
-        default: 'results'
+        default: 'results-1'
 
 jobs:
   fetch_data:
@@ -221,7 +221,7 @@ jobs:
                   "minRow": 1,
                   "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
                   "data": [
-                    ["${{ env.REPO_NAME }}", "Success"]
+                    ["${{ env.REPO_NAME }}", "Action failed for some reason"]
                   ]
                 }
               }
