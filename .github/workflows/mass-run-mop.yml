@@ -166,58 +166,66 @@ jobs:
         echo "::set-output name=row3::$ROW3"
 
     - name: Append results to Google Sheet
-      uses: jroehl/gsheet.action@v2.0.0
+      uses: Wandalen/wretry.action@master
       with:
-        spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
-        commands: |
-          [
-            {
-              "command": "updateData",
-              "args": {
-                "minCol": 1,
-                "minRow": 1,
-                "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
-                "data": [
-                  [${{ steps.read_csv_rows.outputs.row1 }}]
-                ]
+        attempt_delay: 60000 # 1 min
+        attempt_limit: 10
+        action: jroehl/gsheet.action@v2.0.0
+        with: |
+          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
+          commands: |
+            [
+              {
+                "command": "updateData",
+                "args": {
+                  "minCol": 1,
+                  "minRow": 1,
+                  "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
+                  "data": [
+                    [${{ steps.read_csv_rows.outputs.row1 }}]
+                  ]
+                }
+              },
+              {
+                "command": "appendData",
+                "args": {
+                  "minCol": 1,
+                  "minRow": 2,
+                  "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
+                  "data": [
+                    [${{ steps.read_csv_rows.outputs.row2 }}],
+                    [${{ steps.read_csv_rows.outputs.row3 }}]
+                  ]
+                }
               }
-            },
-            {
-              "command": "appendData",
-              "args": {
-                "minCol": 1,
-                "minRow": 2,
-                "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
-                "data": [
-                  [${{ steps.read_csv_rows.outputs.row2 }}],
-                  [${{ steps.read_csv_rows.outputs.row3 }}]
-                ]
-              }
-            }
-          ]
+            ]
       env:
         GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
         GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
 
     - name: Action failed for some reason
       if: failure()
-      uses: jroehl/gsheet.action@v2.0.0
+      uses: Wandalen/wretry.action@master
       with:
-        spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
-        commands: |
-          [
-            {
-              "command": "appendData",
-              "args": {
-                "minCol": 1,
-                "minRow": 1,
-                "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
-                "data": [
-                  ["${{ env.REPO_NAME }}", "Action failed for some reason"]
-                ]
+        attempt_delay: 60000 # 1 min
+        attempt_limit: 10
+        action: jroehl/gsheet.action@v2.0.0
+        with: |
+          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
+          commands: |
+            [
+              {
+                "command": "appendData",
+                "args": {
+                  "minCol": 1,
+                  "minRow": 1,
+                  "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
+                  "data": [
+                    ["${{ env.REPO_NAME }}", "Success"]
+                  ]
+                }
               }
-            }
-          ]
+            ]
       env:
         GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
         GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
