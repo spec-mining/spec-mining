@@ -9,11 +9,17 @@ on:
   workflow_dispatch:
     inputs:
       google_sheet_id:
-        description: 'ID of the Google Sheet containing repository links. Id is located in the URL of the Google Sheet https://docs.google.com/spreadsheets/d/<ID>/edit. The sheet should have a tab named "links" with the links in column A and the first row should be a header row. The sheet should either be public or add mass-run-mop@mohas-filemap-cloud.iam.gserviceaccount.com as an editor'
+        description: 'ID of the Google Sheet containing repository links and where results will be appended. Id is located in the URL of the Google Sheet https://docs.google.com/spreadsheets/d/<ID>/edit. The sheet should add "mass-run-mop@mohas-filemap-cloud.iam.gserviceaccount.com" as an editor'
         required: true
-      output_google_sheet_id:
-        description: 'ID of the Google Sheet where results will be appended. The sheet should have a tab names "results". you need to add mass-run-mop@mohas-filemap-cloud.iam.gserviceaccount.com as an editor to this sheet'
-        required: true
+        default: '1mWRsxwLih48Zd5TdZCpM_Qv7VPIn0lzlD9lsXV6zDl0'
+      links_worksheetTitle:
+        description: 'Title of the tab containing the links. Default is "links". The first column should contain the links to the repositories. a maximum of 256 links can be added.'
+        required: false
+        default: 'links'
+      results_worksheetTitle:
+        description: 'Title of the tab where results will be appended. Default is "results"'
+        required: false
+        default: 'results'
 
 jobs:
   fetch_data:
@@ -28,7 +34,13 @@ jobs:
           spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
           commands: |
             [
-              { "command": "getData", "args": { "range": "links!A2:A" }}
+              {
+                "command": "getData",
+                "args": {
+                  "worksheetTitle": "${{ github.event.inputs.links_worksheetTitle }}",
+                  "range": "links!A1:A"
+                }
+              }
             ]
         env:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
@@ -153,7 +165,7 @@ jobs:
     - name: Append results to Google Sheet
       uses: jroehl/gsheet.action@v2.0.0
       with:
-        spreadsheetId: ${{ github.event.inputs.output_google_sheet_id }}
+        spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
         commands: |
           [
             {
@@ -161,7 +173,7 @@ jobs:
               "args": {
                 "minCol": 1,
                 "minRow": 1,
-                "worksheetTitle": "results",
+                "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
                 "data": [
                   [${{ steps.read_csv_rows.outputs.row1 }}]
                 ]
@@ -172,7 +184,7 @@ jobs:
               "args": {
                 "minCol": 1,
                 "minRow": 2,
-                "worksheetTitle": "results",
+                "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
                 "data": [
                   [${{ steps.read_csv_rows.outputs.row2 }}],
                   [${{ steps.read_csv_rows.outputs.row3 }}]
@@ -188,7 +200,7 @@ jobs:
       if: failure()
       uses: jroehl/gsheet.action@v2.0.0
       with:
-        spreadsheetId: ${{ github.event.inputs.output_google_sheet_id }}
+        spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
         commands: |
           [
             {
@@ -196,7 +208,7 @@ jobs:
               "args": {
                 "minCol": 1,
                 "minRow": 1,
-                "worksheetTitle": "results",
+                "worksheetTitle": "${{ github.event.inputs.results_worksheetTitle }}",
                 "data": [
                   ["${{ env.REPO_NAME }}", "Action failed for some reason"]
                 ]
