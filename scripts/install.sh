@@ -29,7 +29,7 @@ for file in requirements.txt requirements-dev.txt requirements-test.txt dev-requ
     fi
 done
 
-pip3 install pytest-json-report pytest-monitor
+pip3 install pytest-json-report pytest-monitor pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
 
 # Install pythonmop (assuming it's in a sibling directory named 'mop-with-dynapt')
 cd ../mop-with-dynapt || exit
