@@ -144,14 +144,18 @@ jobs:
       shell: bash
 
     - name: Upload report to GitHub Release
-      uses: softprops/action-gh-release@v1
+      uses: Wandalen/wretry.action@master
       with:
-        files: ./projects/${{env.ZIP_FILE}}
-        tag_name: mass-run-mop-${{ github.run_id }}
-        name: mass-run-mop-${{ github.run_id }}
-        draft: false
-        prerelease: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+        attempt_delay: 60000 # 1 min
+        attempt_limit: 10
+        action: softprops/action-gh-release@v1
+        with: |
+          files: ./projects/${{env.ZIP_FILE}}
+          tag_name: mass-run-mop-${{ github.run_id }}
+          name: mass-run-mop-${{ github.run_id }}
+          draft: false
+          prerelease: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Read rows from results.csv
       id: read_csv_rows
