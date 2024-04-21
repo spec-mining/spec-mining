@@ -169,6 +169,9 @@ jobs:
         echo "::set-output name=row2::$ROW2"
         echo "::set-output name=row3::$ROW3"
 
+    - name: Set up mutex
+      uses: ben-z/gh-action-mutex@v1.0.0-alpha.9
+
     - name: Append results to Google Sheet
       uses: Wandalen/wretry.action@master
       with:
