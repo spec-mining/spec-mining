@@ -1,6 +1,6 @@
 import yargs from 'yargs';
 import { hideBin } from 'yargs/helpers';
-import { collectData, removeRepetition, analyzeData, collectGithubRepos, collectGithubIssues, scanDocs } from './commands'
+import { collectData, removeRepetition, analyzeData, collectGithubRepos, collectGithubIssues, scanDocs, collectGithubReposUsingSpecs } from './commands'
 
 const DEFAULT_COLLECT_IN_FILE = './out/collected_issues.csv';
 const DEFAULT_COLLECT_OUT_FILE = './out/collected_issues.csv';
@@ -101,6 +101,29 @@ const argv = await (yargs(hideBin(process.argv))
         description: 'list of library names to find dependants for',
       }).demandOption('libName')
     }, (argv) => collectGithubRepos(argv.outDir || DEFAULT_GH_LIBS_OUT_FILE, argv.libName as Array<string>,argv.testingFramework as Array<string>, argv.startPage || DEFAULT_START_PAGE, argv.endPage || DEFAULT_END_PAGE))
+    .command('spec_id_basec_collect', 'collect repos based on spec based regex', (_yargs) => {
+      return _yargs
+      .option('outDir', {
+        alias: 'o',
+        type: 'string',
+        description: 'Output dir',
+      })
+      .option('startPage', {
+        alias: 's',
+        type: 'number',
+        description: 'Start page'
+      })
+      .option('endPage', {
+        alias: 'e',
+        type: 'number',
+        description: 'End page'
+      })
+      .option('testingFramework', {
+        alias: 't',
+        type: 'array',
+        description: 'list of testing frameworks to find in manifest files'
+      })
+    }, (argv) => collectGithubReposUsingSpecs(argv.outDir || DEFAULT_GH_LIBS_OUT_FILE, argv.testingFramework as Array<string>, argv.startPage || DEFAULT_START_PAGE, argv.endPage || DEFAULT_END_PAGE))
     .command('collect_issues', 'Collect github issues', (_yargs) => {
       return _yargs
       .option('outDir', {

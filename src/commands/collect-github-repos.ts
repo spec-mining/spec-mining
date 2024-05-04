@@ -8,6 +8,7 @@ import { createObjectCsvWriter } from "csv-writer";
 import { sleep } from "openai/core";
 import { removeRepetition } from "./remove-repetition";
 import { sortList } from "../utils/sortList";
+import { specIDList } from "../constants";
 
 const GH_ACCESS_TOKEN = process.env['GH_ACCESS_TOKEN'];
 const octokit = new Octokit({ auth: GH_ACCESS_TOKEN });
@@ -80,6 +81,29 @@ const searchForFiles = async (fileNames: Array<string>, libName: string, testing
         remainingRateLimit
     };
 
+}
+
+const searchForRegex = async (specRegex: string, testingFramework: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
+    const searchQuery = `${specRegex}+${testingFramework}+language:Python`;
+
+    const searchResults = await octokit.request('GET /search/code', {
+        q: searchQuery,
+        per_page: 100, // Adjust per_page as needed, up to a maximum of 100
+        page,
+    });
+
+    const rateLimitReset = searchResults.headers["x-ratelimit-reset"]
+    const remainingRateLimit = searchResults.headers["x-ratelimit-remaining"]
+
+    return {
+        data: searchResults.data.items.map(item => ({
+            owner: item.repository.owner.login,
+            repoName: item.repository.name,
+            fileName: item.name
+        })),
+        rateLimitReset,
+        remainingRateLimit
+    };
 }
 
 const constructRepoDetailsQuery = (repositories: Array<BaseRepository>) => {
@@ -167,6 +191,7 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
             { id: 'description', title: 'Description' },
             { id: 'manifestFileName', title: 'Manifest File Name' },
             { id: 'dependencyName', title: 'Dependency Name' },
+            { id: 'specName', title: 'Spec Name' },
             { id: 'testingFramework', title: 'Testing Framework' },
             { id: 'created_at', title: 'Created At' }
         ],
@@ -261,6 +286,76 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
             
                     await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
                 }
+            }
+        }
+    }
+}
+
+export const collectGithubReposUsingSpecs = async (outDir: string, testFrameworks: Array<string>, startPage: number, endPage: number) => {
+    if (endPage > 10) {
+        console.warn('End page is greater than 10, which is the maximum number of pages allowed by GitHub code search API. Setting end page to 10');
+        endPage = 10;
+    }
+
+    const filePath = path.resolve(outDir, `repos_using_specs.csv`)
+
+    const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
+    for (const specId of specIDList) {
+        for (const testFramework of testFrameworks) {
+            for (const page of pages) {
+                console.log('Page:', page, ' - Fetching details for', specId.specName, 'from GitHub', 'with test framework:', testFramework);
+                const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForRegex(specId.regexQuery, testFramework, page)
+
+                const chunks = [baseRepoInfo.slice(0, baseRepoInfo.length/2), baseRepoInfo.slice(baseRepoInfo.length/2, baseRepoInfo.length)]
+        
+                await Promise.all(chunks.map(async (chunk, i) => {
+                    if (chunk.length < 1) return;
+
+                    const response = await fetchRepositoriesDetails(chunk);
+                
+                    const repoDetails: Array<DependantRepoDetails> = chunk.map((repo, index) => {
+                        const repoDetails = response[`repo${index}`].repository;
+                        return {
+                            ...repo,
+                            repoLink: repoDetails.url,
+                            stars: repoDetails.stargazers.totalCount,
+                            forks: repoDetails.forks.totalCount,
+                            issues: repoDetails.issues.totalCount,
+                            pullRequests: repoDetails.pullRequests.totalCount,
+                            description: repoDetails.description,
+                            manifestFileName: chunk[index].fileName,
+                            dependencyName: specId.dependencyName,
+                            testingFramework: testFramework,
+                            created_at: repoDetails.createdAt,
+                            specName: specId.specName,
+                        }
+                    });
+                
+                    console.log('Page:', page, ' - ',i + 1, '. Fetched details for', repoDetails.length, 'repos.');
+    
+                    await saveData(filePath, repoDetails);
+                }))
+    
+                removeRepetition(filePath, 'Repository Link', ['Dependency Name', 'Testing Framework'])
+                sortList(filePath, {
+                    sortField: 'Stars',
+                    customFunction: (a, b) => {
+                        // make an array of strings from dep1;dep2;dep3
+                        const aStars = Number.parseInt(a['Stars']);
+                        const bStars = Number.parseInt(b['Stars']);
+                        const aDependencyCount = (a['Dependency Name']?.split('|')?.length || 1) * 10;
+                        const bDependencyCount = (b['Dependency Name']?.split('|')?.length || 1) * 10;
+                        let result = bDependencyCount * bStars - aDependencyCount * aStars;
+
+                        if (result === 0) {
+                            result = bStars - aStars;
+                        }
+                        
+                        return result;
+                    }
+                })
+        
+                await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
             }
         }
     }
