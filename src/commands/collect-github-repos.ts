@@ -34,16 +34,29 @@ export interface DependantRepoDetails extends BaseRepository {
     issues: number,
     pullRequests: number,
     description: string,
-    manifestFileName: string,
+    fileName?: string,
     dependencyName: string,
     testingFramework: string,
     created_at: string
+    specName?: string
 }
 
 export type WithRateLimitMetaData<T> = {
     data: T,
     rateLimitReset?: string,
     remainingRateLimit?: string
+}
+
+const formatTimestamp = () => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
 }
 
 export const sleepTillRateLimitResets = async (remainingRateLimit?: string, rateLimitReset?: string) => {
@@ -80,12 +93,12 @@ const searchForFiles = async (fileNames: Array<string>, libName: string, testing
         rateLimitReset,
         remainingRateLimit
     };
-
 }
 
-const searchForRegex = async (specRegex: string, testingFramework: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
-    const searchQuery = `${specRegex}+${testingFramework}+language:Python`;
+const searchForRegex = async (specRegex: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
+    const searchQuery = `${specRegex}+language:Python`;
 
+    console.log('Running query:', searchQuery);
     const searchResults = await octokit.request('GET /search/code', {
         q: searchQuery,
         per_page: 100, // Adjust per_page as needed, up to a maximum of 100
@@ -189,7 +202,7 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
             { id: 'issues', title: 'Issues' },
             { id: 'pullRequests', title: 'Pull Requests' },
             { id: 'description', title: 'Description' },
-            { id: 'manifestFileName', title: 'Manifest File Name' },
+            { id: 'fileName', title: 'File Name' },
             { id: 'dependencyName', title: 'Dependency Name' },
             { id: 'specName', title: 'Spec Name' },
             { id: 'testingFramework', title: 'Testing Framework' },
@@ -208,10 +221,11 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
         stars: record.stars || 0,
         forks: record.forks || 0,
         created_at: new Date(record.created_at).toLocaleDateString(),
-        manifestFileName: record.manifestFileName || '',
+        fileName: record.fileName || '',
         issues: record.issues || 0,
         pullRequests: record.pullRequests || 0,
         testingFramework: record.testingFramework,
+        specName: record.specName || ''
     })));
 }
 
@@ -253,7 +267,7 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
                                 issues: repoDetails.issues.totalCount,
                                 pullRequests: repoDetails.pullRequests.totalCount,
                                 description: repoDetails.description,
-                                manifestFileName: chunk[index].fileName,
+                                fileName: chunk[index].fileName,
                                 dependencyName: libName,
                                 testingFramework: testFramework,
                                 created_at: repoDetails.createdAt
@@ -291,60 +305,111 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
     }
 }
 
+const usesPytest = async (reposInfo: Array<BaseRepository>) => {
+    const filePathList = MANIFEST_FILES.map(fileName => `filename:${fileName}`).join("+OR+");
+    const targetPackages = reposInfo.map(repo => `repo:${repo.owner}/${repo.repoName}`).join("+OR+");
+    const searchQuery = `${targetPackages}+pytest+in:file+${filePathList}`;
+    const searchResults = await octokit.request('GET /search/code', {
+        q: searchQuery,
+        per_page: 100, // Adjust per_page as needed, up to a maximum of 100
+    });
+
+    const rateLimitReset = searchResults.headers["x-ratelimit-reset"]
+    const remainingRateLimit = searchResults.headers["x-ratelimit-remaining"]
+
+    const doesUse = searchResults.data.items.map(item => ({
+        owner: item.repository.owner.login,
+        repoName: item.repository.name
+    }));
+
+    return {
+        data: reposInfo.map((repo) => {
+            return {
+                ...repo,
+                usesTestingFramework: doesUse.find((item) => item.owner === repo.owner && item.repoName === repo.repoName) !== undefined
+            }
+        }),
+        rateLimitReset,
+        remainingRateLimit
+    }
+}
+
 export const collectGithubReposUsingSpecs = async (outDir: string, testFrameworks: Array<string>, startPage: number, endPage: number) => {
     if (endPage > 10) {
         console.warn('End page is greater than 10, which is the maximum number of pages allowed by GitHub code search API. Setting end page to 10');
         endPage = 10;
     }
 
-    const filePath = path.resolve(outDir, `repos_using_specs.csv`)
+    const filePath = path.resolve(outDir, `repos_using_specs_${formatTimestamp()}.csv`)
 
     const pages = Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i);
     for (const specId of specIDList) {
         for (const testFramework of testFrameworks) {
             for (const page of pages) {
-                console.log('Page:', page, ' - Fetching details for', specId.specName, 'from GitHub', 'with test framework:', testFramework);
-                const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForRegex(specId.regexQuery, testFramework, page)
+                console.log('Page:', page, ' - Finding repos for spec [', specId.specName, '] from GitHub', 'with test framework:', testFramework);
+                const {data: baseRepoInfo, rateLimitReset, remainingRateLimit} = await searchForRegex(specId.githubQuery, page)
+                console.log('Found', baseRepoInfo.length, 'results previous query from GitHub');
 
-                const chunks = [baseRepoInfo.slice(0, baseRepoInfo.length/2), baseRepoInfo.slice(baseRepoInfo.length/2, baseRepoInfo.length)]
-        
-                await Promise.all(chunks.map(async (chunk, i) => {
+                await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
+
+                // filter out repetitions
+                const uniqueBaseRepoInfo = baseRepoInfo.filter((repo, index, self) =>
+                    index === self.findIndex((t) => (
+                        t.owner === repo.owner && t.repoName === repo.repoName
+                    ))
+                );
+                console.log('Unique repos:', uniqueBaseRepoInfo.length);
+
+                // devide uniqueBaseRepoInfo into n chunks
+                const n = 5;
+                const chunks = Array.from({ length: n }, (_, i) => uniqueBaseRepoInfo.slice(i * uniqueBaseRepoInfo.length/n, (i + 1) * uniqueBaseRepoInfo.length/n));
+
+                let rateLimitReset2 = rateLimitReset;
+                let remainingRateLimit2 = remainingRateLimit;
+                let i = 0;
+                for (const chunk of chunks) {
                     if (chunk.length < 1) return;
 
-                    const response = await fetchRepositoriesDetails(chunk);
+                    const { data, rateLimitReset, remainingRateLimit } = await usesPytest(chunk);
+                    console.log('Chunk:', i + 1, ' - Found', data.filter(repo => repo.usesTestingFramework).length, 'repos out of ', data.length, 'repos that use pytest.');
+                    rateLimitReset2 = rateLimitReset;
+                    remainingRateLimit2 = remainingRateLimit;
+                    const filteredBaseRepoInfo = data.filter(repo => repo.usesTestingFramework);
+                    await sleepTillRateLimitResets(remainingRateLimit2, rateLimitReset2);
+
+                    const response = await fetchRepositoriesDetails(filteredBaseRepoInfo);
                 
-                    const repoDetails: Array<DependantRepoDetails> = chunk.map((repo, index) => {
-                        const repoDetails = response[`repo${index}`].repository;
+                    const repoDetails: Array<DependantRepoDetails> = filteredBaseRepoInfo.map((repo, index) => {
+                        const details = response[`repo${index}`].repository;
                         return {
                             ...repo,
-                            repoLink: repoDetails.url,
-                            stars: repoDetails.stargazers.totalCount,
-                            forks: repoDetails.forks.totalCount,
-                            issues: repoDetails.issues.totalCount,
-                            pullRequests: repoDetails.pullRequests.totalCount,
-                            description: repoDetails.description,
-                            manifestFileName: chunk[index].fileName,
+                            repoLink: details.url,
+                            stars: details.stargazers.totalCount,
+                            forks: details.forks.totalCount,
+                            issues: details.issues.totalCount,
+                            pullRequests: details.pullRequests.totalCount,
+                            description: details.description,
+                            fileName: chunk[index].fileName,
                             dependencyName: specId.dependencyName,
                             testingFramework: testFramework,
-                            created_at: repoDetails.createdAt,
+                            created_at: details.createdAt,
                             specName: specId.specName,
                         }
                     });
-                
-                    console.log('Page:', page, ' - ',i + 1, '. Fetched details for', repoDetails.length, 'repos.');
-    
+
                     await saveData(filePath, repoDetails);
-                }))
-    
-                removeRepetition(filePath, 'Repository Link', ['Dependency Name', 'Testing Framework'])
+                }
+                await sleepTillRateLimitResets(remainingRateLimit2, rateLimitReset2);
+
+                removeRepetition(filePath, 'Repository Link', ['Spec Name', 'Dependency Name'])
                 sortList(filePath, {
                     sortField: 'Stars',
                     customFunction: (a, b) => {
                         // make an array of strings from dep1;dep2;dep3
                         const aStars = Number.parseInt(a['Stars']);
                         const bStars = Number.parseInt(b['Stars']);
-                        const aDependencyCount = (a['Dependency Name']?.split('|')?.length || 1) * 10;
-                        const bDependencyCount = (b['Dependency Name']?.split('|')?.length || 1) * 10;
+                        const aDependencyCount = (a['Spec Name']?.split('|')?.length || 1) * 10;
+                        const bDependencyCount = (b['Spec Name']?.split('|')?.length || 1) * 10;
                         let result = bDependencyCount * bStars - aDependencyCount * aStars;
 
                         if (result === 0) {
@@ -354,8 +419,6 @@ export const collectGithubReposUsingSpecs = async (outDir: string, testFramework
                         return result;
                     }
                 })
-        
-                await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
             }
         }
     }

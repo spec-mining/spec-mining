@@ -50,7 +50,7 @@ export const removeRepetition = async (inFilePath: string, uniqueFieldName: stri
       })
       .on("end", () => {
         console.log(
-          `Removed ${originalRecordCount - records.length} duplicate records.`
+          'Removed', originalRecordCount - records.length, 'duplicate records.'
         );
   
         if (csvHeaders.length > 0) {
@@ -62,7 +62,7 @@ export const removeRepetition = async (inFilePath: string, uniqueFieldName: stri
           csvWriter
             .writeRecords(records) // returns a promise
             .then(() => {
-                console.log(`Processed ${records.length} unique records.`)
+                console.log('Processed', records.length, 'unique records.');
                 resolve()
               }
             )
