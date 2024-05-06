@@ -87,7 +87,7 @@ export const specIDList: Array<SpecID> = [
     {
         specName: 'NLTK_MustImplementEntries',
         regexQuery: 'nltk AND /IBMModel1\((?:[^()]*|\([^()]*\))*\)/ OR /IBMModel2\((?:[^()]*|\([^()]*\))*\)/ OR /IBMModel3\((?:[^()]*|\([^()]*\))*\)/ OR /IBMModel4\((?:[^()]*|\([^()]*\))*\)/ OR /IBMModel5\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'nltk AND IBMModel1( OR IBMModel2( OR IBMModel3( OR IBMModel4( OR IBMModel5(',
+        githubQuery: 'nltk AND IBMModel1 OR IBMModel2 OR IBMModel3 OR IBMModel4 OR IBMModel5',
         dependencyName: 'nltk'
     },
     {

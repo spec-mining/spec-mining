@@ -14,12 +14,14 @@ const GH_ACCESS_TOKEN = process.env['GH_ACCESS_TOKEN'];
 const octokit = new Octokit({ auth: GH_ACCESS_TOKEN });
 const MANIFEST_FILES = [
     "setup.py",
-    "requirements.txt",
+    "requirements",
     "Pipfile",
     "Pipfile.lock",
     "pyproject.toml",
     "environment.yml",
-    "tox.ini"
+    "tox.ini",
+    "req.txt",
+    "requires"
 ]
 
 export interface BaseRepository {
@@ -96,7 +98,7 @@ const searchForFiles = async (fileNames: Array<string>, libName: string, testing
 }
 
 const searchForRegex = async (specRegex: string, page: number): Promise<WithRateLimitMetaData<Array<BaseRepository & { fileName: string }>>> => {
-    const searchQuery = `${specRegex}+language:Python`;
+    const searchQuery = `${specRegex}+in:file+language:Python`;
 
     console.log('Running query:', searchQuery);
     const searchResults = await octokit.request('GET /search/code', {
@@ -361,7 +363,7 @@ export const collectGithubReposUsingSpecs = async (outDir: string, testFramework
                 console.log('Unique repos:', uniqueBaseRepoInfo.length);
 
                 // devide uniqueBaseRepoInfo into n chunks
-                const n = 5;
+                const n = 6;
                 const chunks = Array.from({ length: n }, (_, i) => uniqueBaseRepoInfo.slice(i * uniqueBaseRepoInfo.length/n, (i + 1) * uniqueBaseRepoInfo.length/n));
 
                 let rateLimitReset2 = rateLimitReset;
@@ -369,13 +371,17 @@ export const collectGithubReposUsingSpecs = async (outDir: string, testFramework
                 let i = 0;
                 for (const chunk of chunks) {
                     if (chunk.length < 1) return;
+                    i++;
 
                     const { data, rateLimitReset, remainingRateLimit } = await usesPytest(chunk);
-                    console.log('Chunk:', i + 1, ' - Found', data.filter(repo => repo.usesTestingFramework).length, 'repos out of ', data.length, 'repos that use pytest.');
+                    console.log('Chunk:', i, ' - Found', data.filter(repo => repo.usesTestingFramework).length, 'repos out of ', data.length, 'repos that use pytest.');
                     rateLimitReset2 = rateLimitReset;
                     remainingRateLimit2 = remainingRateLimit;
                     const filteredBaseRepoInfo = data.filter(repo => repo.usesTestingFramework);
                     await sleepTillRateLimitResets(remainingRateLimit2, rateLimitReset2);
+
+                    if (filteredBaseRepoInfo.length < 1)
+                        continue;
 
                     const response = await fetchRepositoriesDetails(filteredBaseRepoInfo);
                 
