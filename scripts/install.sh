@@ -20,7 +20,7 @@ python3 -m venv env
 source env/bin/activate
 
 # Install dependencies
-pip3 install .[dev,test]
+pip3 install .[dev,test,tests,testing]
 
 # Install additional requirements if available
 for file in requirements.txt requirements-dev.txt requirements-test.txt dev-requirements.txt; do
