@@ -127,7 +127,13 @@ def get_results(filename, project, algorithm):
             attr = f' {attribute}'
             if attr in att:
                 # get only the number
-                line[attribute] = att.split(' ')[1].strip()
+                num = att.split(' ')[1].strip()
+                # check if it is a number
+                try:
+                    int(num)
+                except Exception as e:
+                    num = att.split(' ')[0].strip()
+                line[attribute] = num
                 break
 
     return line
@@ -164,6 +170,7 @@ def compare(results, projectname):
     for key in keys:
         for result in results[1:]:
             if result[key] != original[key]:
+                # print(projectname, original[key], result[key])
                 diff = int(original[key]) - int(result[key])
                 message = f'DIFF: {key} is different from ORIGINAL. diff={diff}'
                 add_problem(projectname,
@@ -189,7 +196,8 @@ def print_results_csv(lines):
     for line in lines:
         line = ''.join([f'{value},' for value in line.values()])
         print(line[:-1])
-        
+
+
 def results_csv_file(lines):
     index = 0 if len(lines) == 0 else 1
     headerline = ''.join([f'{key},' for key in lines[index].keys()])
@@ -250,6 +258,7 @@ def main():
         if os.path.isdir(project) and 'report' not in project:
             # Remove the trailing slash to get the project name
             projectname = project.rstrip('/')
+            print("======")
             print(f'Project: {projectname}')
 
             os.chdir(projectname)
@@ -277,9 +286,11 @@ def main():
                             line['total_violations'] = total_violations
                             line['violations'] = violations_str
                             line['unique_violations_count'] = unique_violations_count
-                            str_unique_violations_summary = str(unique_violations_summary).replace(",", ";")
+                            str_unique_violations_summary = str(
+                                unique_violations_summary).replace(",", ";")
                             line['unique_violations_summary'] = str_unique_violations_summary
-                            str_unique_violations_test = str(unique_violations_test).replace(",", ";")
+                            str_unique_violations_test = str(
+                                unique_violations_test).replace(",", ";")
                             line['unique_violations_test'] = str_unique_violations_test
 
                         # get monitors and events from json
@@ -305,7 +316,7 @@ def main():
             print("======")
 
     print("\n====== RESULTS CSV ======\n")
-    #print_results_csv(lines)
+    # print_results_csv(lines)
     results_csv_file(lines)
     print('created results.csv')
     print("\n====== PROBLEMS CSV ======\n")

@@ -23,7 +23,7 @@ source env/bin/activate
 pip3 install .[dev,test,tests,testing]
 
 # Install additional requirements if available
-for file in requirements.txt requirements-dev.txt requirements-test.txt dev-requirements.txt; do
+for file in *.txt; do
     if [ -f "$file" ]; then
         pip3 install -r "$file"
     fi
