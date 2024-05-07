@@ -260,7 +260,12 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
                         const response = await fetchRepositoriesDetails(chunk);
                     
                         const repoDetails: Array<DependantRepoDetails> = chunk.map((repo, index) => {
-                            const repoDetails = response[`repo${index}`].repository;
+                            const repoDetails = response[`repo${index}`]?.repository;
+
+                            if (!repoDetails) {
+                                return undefined
+                            }
+
                             return {
                                 ...repo,
                                 repoLink: repoDetails.url,
@@ -274,7 +279,7 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
                                 testingFramework: testFramework,
                                 created_at: repoDetails.createdAt
                             }
-                        });
+                        }).filter(Boolean) as Array<DependantRepoDetails>;
                     
                         console.log('File: ', file, 'Page:', page, ' - ',i + 1, '. Fetched details for', repoDetails.length, 'repos.');
         
