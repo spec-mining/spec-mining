@@ -3,6 +3,7 @@ import json
 import subprocess
 from collections import OrderedDict
 from collections import Counter
+import re
 
 SQL_QUERY = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_usage FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 problems = {}
@@ -164,17 +165,26 @@ def get_memory_from_db(projectname, algorithm):
 
 
 def compare(results, projectname):
-    # check if the collums: passed, failed, skipped, xfailed, xpassed, errors are different from the original
+    # Regular expression to remove ANSI escape sequences
+    ansi_escape = re.compile(r'\x1b\[([0-9]+)(;[0-9]+)*m')
+    
+    # check if the columns: passed, failed, skipped, xfailed, xpassed, errors are different from the original
     original = results[0]
     keys = ['failed', 'skipped', 'xfailed', 'xpassed', 'errors']
     for key in keys:
         for result in results[1:]:
-            if result[key] != original[key]:
-                # print(projectname, original[key], result[key])
-                diff = int(original[key]) - int(result[key])
+            # Remove ANSI escape sequences before comparison
+            original_value = ansi_escape.sub('', original[key])
+            result_value = ansi_escape.sub('', result[key])
+            
+            # Convert to integer and compare
+            if original_value.isdigit() and result_value.isdigit():
+                diff = int(original_value) - int(result_value)
                 message = f'DIFF: {key} is different from ORIGINAL. diff={diff}'
-                add_problem(projectname,
-                            result['algorithm'], message)
+                add_problem(projectname, result['algorithm'], message)
+            else:
+                message = f'Invalid data for comparison. Original: {original_value}, Result: {result_value}'
+                add_problem(projectname, result['algorithm'], message)
 
 
 def add_problem(project, algorithm, message):

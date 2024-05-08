@@ -1,0 +1,70 @@
+name: Analyzes the data and generate a report.csv
+
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-tag:
+        description: 'The tag of the release to download logs from.'
+        required: true
+        type: string
+
+jobs:
+    analyze_data:
+        runs-on: ubuntu-latest
+        steps:
+          - uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+    
+          - name: download files from release
+            uses: robinraju/release-downloader@v1.10
+            with:
+              preRelease: true
+              tag: ${{inputs.release-tag}}
+              fileName: '*.zip'
+              out-file-path: './projects/reports/'
+              extract: false
+              token: ${{ secrets.GITHUB_TOKEN }}
+          
+          - name: extract zip files into folders with the same name
+            run: |
+              cd ./projects/reports
+              for f in *.zip; do unzip -d "${f%.*}" "$f"; done
+              ls -l
+    
+          - name: Generate report csv
+            run: |
+              cd ./projects/reports
+    
+              # move ../../../scripts/parse-reports.py to ./projects/reports
+              cp ../../scripts/parse-reports.py .
+              
+              ls -l
+              # run the python script
+              python3 parse-reports.py
+              ls -l
+      
+              # print the contents of results.csv
+              echo "================================== Results =================================="
+              cat results.csv
+    
+            shell: bash
+            continue-on-error: true
+    
+          - name: Upload report to GitHub Release
+            uses: Wandalen/wretry.action@master
+            with:
+              attempt_delay: 60000 # 1 min
+              attempt_limit: 10
+              action: softprops/action-gh-release@v1
+              with: |
+                files: ./projects/reports/results.csv
+                tag_name: ${{inputs.release-tag}}
+                name: ${{inputs.release-tag}}
+                draft: false
+                prerelease: true
+                token: ${{ secrets.GITHUB_TOKEN }}
