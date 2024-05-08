@@ -4,6 +4,7 @@ import subprocess
 from collections import OrderedDict
 from collections import Counter
 import re
+import csv
 
 SQL_QUERY = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_usage FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 problems = {}
@@ -38,9 +39,9 @@ def get_monitors_and_events_from_json(projectname, algorithm):
     for spec in json_data.keys():
         num_monitors = json_data[spec]["monitors"]
         toal_events = sum(json_data[spec]["events"].values())
-        return_str_monitors += f'{spec}={num_monitors};'
+        return_str_monitors += f'{spec}={num_monitors}<>'
         for event in json_data[spec]["events"].keys():
-            return_str_events += f'{spec}={event}={json_data[spec]["events"][event]};'
+            return_str_events += f'{spec}={event}={json_data[spec]["events"][event]}<>'
         total_monitors += num_monitors
         total_events += toal_events
 
@@ -102,8 +103,9 @@ def get_result_line(filename):
         for line in reversed(last_lines):
             if 'in' in line and "passed" in line:
                 last_line = line
-                break
-    return last_line
+                return last_line
+    else:
+        return last_line
 
 
 def get_results(filename, project, algorithm):
@@ -214,12 +216,12 @@ def print_results_csv(lines):
 
 def results_csv_file(lines):
     index = 0 if len(lines) == 0 else 1
-    headerline = ''.join([f'{key},' for key in lines[index].keys()])
-    with open('results.csv', 'w') as f:
-        f.write(headerline[:-1] + '\n')
+    with open('results.csv', 'w', newline='', encoding='utf-8') as f:
+        writer = csv.DictWriter(f, fieldnames=lines[index].keys() if lines else [])
+        writer.writeheader()
         for line in lines:
-            line = ''.join([f'{value},' for value in line.values()])
-            f.write(line[:-1] + '\n')
+            writer.writerow(line)
+    print('CSV file created successfully.')
 
 
 def print_problems_csv(problems):
@@ -291,8 +293,8 @@ def main():
                     if algorithm != "ORIGINAL":
 
                         # get violations from json
-                        ret_violation = get_num_violations_from_json(
-                            projectname, algorithm)
+                        ret_violation = get_num_violations_from_json(projectname, algorithm)
+
                         if ret_violation is not None:
                             (violations_str, total_violations, unique_violations_count, unique_violations_summary,
                              unique_violations_test) = (ret_violation[0], ret_violation[1], ret_violation[2],
@@ -300,19 +302,16 @@ def main():
                             line['total_violations'] = total_violations
                             line['violations'] = violations_str
                             line['unique_violations_count'] = unique_violations_count
-                            str_unique_violations_summary = str(
-                                unique_violations_summary).replace(",", ";")
+                            str_unique_violations_summary = str(unique_violations_summary).replace(",", "<>")
                             line['unique_violations_summary'] = str_unique_violations_summary
-                            str_unique_violations_test = str(
-                                unique_violations_test).replace(",", ";")
+                            str_unique_violations_test = str(unique_violations_test).replace(",", "<>")
                             line['unique_violations_test'] = str_unique_violations_test
 
                         # get monitors and events from json
-                        ret_full = get_monitors_and_events_from_json(
-                            projectname, algorithm)
+                        ret_full = get_monitors_and_events_from_json(projectname, algorithm)
+
                         if ret_full is not None:
-                            monitors_str, events_str, total_monitors, total_events = ret_full[
-                                0], ret_full[1], ret_full[2], ret_full[3]
+                            monitors_str, events_str, total_monitors, total_events = ret_full[0], ret_full[1], ret_full[2], ret_full[3]
                             line['monitors'] = monitors_str
                             line['total_monitors'] = total_monitors
                             line['events'] = events_str
