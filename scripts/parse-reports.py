@@ -173,17 +173,21 @@ def compare(results, projectname):
     keys = ['failed', 'skipped', 'xfailed', 'xpassed', 'errors']
     for key in keys:
         for result in results[1:]:
-            # Remove ANSI escape sequences before comparison
-            original_value = ansi_escape.sub('', original[key])
-            result_value = ansi_escape.sub('', result[key])
+            # Ensure values are strings before attempting to strip ANSI codes
+            original_value = str(original.get(key, ''))
+            result_value = str(result.get(key, ''))
             
-            # Convert to integer and compare
-            if original_value.isdigit() and result_value.isdigit():
-                diff = int(original_value) - int(result_value)
+            # Remove ANSI escape sequences
+            original_value_clean = ansi_escape.sub('', original_value)
+            result_value_clean = ansi_escape.sub('', result_value)
+            
+            # Check if values are numeric before converting to integer
+            if original_value_clean.isdigit() and result_value_clean.isdigit():
+                diff = int(original_value_clean) - int(result_value_clean)
                 message = f'DIFF: {key} is different from ORIGINAL. diff={diff}'
                 add_problem(projectname, result['algorithm'], message)
             else:
-                message = f'Invalid data for comparison. Original: {original_value}, Result: {result_value}'
+                message = f'Non-numeric or invalid data for comparison. Original: {original_value_clean}, Result: {result_value_clean}'
                 add_problem(projectname, result['algorithm'], message)
 
 
