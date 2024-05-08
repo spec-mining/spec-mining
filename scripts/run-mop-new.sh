@@ -17,6 +17,7 @@ call_pymop(){
 
     #run and print this command
     set -x
+    export PYTHONIOENCODING=utf-8
     timeout 10800 pytest -p pythonmop -p monitor -rA  --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo \
     --continue-on-collection-errors --json-report --json-report-indent=2  --description ALGO_$algo --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
     # if process stop by timeout, then print timeout
