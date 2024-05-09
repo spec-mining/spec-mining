@@ -15,6 +15,10 @@ folder=$(basename $url .git)
 # Navigate to project directory
 cd $folder || exit
 
+sha=$(git rev-parse HEAD | cut -c1-7)
+echo "current sha commit: $sha"
+echo "project url: $url"
+
 # Create and activate virtual environment
 python3 -m venv env
 source env/bin/activate
