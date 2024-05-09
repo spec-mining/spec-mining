@@ -49,13 +49,17 @@ export type WithRateLimitMetaData<T> = {
     remainingRateLimit?: string
 }
 
-const sanitizeString = (str: string | undefined) => {
-    if (str == null) {
+const sanitizeValue = (value: string | undefined | number) => {
+    if (value == null) {
         return 'N/A'
     }
 
+    if (typeof value === 'number') {
+        return value
+    }
+
     // remove any , or ; charachters and replace them with <>
-    return str.replace(',', '<>').replace(';', '<>')
+    return value.replace(',', '<>').replace(';', '<>')
 }
 
 const formatTimestamp = () => {
@@ -228,19 +232,19 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
 
     // escape commas to avoid issues
     await csvWriterInstance.writeRecords(data.map((record) => ({
-        description: sanitizeString(record.description),
-        dependencyName: sanitizeString(record.dependencyName) || '',
-        owner: sanitizeString(record.owner),
-        repoName: sanitizeString(record.repoName),
-        repoLink: sanitizeString(record.repoLink),
-        stars: sanitizeString(record.stars),
-        forks: sanitizeString(record.forks),
+        description: sanitizeValue(record.description),
+        dependencyName: sanitizeValue(record.dependencyName),
+        owner: sanitizeValue(record.owner),
+        repoName: sanitizeValue(record.repoName),
+        repoLink: sanitizeValue(record.repoLink),
+        stars: sanitizeValue(record.stars),
+        forks: sanitizeValue(record.forks),
         created_at: new Date(record.created_at).toLocaleDateString(),
-        fileName: sanitizeString(record.fileName),
-        issues: sanitizeString(record.issues),
-        pullRequests: sanitizeString(record.pullRequests),
-        testingFramework: sanitizeString(record.testingFramework),
-        specName: sanitizeString(record.specName)
+        fileName: sanitizeValue(record.fileName),
+        issues: sanitizeValue(record.issues),
+        pullRequests: sanitizeValue(record.pullRequests),
+        testingFramework: sanitizeValue(record.testingFramework),
+        specName: sanitizeValue(record.specName)
     })));
 }
 
