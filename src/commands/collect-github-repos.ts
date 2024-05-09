@@ -49,6 +49,15 @@ export type WithRateLimitMetaData<T> = {
     remainingRateLimit?: string
 }
 
+const sanitizeString = (str: string | undefined) => {
+    if (str == null) {
+        return 'N/A'
+    }
+
+    // remove any , or ; charachters and replace them with <>
+    return str.replace(',', '<>').replace(';', '<>')
+}
+
 const formatTimestamp = () => {
     const now = new Date();
     const year = now.getFullYear();
@@ -193,6 +202,10 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
         fs.mkdirSync(base);
     }
 
+    if (!fileExists) {
+        console.log('File Does not exist, creating it', outFile);
+    }
+
     const csvWriterInstance = createObjectCsvWriter({
         path: outFile,
         header: [
@@ -215,19 +228,19 @@ const saveData = async (outFile: string, data: Array<DependantRepoDetails>) => {
 
     // escape commas to avoid issues
     await csvWriterInstance.writeRecords(data.map((record) => ({
-        description: record.description?.replace(/,/g, ' ')?.replace(/;/g, ' ') || '',
-        dependencyName: record.dependencyName || '',
-        owner: record.owner || 'N/A',
-        repoName: record.repoName || 'N/A',
-        repoLink: record.repoLink || 'N/A',
-        stars: record.stars || 0,
-        forks: record.forks || 0,
+        description: sanitizeString(record.description),
+        dependencyName: sanitizeString(record.dependencyName) || '',
+        owner: sanitizeString(record.owner),
+        repoName: sanitizeString(record.repoName),
+        repoLink: sanitizeString(record.repoLink),
+        stars: sanitizeString(record.stars),
+        forks: sanitizeString(record.forks),
         created_at: new Date(record.created_at).toLocaleDateString(),
-        fileName: record.fileName || '',
-        issues: record.issues || 0,
-        pullRequests: record.pullRequests || 0,
-        testingFramework: record.testingFramework,
-        specName: record.specName || ''
+        fileName: sanitizeString(record.fileName),
+        issues: sanitizeString(record.issues),
+        pullRequests: sanitizeString(record.pullRequests),
+        testingFramework: sanitizeString(record.testingFramework),
+        specName: sanitizeString(record.specName)
     })));
 }
 
@@ -286,8 +299,8 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
                         await saveData(filePath, repoDetails);
                     }))
         
-                    removeRepetition(filePath, 'Repository Link', ['Dependency Name', 'Testing Framework'])
-                    sortList(filePath, {
+                    await removeRepetition(filePath, 'Repository Link', ['Dependency Name', 'Testing Framework']);
+                    await sortList(filePath, {
                         sortField: 'Stars',
                         customFunction: (a, b) => {
                             // make an array of strings from dep1;dep2;dep3
@@ -303,7 +316,7 @@ export const collectGithubRepos = async (outDir: string, libNames: Array<string>
                             
                             return result;
                         }
-                    })
+                    });
             
                     await sleepTillRateLimitResets(remainingRateLimit, rateLimitReset);
                 }
@@ -412,8 +425,8 @@ export const collectGithubReposUsingSpecs = async (outDir: string, testFramework
                 }
                 await sleepTillRateLimitResets(remainingRateLimit2, rateLimitReset2);
 
-                removeRepetition(filePath, 'Repository Link', ['Spec Name', 'Dependency Name'])
-                sortList(filePath, {
+                await removeRepetition(filePath, 'Repository Link', ['Spec Name', 'Dependency Name']);
+                await sortList(filePath, {
                     sortField: 'Stars',
                     customFunction: (a, b) => {
                         // make an array of strings from dep1;dep2;dep3
@@ -429,7 +442,7 @@ export const collectGithubReposUsingSpecs = async (outDir: string, testFramework
                         
                         return result;
                     }
-                })
+                });
             }
         }
     }
