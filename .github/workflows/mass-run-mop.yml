@@ -55,7 +55,7 @@ jobs:
   run_jobs:
     needs: fetch_data
     runs-on: ubuntu-latest
-    timeout-minutes: 200
+    timeout-minutes: 240
     strategy:
       fail-fast: false
       matrix:
