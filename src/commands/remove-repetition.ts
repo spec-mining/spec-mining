@@ -37,7 +37,7 @@ export const removeRepetition = async (inFilePath: string, uniqueFieldName: stri
             if (existingRecord) {
               mergeFieldNames.forEach((fieldName) => {
                 if (data[fieldName]) {
-                  const existingValueList = existingRecord[fieldName].split('|');
+                  const existingValueList = existingRecord[fieldName]?.split('|') || [];
                   if (!existingValueList.includes(data[fieldName])) {
                     existingValueList.push(data[fieldName]);
                     existingRecord[fieldName] = existingValueList.join('|');
