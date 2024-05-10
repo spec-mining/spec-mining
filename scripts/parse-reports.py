@@ -217,12 +217,24 @@ def print_results_csv(lines):
 
 
 def results_csv_file(lines):
-    index = 0 if len(lines) == 0 else 1
+    if not lines:
+        print('No data to write.')
+        return
+
+    # Gather all unique fieldnames from all dictionaries
+    fieldnames = set()
+    for line in lines:
+        fieldnames.update(line.keys())
+
     with open('results.csv', 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=lines[index].keys() if lines else [])
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()
         for line in lines:
-            writer.writerow(line)
+            try:
+                writer.writerow(line)
+            except Exception as e:
+                print(f'Could not write line: {e}')
+
     print('CSV file created successfully.')
 
 
