@@ -221,19 +221,19 @@ def results_csv_file(lines):
         print('No data to write.')
         return
 
-    # Gather all unique fieldnames from all dictionaries
-    fieldnames = set()
-    for line in lines:
-        fieldnames.update(line.keys())
+    # Find the line with the maximum number of keys (columns)
+    max_columns_line = max(lines, key=lambda line: len(line.keys()))
 
     with open('results.csv', 'w', newline='', encoding='utf-8') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        # Use the keys from the line with the most keys as fieldnames
+        writer = csv.DictWriter(f, fieldnames=max_columns_line.keys())
         writer.writeheader()
         for line in lines:
             try:
                 writer.writerow(line)
+                print('success writing line:', line.keys())
             except Exception as e:
-                print(f'Could not write line: {e}')
+                print('could not write line:', line.keys(), str(e))
 
     print('CSV file created successfully.')
 
