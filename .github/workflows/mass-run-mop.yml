@@ -112,6 +112,11 @@ jobs:
         find . -type f -name "*.gz" -exec gunzip {} \;
         echo "Files within ./projects/reports/$REPO_NAME:"
         ls -l
+    
+    - name: Save link to logs
+      run: |
+        cd ./projects/reports/$REPO_NAME
+        echo "https://github.com/${{github.repository}}/releases/download/mass-run-mop-${{inputs.links_worksheetTitle}}-${{ github.run_id }}/${{env.ZIP_FILE}}" > logs_link.txt
 
     - name: Zip report files
       run: |

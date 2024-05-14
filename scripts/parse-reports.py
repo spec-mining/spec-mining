@@ -331,6 +331,9 @@ def main():
                             line['events'] = events_str
                             line['total_events'] = total_events
 
+                    with open('logs_link.txt', 'r') as file:
+                        line['log_file'] = file.read()
+                    
                     results.append(line)
             if len(results) == 0:
                 print(f'No results found for {projectname}')
