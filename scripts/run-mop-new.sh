@@ -57,9 +57,9 @@ cd "$project_dir" || exit
 rm -f .pymon
 source env/bin/activate
 
-#algos=("ORIGINAL" "A" "B" "C" "C+" "D")
+algos=("ORIGINAL" "B" "C" "C+" "D")
 #algos=("B")
-algos=("ORIGINAL" "D")
+# algos=("ORIGINAL" "D")
 
 # Iterate over the strings using a for loop
 for algo in "${algos[@]}"; do

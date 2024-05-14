@@ -294,7 +294,7 @@ def main():
             os.chdir(projectname)
 
             # Iterate through each algorithm
-            algos = ["ORIGINAL", "D"]
+            algos = ["ORIGINAL", "B", "C", "C+", "D"]
             results = []
 
             for algorithm in algos:
