@@ -1,0 +1,23 @@
+name: 'Get sys info'
+
+on:
+  workflow_dispatch:
+
+jobs:
+  print-sys-data:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          lscpu
+
+          free -h 
+          
+          cat /proc/cpuinfo
+          
+          lsb_release -a
+          
+          hostnamectl
+          
+          df -h
+
+
