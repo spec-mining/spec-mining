@@ -13,13 +13,13 @@ import { specIDList } from "../constants";
 const GH_ACCESS_TOKEN = process.env['GH_ACCESS_TOKEN'];
 const octokit = new Octokit({ auth: GH_ACCESS_TOKEN });
 const MANIFEST_FILES = [
-    "setup.py",
+    // "setup.py",
     "requirements",
-    "Pipfile",
-    "Pipfile.lock",
-    "pyproject.toml",
-    "environment.yml",
-    "tox.ini",
+    // "Pipfile",
+    // "Pipfile.lock",
+    // "pyproject.toml",
+    // "environment.yml",
+    // "tox.ini",
     "req.txt",
     "requires"
 ]
