@@ -164,9 +164,27 @@ export const specIDList: Array<SpecID> = [
     },
     {
         specName: 'TfFunction_NoSideEffect',
+        regexQuery: '/@tf\.function\s*\n\s*def\s+\w+\s*\(.*?\):\s*(?:[^\{]*\{[^\}]*\})?.*?append\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: '@tf.function AND def AND append(',
+        dependencyName: 'tensorflow'
+    },    
+    {
+        specName: 'TfFunction_NoSideEffect',
         regexQuery: '/@tf\.function\s*\n\s*def\s+\w+\s*\(.*?\):\s*(?:[^\{]*\{[^\}]*\})?.*?print\((?:[^()]*|\([^()]*\))*\)/',
         githubQuery: '@tf.function AND def AND print(',
         dependencyName: 'tensorflow'
+    },
+    {
+        specName: 'Turtle_LastStatementDone',
+        regexQuery: '/turtle.done\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'turtle.done()',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Scipy_IntegrateRange',
+        regexQuery: 'scipy AND /quad\((?:[^()]*|\([^()]*\))*\)/ OR /integrate.quad\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'scipy AND integrate AND quad(',
+        dependencyName: 'scipy'
     },
     {
         specName: 'Thread_StartOnce',
