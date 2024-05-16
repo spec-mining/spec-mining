@@ -6,7 +6,8 @@ from collections import Counter
 import re
 import csv
 
-SQL_QUERY = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_usage FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
+SQL_QUERY_MEM = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_usage FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
+SQL_QUERY_TIME2 = 'SELECT t.RUN_DESCRIPTION, SUM(m.USER_TIME) AS total_user_time FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 problems = {}
 
 
@@ -148,7 +149,7 @@ def get_memory_from_db(projectname, algorithm):
     # run sqlite3 db.pymon < test.sql and get the output
     try:
         output_lines = subprocess.check_output(
-            ['sqlite3', 'db.pymon', SQL_QUERY], stderr=subprocess.DEVNULL).decode('utf-8').strip().split('\n')
+            ['sqlite3', 'db.pymon', SQL_QUERY_MEM], stderr=subprocess.DEVNULL).decode('utf-8').strip().split('\n')
     except Exception as e:
         add_problem(projectname, algorithm, f"Error running SQL query.")
         return 0.0
@@ -166,6 +167,31 @@ def get_memory_from_db(projectname, algorithm):
         if algo in line:
             average = line.split('|')[1].strip()
             return round(float(average), 2)
+
+
+def get_time_from_db(projectname, algorithm):
+    # run sqlite3 db.pymon < test.sql and get the output
+    try:
+        output_lines = subprocess.check_output(
+            ['sqlite3', 'db.pymon', SQL_QUERY_TIME2], stderr=subprocess.DEVNULL).decode('utf-8').strip().split('\n')
+    except Exception as e:
+        add_problem(projectname, algorithm, f"Error running SQL query.")
+        return 0.0
+
+    algo = f'"ALGO_{algorithm}"'
+
+    if len(output_lines) == 0:
+        add_problem(projectname, algorithm, "No data in database")
+        return None
+    if len(output_lines) > 5:
+        add_problem(projectname, algorithm,
+                    f"Too many lines in database. len={len(output_lines)}")
+        return 0.0
+
+    for line in output_lines:
+        if algo in line:
+            time2 = line.split('|')[1].strip()
+            return round(float(time2), 2)
 
 
 def compare(results, projectname):
@@ -301,9 +327,15 @@ def main():
                 filename = f'pymop_{algorithm}.out'
                 line = get_results(filename, projectname, algorithm)
                 if line is not None:
+                    
+                    # get time2 from db
+                    time2 = get_time_from_db(projectname, algorithm)
+                    line['time2'] = time2
+                    
                     # get memory from db
                     mem = get_memory_from_db(projectname, algorithm)
                     line['memory'] = mem
+                    
                     if algorithm != "ORIGINAL":
 
                         # get violations from json
