@@ -15,6 +15,8 @@ on:
         description: 'Title of the tab containing the links. Default is "links". The first column should contain the links to the repositories. a maximum of 256 links can be added.'
         required: false
         default: 'links-1'
+  repository_dispatch:
+    types: [run-multiple-repos]
 
 jobs:
   fetch_data:
@@ -26,14 +28,14 @@ jobs:
         id: fetch-repos
         uses: jroehl/gsheet.action@v2.0.0
         with:
-          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
+          spreadsheetId: ${{ github.event.inputs.google_sheet_id || github.event.client_payload.google_sheet_id }}
           commands: |
             [
               {
                 "command": "getData",
                 "args": {
-                  "worksheetTitle": "${{ github.event.inputs.links_worksheetTitle }}",
-                  "range": "${{ github.event.inputs.links_worksheetTitle }}!A1:A"
+                  "worksheetTitle": "${{ github.event.inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle }}",
+                  "range": "${{ github.event.inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle }}!A1:A"
                 }
               }
             ]

@@ -5,13 +5,13 @@ import json
 
 def trigger_workflow(repo_name, google_sheet_id, tab_name, token):
     print(f'Triggering: {repo_name} {google_sheet_id} {tab_name}')
-    # g = Github(token)
-    # repo = g.get_repo(repo_name)
-    # payload = {
-    #     'google_sheet_id': google_sheet_id,
-    #     'links_tab_name': tab_name
-    # }
-    # repo.create_dispatch_event(event_type='trigger-workflow-event', client_payload=payload)
+    g = Github(token)
+    repo = g.get_repo(repo_name)
+    payload = {
+        'google_sheet_id': google_sheet_id,
+        'links_worksheetTitle': tab_name
+    }
+    repo.create_dispatch_event(event_type='run-multiple-repos', client_payload=payload)
 
 def main():
     with open('github_repos.txt') as repoFile:
