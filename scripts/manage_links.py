@@ -25,10 +25,16 @@ def add_data_to_sheet(gc, sheet_id, chunks):
         except pygsheets.WorksheetNotFound:
             # If it does not exist, create a new one
             wks = sheet.add_worksheet(title=tab_name, rows=len(chunk), cols=1)
+            # If a new worksheet is created, resize it if the chunk is smaller than the default number of rows
+            if len(chunk) < 1000:  # Default number of rows is typically 1000
+                wks.rows = len(chunk)
 
-        # Populate the worksheet
-        for i, link in enumerate(chunk):
-            wks.update_value(f'A{i+1}', link)  # This updates cell by cell, consider using batch update for efficiency
+        # Prepare the range to be updated
+        cell_range = f'A1:A{len(chunk)}'
+        values = [[link] for link in chunk]  # Format the links as a list of lists for the update_cells method
+
+        # Perform a batch update
+        wks.update_values(crange=cell_range, values=values)
 
 def main():
     with open('links.json', 'r') as file:
