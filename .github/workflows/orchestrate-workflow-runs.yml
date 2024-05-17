@@ -58,7 +58,6 @@ jobs:
           echo "$JSON_STRING"
           echo "$JSON_STRING" > links.json
           cat links.json
-          echo "JSON_STRING=$(echo "$JSON_STRING")" >> $GITHUB_ENV
   
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
