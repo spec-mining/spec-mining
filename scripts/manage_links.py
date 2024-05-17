@@ -45,7 +45,10 @@ def main():
     # Save commands to JSON file
     with open('commands.json', 'w') as file:
         json.dump(commands, file)
-    print(f"::set-output name=commands::$(cat commands.json)")
+
+    commandsString = json.dumps(commands)
+
+    print(f"::set-output name=commands::{commandsString}")
 
 if __name__ == "__main__":
     main()
