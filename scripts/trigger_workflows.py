@@ -30,7 +30,7 @@ def main():
         tab_name = f'links_chunk_{j + 1}'
         repo_name = repoNamesList[latestRepoIndex]
         trigger_workflow(repo_name, google_sheet_id, tab_name, token)
-        latestRepoIndex = latestRepoIndex + 1 % num_repos
+        latestRepoIndex = (latestRepoIndex + 1) % num_repos
 
 if __name__ == "__main__":
     main()
