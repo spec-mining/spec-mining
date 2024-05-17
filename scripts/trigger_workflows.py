@@ -53,7 +53,7 @@ def main():
         trigger_workflow(repo_name, google_sheet_id, tab_name, token)
         latestRepoIndex = (latestRepoIndex + 1) % num_repos
 
-        if j < chunk_count - 1:  # Avoid sleeping after the last iteration
+        if j < int(chunk_count) - 1:  # Avoid sleeping after the last iteration
             time.sleep(30)
 
 if __name__ == "__main__":
