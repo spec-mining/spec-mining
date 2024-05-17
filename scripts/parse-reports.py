@@ -12,6 +12,31 @@ problems = {}
 NUM_ALGORITHMS = 6
 
 
+def get_time_from_json(projectname, algorithm):
+    filename = f'{algorithm}-time.json'
+    # check filename
+    if not os.path.isfile(filename):
+        add_problem(projectname, algorithm, "json time not found")
+        return None
+    # read json file
+    with open(filename, 'r') as f:
+        json_data = json.load(f)
+
+    # example json_data:
+    # {
+    # "instrumentation_duration": 0.0006315708160400391,
+    # "create_monitor_duration": 0.0004477500915527344,
+    # "test_duration": 0.425640344619751
+    # }
+    #
+    #
+    instrumentation_duration = json_data['instrumentation_duration']
+    create_monitor_duration = json_data['create_monitor_duration']
+    test_duration = json_data['test_duration']
+
+    return instrumentation_duration, create_monitor_duration, test_duration
+
+
 def get_monitors_and_events_from_json(projectname, algorithm):
     filename = f'{algorithm}-full.json'
     # check filename
@@ -328,6 +353,15 @@ def main():
                 filename = f'pymop_{algorithm}.out'
                 line = get_results(filename, projectname, algorithm)
                 if line is not None:
+
+                    # get time from json produced by pymop
+                    ret_time = get_time_from_json(projectname, algorithm)
+                    if ret_time is not None:
+                        (instrumentation_duration,
+                         create_monitor_duration, test_duration) = ret_time
+                        line['time_instrumentation'] = instrumentation_duration
+                        line['time_create_monitor'] = create_monitor_duration
+                        line['test_duration'] = test_duration
 
                     # get time2 from db
                     time2 = get_time_from_db(projectname, algorithm)
