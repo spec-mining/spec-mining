@@ -50,7 +50,7 @@ jobs:
       - name: Encode and Decode Links
         id: encode-decode
         run: |
-          ENCODED_RESULTS=$(echo '${{ steps.fetch-repos.outputs.data }}' | base64)
+          ENCODED_RESULTS=$(echo '${{ steps.fetch-repos.outputs.results }}' | base64)
           JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -r '[.[] | .rowData[0].values[0].formattedValue]')
           echo "$JSON_STRING" > links.json
           echo "JSON_STRING=$(echo "$JSON_STRING")" >> $GITHUB_ENV
