@@ -50,11 +50,15 @@ jobs:
       - name: Encode and Decode Links
         id: encode-decode
         run: |
+          # Base64 encode the results to avoid shell parsing issues
           ENCODED_RESULTS=$(echo '${{ steps.fetch-repos.outputs.results }}' | base64)
-          JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -r '[.[] | .rowData[0].values[0].formattedValue]')
+          # Decode and parse using jq
+          JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -c '[.results[].result.rawData[][]]')
+          echo "Extracted JSON String:"
+          echo "$JSON_STRING"
           echo "$JSON_STRING" > links.json
-          echo "JSON_STRING=$(echo "$JSON_STRING")" >> $GITHUB_ENV
           cat links.json
+          echo "JSON_STRING=$(echo "$JSON_STRING")" >> $GITHUB_ENV
   
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
