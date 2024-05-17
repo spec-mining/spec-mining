@@ -19,5 +19,3 @@ jobs:
           hostnamectl
           
           df -h
-          
-          sudo dmidecode | grep Size | grep MB
