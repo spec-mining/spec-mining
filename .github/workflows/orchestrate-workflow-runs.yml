@@ -59,6 +59,9 @@ jobs:
           echo "$JSON_STRING" > links.json
           cat links.json
           echo "${{ github.event.inputs.github_repositories }}" > github_repos.txt
+      
+      - name: Install Dependencies
+        run: pip3 install pygsheets
   
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
