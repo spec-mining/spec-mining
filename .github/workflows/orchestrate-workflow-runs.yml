@@ -54,6 +54,7 @@ jobs:
           JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -r '[.[] | .rowData[0].values[0].formattedValue]')
           echo "$JSON_STRING" > links.json
           echo "JSON_STRING=$(echo "$JSON_STRING")" >> $GITHUB_ENV
+          cat links.json
   
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
