@@ -32,6 +32,8 @@ call_pymop(){
     mv .report.json $report/$algo.report.json
     mv "$algo"-full.json $report/$algo-full.json
     mv "$algo"-violations.json $report/$algo-violations.json
+    mv "$algo"-time.json $report/$algo-time.json
+
 
 
     gzip -f $report/$algo.report.json $report/pymop_$algo.out
