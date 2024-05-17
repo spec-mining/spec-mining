@@ -57,7 +57,7 @@ jobs:
   
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
-        run: python ./scripts/prepare_chunks.py
+        run: python scripts/prepare_chunks.py
   
       - name: Create and Populate Tabs
         uses: jroehl/gsheet.action@v2.0.0
@@ -69,5 +69,5 @@ jobs:
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
   
       - name: Trigger Workflows
-        run: python ./scripts/trigger_workflows.py
+        run: python scripts/trigger_workflows.py
   
