@@ -68,6 +68,7 @@ jobs:
         run: python3 scripts/manage_links.py
         env:
             GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+            GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
   
       - name: Create and Populate Tabs
         uses: jroehl/gsheet.action@v2.0.0
