@@ -54,7 +54,7 @@ def main():
         latestRepoIndex = (latestRepoIndex + 1) % num_repos
 
         if j < int(chunk_count) - 1:  # Avoid sleeping after the last iteration
-            time.sleep(30)
+            time.sleep(15)
 
 if __name__ == "__main__":
     main()
