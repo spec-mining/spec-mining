@@ -9,6 +9,7 @@ import csv
 SQL_QUERY_MEM = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_usage FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 SQL_QUERY_TIME2 = 'SELECT t.RUN_DESCRIPTION, SUM(m.USER_TIME) AS total_user_time FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 problems = {}
+NUM_ALGORITHMS = 6
 
 
 def get_monitors_and_events_from_json(projectname, algorithm):
@@ -158,7 +159,7 @@ def get_memory_from_db(projectname, algorithm):
 
     if len(output_lines) == 0:
         add_problem(projectname, algorithm, "No data in database")
-    if len(output_lines) > 5:
+    if len(output_lines) > NUM_ALGORITHMS:
         add_problem(projectname, algorithm,
                     f"Too many lines in database. len={len(output_lines)}")
         return 0.0
@@ -183,7 +184,7 @@ def get_time_from_db(projectname, algorithm):
     if len(output_lines) == 0:
         add_problem(projectname, algorithm, "No data in database")
         return None
-    if len(output_lines) > 5:
+    if len(output_lines) > NUM_ALGORITHMS:
         add_problem(projectname, algorithm,
                     f"Too many lines in database. len={len(output_lines)}")
         return 0.0
@@ -197,7 +198,7 @@ def get_time_from_db(projectname, algorithm):
 def compare(results, projectname):
     # Regular expression to remove ANSI escape sequences
     ansi_escape = re.compile(r'\x1b\[([0-9]+)(;[0-9]+)*m')
-    
+
     # check if the columns: passed, failed, skipped, xfailed, xpassed, errors are different from the original
     original = results[0]
     keys = ['failed', 'skipped', 'xfailed', 'xpassed', 'errors']
@@ -206,11 +207,11 @@ def compare(results, projectname):
             # Ensure values are strings before attempting to strip ANSI codes
             original_value = str(original.get(key, ''))
             result_value = str(result.get(key, ''))
-            
+
             # Remove ANSI escape sequences
             original_value_clean = ansi_escape.sub('', original_value)
             result_value_clean = ansi_escape.sub('', result_value)
-            
+
             # Check if values are numeric before converting to integer
             if original_value_clean.isdigit() and result_value_clean.isdigit():
                 diff = int(original_value_clean) - int(result_value_clean)
@@ -327,19 +328,20 @@ def main():
                 filename = f'pymop_{algorithm}.out'
                 line = get_results(filename, projectname, algorithm)
                 if line is not None:
-                    
+
                     # get time2 from db
                     time2 = get_time_from_db(projectname, algorithm)
                     line['time2'] = time2
-                    
+
                     # get memory from db
                     mem = get_memory_from_db(projectname, algorithm)
                     line['memory'] = mem
-                    
+
                     if algorithm != "ORIGINAL":
 
                         # get violations from json
-                        ret_violation = get_num_violations_from_json(projectname, algorithm)
+                        ret_violation = get_num_violations_from_json(
+                            projectname, algorithm)
 
                         if ret_violation is not None:
                             (violations_str, total_violations, unique_violations_count, unique_violations_summary,
@@ -348,16 +350,20 @@ def main():
                             line['total_violations'] = total_violations
                             line['violations'] = violations_str
                             line['unique_violations_count'] = unique_violations_count
-                            str_unique_violations_summary = str(unique_violations_summary).replace(",", "<>")
+                            str_unique_violations_summary = str(
+                                unique_violations_summary).replace(",", "<>")
                             line['unique_violations_summary'] = str_unique_violations_summary
-                            str_unique_violations_test = str(unique_violations_test).replace(",", "<>")
+                            str_unique_violations_test = str(
+                                unique_violations_test).replace(",", "<>")
                             line['unique_violations_test'] = str_unique_violations_test
 
                         # get monitors and events from json
-                        ret_full = get_monitors_and_events_from_json(projectname, algorithm)
+                        ret_full = get_monitors_and_events_from_json(
+                            projectname, algorithm)
 
                         if ret_full is not None:
-                            monitors_str, events_str, total_monitors, total_events = ret_full[0], ret_full[1], ret_full[2], ret_full[3]
+                            monitors_str, events_str, total_monitors, total_events = ret_full[
+                                0], ret_full[1], ret_full[2], ret_full[3]
                             line['monitors'] = monitors_str
                             line['total_monitors'] = total_monitors
                             line['events'] = events_str
@@ -365,7 +371,7 @@ def main():
 
                     with open('logs_link.txt', 'r') as file:
                         line['log_file'] = file.read()
-                    
+
                     results.append(line)
             if len(results) == 0:
                 print(f'No results found for {projectname}')
