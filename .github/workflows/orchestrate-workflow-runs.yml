@@ -47,7 +47,7 @@ jobs:
           GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
           GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
   
-      - name: Encode and Decode Links
+      - name: Prepate links and github repos
         id: encode-decode
         run: |
           # Base64 encode the results to avoid shell parsing issues
@@ -58,6 +58,7 @@ jobs:
           echo "$JSON_STRING"
           echo "$JSON_STRING" > links.json
           cat links.json
+          echo "${{ github.event.inputs.github_repositories }}" > github_repos.txt
   
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
