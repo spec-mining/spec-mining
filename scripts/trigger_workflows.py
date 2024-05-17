@@ -13,13 +13,17 @@ def trigger_workflow(repo_name, google_sheet_id, tab_name, token):
     # repo.create_dispatch_event(event_type='trigger-workflow-event', client_payload=payload)
 
 def main():
+    with open('github_repos.txt') as repoFile:
+        repoNames = repoFile.read()
+        repoNamesList = repoNames.split()
+        print('repos:\n', repoNamesList)
+
     token = os.getenv('GITHUB_TOKEN')
     google_sheet_id = os.getenv('GOOGLE_SHEET_ID')
-    repositories = os.getenv('GITHUB_REPOSITORIES').split()
-    num_repos = len(repositories)
+    num_repos = len(repoNamesList)
     num_chunks = math.ceil(len(links) / num_repos)
 
-    for i, repo_name in enumerate(repositories):
+    for i, repo_name in enumerate(repoNamesList):
         start_chunk = i * num_chunks
         end_chunk = start_chunk + num_chunks
         for j in range(start_chunk, min(end_chunk, len(chunks))):

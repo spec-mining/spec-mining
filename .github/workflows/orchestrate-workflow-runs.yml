@@ -63,22 +63,16 @@ jobs:
       - name: Install Dependencies
         run: pip3 install pygsheets
   
-      - name: Prepare Chunk Commands
+      - name: Prepare Chunks and Populate Tabs
         id: prepare-chunk-commands
         run: python3 scripts/manage_links.py
         env:
             GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
             GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
   
-      - name: Create and Populate Tabs
-        uses: jroehl/gsheet.action@v2.0.0
-        with:
-          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
-          commands: ${{ steps.prepare-chunk-commands.outputs.commands }}
-        env:
-          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
-          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
-  
       - name: Trigger Workflows
         run: python3 scripts/trigger_workflows.py
+        env:
+            GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+            GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
   
