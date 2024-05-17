@@ -3,7 +3,8 @@ import math
 
 def main():
     with open('links.json', 'r') as file:
-        print('loaded file', file.read())
+        data = file.read()
+        print('loaded file', len(data))
         links = json.load(file)
     
     print('the links:\n', links)
