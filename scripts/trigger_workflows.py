@@ -3,6 +3,7 @@ import os
 import math
 import json
 import time
+import requests
 
 def trigger_workflow(repo_name, google_sheet_id, tab_name, token):
     """Trigger a GitHub repository dispatch event using HTTP requests."""
