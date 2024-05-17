@@ -63,6 +63,8 @@ jobs:
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
         run: python3 scripts/manage_links.py
+        env:
+            GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
   
       - name: Create and Populate Tabs
         uses: jroehl/gsheet.action@v2.0.0
