@@ -2,7 +2,7 @@ import json
 import math
 
 def main():
-    with open('../links.json', 'r') as file:
+    with open('links.json', 'r') as file:
         print('loaded file', file)
         links = json.load(file)
     
