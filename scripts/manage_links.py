@@ -59,5 +59,8 @@ def main():
     sheet_id = os.getenv('GOOGLE_SHEET_ID')  # Ensure GOOGLE_SHEET_ID is set in your env
     add_data_to_sheet(gc, sheet_id, chunks)
 
+    # Output the number of chunks to be used in later steps
+    print(f"::set-output name=chunk_count::{len(chunks)}")
+
 if __name__ == "__main__":
     main()

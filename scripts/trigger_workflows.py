@@ -1,5 +1,6 @@
 from github import Github
 import os
+import math
 import json
 
 def trigger_workflow(repo_name, google_sheet_id, tab_name, token):
@@ -20,15 +21,16 @@ def main():
 
     token = os.getenv('GITHUB_TOKEN')
     google_sheet_id = os.getenv('GOOGLE_SHEET_ID')
+    chunk_count = os.getenv('CHUNK_COUNT')
     num_repos = len(repoNamesList)
-    num_chunks = math.ceil(len(links) / num_repos)
 
-    for i, repo_name in enumerate(repoNamesList):
-        start_chunk = i * num_chunks
-        end_chunk = start_chunk + num_chunks
-        for j in range(start_chunk, min(end_chunk, len(chunks))):
-            tab_name = f'links_chunk_{j + 1}'
-            trigger_workflow(repo_name, google_sheet_id, tab_name, token)
+    # interate over all chunks and distribute them among repos
+    latestRepoIndex = 0
+    for chunk in range(int(chunk_count)):
+        tab_name = f'links_chunk_{j + 1}'
+        repo_name = repoNamesList[latestRepoIndex]
+        trigger_workflow(repo_name, google_sheet_id, tab_name, token)
+        latestRepoIndex = latestRepoIndex + 1 % num_repos
 
 if __name__ == "__main__":
     main()

@@ -61,10 +61,10 @@ jobs:
           echo "${{ github.event.inputs.github_repositories }}" > github_repos.txt
       
       - name: Install Dependencies
-        run: pip3 install pygsheets
+        run: pip3 install pygsheets PyGithub
   
       - name: Prepare Chunks and Populate Tabs
-        id: prepare-chunk-commands
+        id: prepare-chunks
         run: python3 scripts/manage_links.py
         env:
             GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
@@ -75,4 +75,5 @@ jobs:
         env:
             GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
             GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
+            CHUNK_COUNT: ${{ steps.prepare-chunks.outputs.chunk_count }}
   
