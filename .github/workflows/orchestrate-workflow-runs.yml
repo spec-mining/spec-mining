@@ -1,0 +1,73 @@
+name: Orchestrate Workflow Runs
+
+on:
+    workflow_dispatch:
+      inputs:
+        google_sheet_id:
+          description: 'ID of the Google Sheet containing repository links.'
+          required: true
+        links_tab_name:
+          description: 'Title of the tab containing the links.'
+          required: true
+        github_repositories:
+          description: 'Space-separated list of GitHub repositories in the format owner/repo-name.'
+          required: true
+
+jobs:
+    prepare-and-trigger:
+      runs-on: ubuntu-latest
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+  
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+  
+      - name: Install jq
+        run: sudo apt-get install jq
+  
+      - name: Fetch Repository Links
+        id: fetch-repos
+        uses: jroehl/gsheet.action@v2.0.0
+        with:
+          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
+          commands: |
+            [
+              {
+                "command": "getData",
+                "args": {
+                  "worksheetTitle": "${{ github.event.inputs.links_tab_name }}",
+                  "range": "${{ github.event.inputs.links_tab_name }}!A1:A"
+                }
+              }
+            ]
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+  
+      - name: Encode and Decode Links
+        id: encode-decode
+        run: |
+          ENCODED_RESULTS=$(echo '${{ steps.fetch-repos.outputs.data }}' | base64)
+          JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -r '[.[] | .rowData[0].values[0].formattedValue]')
+          echo "$JSON_STRING" > links.json
+          echo "JSON_STRING=$(echo "$JSON_STRING")" >> $GITHUB_ENV
+  
+      - name: Prepare Chunk Commands
+        id: prepare-chunk-commands
+        run: python ./scripts/prepare_chunks.py
+  
+      - name: Create and Populate Tabs
+        uses: jroehl/gsheet.action@v2.0.0
+        with:
+          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
+          commands: ${{ steps.prepare-chunk-commands.outputs.commands }}
+        env:
+          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
+          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
+  
+      - name: Trigger Workflows
+        run: python ./scripts/trigger_workflows.py
+  
