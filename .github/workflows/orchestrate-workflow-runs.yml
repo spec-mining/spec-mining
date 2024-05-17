@@ -57,10 +57,7 @@ jobs:
   
       - name: Prepare Chunk Commands
         id: prepare-chunk-commands
-        run: |
-            ls -al
-            ls -al ./scripts
-            python3 scripts/prepare_chunks.py
+        run: python3 scripts/manage_links.py
   
       - name: Create and Populate Tabs
         uses: jroehl/gsheet.action@v2.0.0
