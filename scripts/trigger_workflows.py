@@ -26,7 +26,7 @@ def main():
 
     # interate over all chunks and distribute them among repos
     latestRepoIndex = 0
-    for chunk in range(int(chunk_count)):
+    for j in range(int(chunk_count)):
         tab_name = f'links_chunk_{j + 1}'
         repo_name = repoNamesList[latestRepoIndex]
         trigger_workflow(repo_name, google_sheet_id, tab_name, token)
