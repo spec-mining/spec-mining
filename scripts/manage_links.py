@@ -2,8 +2,11 @@ import json
 import math
 
 def main():
-    with open('links.json', 'r') as file:
+    with open('../links.json', 'r') as file:
+        print('loaded file', file)
         links = json.load(file)
+    
+    print('the links:\n', links)
     
     max_chunk_size = 256
     num_repositories = len(os.getenv('GITHUB_REPOSITORIES').split())
