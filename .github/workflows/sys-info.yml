@@ -10,6 +10,8 @@ jobs:
       - run: |
           lscpu
 
+          sudo dmidecode | grep Size | grep MB
+        
           free -h 
           
           cat /proc/cpuinfo
