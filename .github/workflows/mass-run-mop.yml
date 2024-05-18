@@ -1,6 +1,5 @@
 name: Run Scripts on Multiple Repositories
 
-
 permissions:
   contents: write
 
@@ -15,6 +14,10 @@ on:
         description: 'Title of the tab containing the links. Default is "links". The first column should contain the links to the repositories. a maximum of 256 links can be added.'
         required: false
         default: 'links-1'
+      release_name:
+        description: 'Name of the release to be created.'
+        default: all-results-2024-05-18-morning
+        required: true
   repository_dispatch:
     types: [run-multiple-repos]
 
@@ -56,89 +59,14 @@ jobs:
 
   run_jobs:
     needs: fetch_data
-    runs-on: ubuntu-latest
+    uses: mohasarc/spec-mining/.github/workflows/run-single-project.yml@main
+    with:
+      project-link: ${{ matrix.repo }}
+      release-name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
     strategy:
       fail-fast: false
       matrix:
         repo: ${{ fromJson(needs.fetch_data.outputs.matrix) }}
-    steps:
-    - uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
-
-    - name: Prepare Working Directory
-      run: |
-          mkdir ./projects
-          cd ./projects
-
-    - name: Setup variables
-      run: |
-          REPO_URL="${{ matrix.repo }}"
-          REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
-          ZIP_FILE="${REPO_NAME}.zip"
-          echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
-          echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
-      shell: bash
-
-    - name: clone SoftEngResearch/mop-with-dynapt
-      run: |
-        cd ./projects
-        git clone https://${{ secrets.GH_ACCESS_TOKEN }}@github.com/SoftEngResearch/mop-with-dynapt.git
-        cd mop-with-dynapt
-        git checkout add_statistics_new
-
-    - name: Create projects directory and copy scripts from ../scripts there
-      run: |
-        cd ./projects
-        cp ../scripts/* .
-        ls -l
-
-    - name: Install Dependencies and Run MOP
-      run: |
-        echo "================== Installing Dependencies =================="
-        cd ./projects
-        ls -l
-        chmod +x ./install.sh
-        ./install.sh ${{ matrix.repo }}
-
-        echo "================== Running MOP =================="
-        REPO_URL="${{ matrix.repo }}"
-        REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
-        echo "Repository Name: $REPO_NAME"
-        chmod +x ./run-mop-new.sh
-        ./run-mop-new.sh ./$REPO_NAME
-
-        # extract all .gz files
-        cd ./reports/$REPO_NAME
-        find . -type f -name "*.gz" -exec gunzip {} \;
-        echo "Files within ./projects/reports/$REPO_NAME:"
-        ls -l
-    
-    - name: Save link to logs
-      run: |
-        cd ./projects/reports/$REPO_NAME
-        echo "https://github.com/${{github.repository}}/releases/download/mass-run-mop-${{inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}-${{ github.run_id }}/${{env.ZIP_FILE}}" > logs_link.txt
-
-    - name: Zip report files
-      run: |
-        cd ./projects/reports/$REPO_NAME
-        zip -r ../../$ZIP_FILE .  # Create a zip file in the projects directory
-        ls -l ../
-      shell: bash
-
-    - name: Upload report to GitHub Release
-      uses: Wandalen/wretry.action@master
-      with:
-        attempt_delay: 60000 # 1 min
-        attempt_limit: 10
-        action: softprops/action-gh-release@v1
-        with: |
-          files: ./projects/${{env.ZIP_FILE}}
-          tag_name: mass-run-mop-${{inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}-${{ github.run_id }}
-          name: mass-run-mop-${{inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}-${{ github.run_id }}
-          draft: false
-          prerelease: true
-          token: ${{ secrets.GITHUB_TOKEN }}
 
   analyze_data:
     needs: run_jobs
@@ -153,7 +81,7 @@ jobs:
         uses: robinraju/release-downloader@v1.10
         with:
           preRelease: true
-          tag: mass-run-mop-${{inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}-${{ github.run_id }}
+          tag: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
           fileName: '*.zip'
           out-file-path: './projects/reports/'
           extract: false
@@ -192,8 +120,8 @@ jobs:
           action: softprops/action-gh-release@v1
           with: |
             files: ./projects/reports/results.csv
-            tag_name: mass-run-mop-${{inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}-${{ github.run_id }}
-            name: mass-run-mop-${{inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}-${{ github.run_id }}
+            tag_name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
+            name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
             draft: false
             prerelease: true
             token: ${{ secrets.GITHUB_TOKEN }}

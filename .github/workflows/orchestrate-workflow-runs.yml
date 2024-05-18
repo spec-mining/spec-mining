@@ -12,6 +12,10 @@ on:
         github_repositories:
           description: 'Space-separated list of GitHub repositories in the format owner/repo-name.'
           required: true
+        release_name:
+          description: 'Name of the release to be created.'
+          default: all-results-2024-05-18-morning
+          required: true
 
 jobs:
     prepare-and-trigger:
@@ -76,4 +80,5 @@ jobs:
             GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
             GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
             CHUNK_COUNT: ${{ steps.prepare-chunks.outputs.chunk_count }}
+            RELEASE_NAME: ${{ github.event.inputs.release_name }}
   

@@ -59,7 +59,7 @@ cd "$project_dir" || exit
 rm -f .pymon
 source env/bin/activate
 
-algos=("ORIGINAL" "A" "B" "C" "C+" "D")
+algos=("$2")
 #algos=("B")
 # algos=("ORIGINAL" "D")
 

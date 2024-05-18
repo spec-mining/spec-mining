@@ -5,9 +5,9 @@ import json
 import time
 import requests
 
-def trigger_workflow(repo_name, google_sheet_id, tab_name, token):
+def trigger_workflow(repo_name, google_sheet_id, tab_name, release_name, token):
     """Trigger a GitHub repository dispatch event using HTTP requests."""
-    print(f'Triggering: {repo_name} with sheet ID: {google_sheet_id} and tab: {tab_name}')
+    print(f'Triggering: {repo_name} with sheet ID: {google_sheet_id} and tab: {tab_name} and release name: {release_name}')
 
     url = f"https://api.github.com/repos/{repo_name}/dispatches"
 
@@ -21,7 +21,8 @@ def trigger_workflow(repo_name, google_sheet_id, tab_name, token):
         "event_type": "run-multiple-repos",
         "client_payload": {
             "google_sheet_id": google_sheet_id,
-            "links_worksheetTitle": tab_name
+            "links_worksheetTitle": tab_name,
+            "release_name": release_name
         }
     }
 
@@ -42,6 +43,7 @@ def main():
     token = os.getenv('GITHUB_TOKEN')
     google_sheet_id = os.getenv('GOOGLE_SHEET_ID')
     chunk_count = os.getenv('CHUNK_COUNT')
+    release_name = os.getenv('RELEASE_NAME')
     num_repos = len(repoNamesList)
 
     # interate over all chunks and distribute them among repos
@@ -50,7 +52,7 @@ def main():
         tab_name = f'links_chunk_{j + 1}'
         repo_name = repoNamesList[latestRepoIndex]
 
-        trigger_workflow(repo_name, google_sheet_id, tab_name, token)
+        trigger_workflow(repo_name, google_sheet_id, tab_name, release_name, token)
         latestRepoIndex = (latestRepoIndex + 1) % num_repos
 
         if j < int(chunk_count) - 1:  # Avoid sleeping after the last iteration

@@ -1,0 +1,179 @@
+name: Run Project
+
+on:
+  workflow_call:
+    inputs:
+      project-link:
+        required: true
+        type: string
+      release-name:
+        required: true
+        type: string
+
+jobs:
+  run-original:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+    
+        - name: Prepare Working Directory
+          run: |
+              mkdir ./projects
+              cd ./projects
+    
+        - name: Setup variables
+          run: |
+              REPO_URL="${{ inputs.project-link }}"
+              REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+              ZIP_FILE="${REPO_NAME}_ORIGINAL.zip"
+              echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+              echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+          shell: bash
+    
+        - name: clone SoftEngResearch/mop-with-dynapt
+          run: |
+            cd ./projects
+            git clone https://${{ secrets.GH_ACCESS_TOKEN }}@github.com/SoftEngResearch/mop-with-dynapt.git
+            cd mop-with-dynapt
+            git checkout add_statistics_new
+    
+        - name: Create projects directory and copy scripts from ../scripts there
+          run: |
+            cd ./projects
+            cp ../scripts/* .
+            ls -l
+    
+        - name: Install Dependencies and Run MOP
+          run: |
+            echo "================== Installing Dependencies =================="
+            cd ./projects
+            ls -l
+            chmod +x ./install.sh
+            ./install.sh ${{ inputs.project-link }}
+    
+            echo "================== Running MOP =================="
+            REPO_URL="${{ inputs.project-link }}"
+            REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+            echo "Repository Name: $REPO_NAME"
+            chmod +x ./run-mop-new.sh
+            ./run-mop-new.sh ./$REPO_NAME ORIGINAL
+    
+            # extract all .gz files
+            cd ./reports/$REPO_NAME
+            find . -type f -name "*.gz" -exec gunzip {} \;
+            echo "Files within ./projects/reports/$REPO_NAME:"
+            ls -l
+        
+        - name: Save link to logs
+          run: |
+            cd ./projects/reports/$REPO_NAME
+            echo "https://github.com/${{github.repository}}/releases/download/${{ inputs.release-name }}/${{env.ZIP_FILE}}" > logs_link.txt
+    
+        - name: Zip report files
+          run: |
+            cd ./projects/reports/$REPO_NAME
+            zip -r ../../$ZIP_FILE .  # Create a zip file in the projects directory
+            ls -l ../
+          shell: bash
+    
+        - name: Upload report to GitHub Release
+          uses: Wandalen/wretry.action@master
+          with:
+            attempt_delay: 60000 # 1 min
+            attempt_limit: 10
+            action: softprops/action-gh-release@v1
+            with: |
+              files: ./projects/${{env.ZIP_FILE}}
+              tag_name: ${{ inputs.release-name }}
+              name: ${{ inputs.release-name }}
+              draft: false
+              prerelease: true
+              token: ${{ secrets.GITHUB_TOKEN }}
+
+  run-algos:
+    needs: run-original
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        algorithm: ['A', 'B', 'C', 'C+', 'D']
+    steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+    
+        - name: Prepare Working Directory
+          run: |
+              mkdir ./projects
+              cd ./projects
+    
+        - name: Setup variables
+          run: |
+              REPO_URL="${{ inputs.project-link }}"
+              REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+              ZIP_FILE="${REPO_NAME}_${{matrix.algorithm}}.zip"
+              echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+              echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+          shell: bash
+    
+        - name: clone SoftEngResearch/mop-with-dynapt
+          run: |
+            cd ./projects
+            git clone https://${{ secrets.GH_ACCESS_TOKEN }}@github.com/SoftEngResearch/mop-with-dynapt.git
+            cd mop-with-dynapt
+            git checkout add_statistics_new
+    
+        - name: Create projects directory and copy scripts from ../scripts there
+          run: |
+            cd ./projects
+            cp ../scripts/* .
+            ls -l
+    
+        - name: Install Dependencies and Run MOP
+          run: |
+            echo "================== Installing Dependencies =================="
+            cd ./projects
+            ls -l
+            chmod +x ./install.sh
+            ./install.sh ${{ inputs.project-link }}
+    
+            echo "================== Running MOP =================="
+            REPO_URL="${{ inputs.project-link }}"
+            REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+            echo "Repository Name: $REPO_NAME"
+            chmod +x ./run-mop-new.sh
+            ./run-mop-new.sh ./$REPO_NAME ${{matrix.algorithm}}
+    
+            # extract all .gz files
+            cd ./reports/$REPO_NAME
+            find . -type f -name "*.gz" -exec gunzip {} \;
+            echo "Files within ./projects/reports/$REPO_NAME:"
+            ls -l
+        
+        - name: Save link to logs
+          run: |
+            cd ./projects/reports/$REPO_NAME
+            echo "https://github.com/${{github.repository}}/releases/download/${{ inputs.release-name }}/${{env.ZIP_FILE}}" > logs_link.txt
+    
+        - name: Zip report files
+          run: |
+            cd ./projects/reports/$REPO_NAME
+            zip -r ../../$ZIP_FILE .  # Create a zip file in the projects directory
+            ls -l ../
+          shell: bash
+    
+        - name: Upload report to GitHub Release
+          uses: Wandalen/wretry.action@master
+          with:
+            attempt_delay: 60000 # 1 min
+            attempt_limit: 10
+            action: softprops/action-gh-release@v1
+            with: |
+              files: ./projects/${{env.ZIP_FILE}}
+              tag_name: ${{ inputs.release-name }}
+              name: ${{ inputs.release-name }}
+              draft: false
+              prerelease: true
+              token: ${{ secrets.GITHUB_TOKEN }}
+
