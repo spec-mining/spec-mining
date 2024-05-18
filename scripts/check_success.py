@@ -21,5 +21,12 @@ def get_result_line(filename):
 def check_success():
     file_name = os.environ.get('REPORT_FILE')
     result_line = get_result_line(file_name)
+
+    print('Result Line: ', result_line)
+
     if result_line is None:
+        print('exiting with an error')
         exit(1)
+    else:
+        print('exiting with success')
+        exit(0)
