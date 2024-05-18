@@ -1,0 +1,35 @@
+name: Main Workflow
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  setup_matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - id: set-matrix
+        run: |
+          echo "::set-output name=matrix::$(jq -c . <<<'{\"jobs\":[\"Alpha\",\"Beta\",\"Gamma\"]}')"
+
+  primary_job:
+    needs: setup_matrix
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        job: ${{ fromJson(needs.setup_matrix.outputs.matrix).jobs }}
+    steps:
+      - name: Execute primary job ${{ matrix.job }}
+        run: |
+          echo "Running primary job ${{ matrix.job }}"
+
+      - name: Trigger dependent workflows
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: Dependent Jobs Workflow
+          token: ${{ secrets.GITHUB_TOKEN }}
+          inputs: '{"jobName": "${{ matrix.job }}"}'
+          ref: ${{ github.ref }}
