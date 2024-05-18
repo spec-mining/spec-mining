@@ -92,7 +92,10 @@ jobs:
       - name: extract zip files into folders with the same name
         run: |
           cd ./projects/reports
-          for f in *.zip; do unzip -d "${f%.*}" "$f"; done
+          for f in *.zip; do
+            folder_name=$(echo "${f%.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
+            unzip -o -d "$folder_name" "$f"
+          done
           ls -l
 
       - name: Generate report csv

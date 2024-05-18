@@ -37,7 +37,7 @@ jobs:
                 folder_name=$(echo "${f%.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
                 unzip -o -d "$folder_name" "$f"
               done
-              ls -l    
+              ls -l
     
           - name: Generate report csv
             run: |
