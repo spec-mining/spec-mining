@@ -1,5 +1,5 @@
 import os
-from .parse_reports import get_result_line
+from parse_reports import get_result_line
 
 def check_success():
     file_name = os.environ.get('REPORT_FILE')
