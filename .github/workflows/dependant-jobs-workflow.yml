@@ -5,6 +5,7 @@ on:
       jobName:
         required: true
         type: string
+  workflow_dispatch: 
 
 jobs:
   dependent_jobs:
