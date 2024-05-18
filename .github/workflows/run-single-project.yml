@@ -9,7 +9,9 @@ on:
       release-name:
         required: true
         type: string
-
+    secrets: 
+      GH_ACCESS_TOKEN:
+        required: true 
 jobs:
   run-original:
     runs-on: ubuntu-latest
@@ -27,8 +29,13 @@ jobs:
           run: |
               REPO_URL="${{ inputs.project-link }}"
               REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
-              ZIP_FILE="${REPO_NAME}_ORIGINAL.zip"
+              OWNER_NAME="${REPO_URL%/$REPO_NAME}"  # Removes the repo name from the URL, leaving the owner path
+              OWNER_NAME="${OWNER_NAME##*/}"  # Extracts only the owner name
+              FULL_REPO_NAME="$OWNER_NAME-$REPO_NAME"  # Combines owner and repository names with a dash
+
+              ZIP_FILE="${FULL_REPO_NAME}_ORIGINAL.zip"
               echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+              echo "FULL_REPO_NAME=$FULL_REPO_NAME" >> $GITHUB_ENV
               echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
           shell: bash
     
@@ -55,7 +62,7 @@ jobs:
     
             echo "================== Running MOP =================="
             REPO_URL="${{ inputs.project-link }}"
-            REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+
             echo "Repository Name: $REPO_NAME"
             chmod +x ./run-mop-new.sh
             ./run-mop-new.sh ./$REPO_NAME "ORIGINAL"
@@ -119,9 +126,15 @@ jobs:
         - name: Setup variables
           run: |
               REPO_URL="${{ inputs.project-link }}"
+
               REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
-              ZIP_FILE="${REPO_NAME}_${{matrix.algorithm}}.zip"
+              OWNER_NAME="${REPO_URL%/$REPO_NAME}"  # Removes the repo name from the URL, leaving the owner path
+              OWNER_NAME="${OWNER_NAME##*/}"  # Extracts only the owner name
+              FULL_REPO_NAME="$OWNER_NAME-$REPO_NAME"  # Combines owner and repository names with a dash
+              
+              ZIP_FILE="${FULL_REPO_NAME}_${{matrix.algorithm}}.zip"
               echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+              echo "FULL_REPO_NAME=$FULL_REPO_NAME" >> $GITHUB_ENV
               echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
           shell: bash
     
@@ -148,7 +161,6 @@ jobs:
     
             echo "================== Running MOP =================="
             REPO_URL="${{ inputs.project-link }}"
-            REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
             echo "Repository Name: $REPO_NAME"
             chmod +x ./run-mop-new.sh
             ./run-mop-new.sh ./$REPO_NAME "${{matrix.algorithm}}"
