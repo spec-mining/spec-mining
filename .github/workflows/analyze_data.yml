@@ -73,8 +73,8 @@ jobs:
               action: softprops/action-gh-release@v1
               with: |
                 files: ./projects/reports/results.csv
-                tag_name: ${{inputs.release-tag}}
-                name: ${{inputs.release-tag}}
+                tag_name: all-results-${{inputs.release-tag}}
+                name: all-results-${{inputs.release-tag}}
                 draft: false
                 prerelease: true
                 token: ${{ secrets.GITHUB_TOKEN }}
