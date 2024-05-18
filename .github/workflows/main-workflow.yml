@@ -31,6 +31,6 @@ jobs:
           echo "Running primary job ${{ matrix.job }}"
 
       - name: Trigger dependent workflows
-        uses: ./.github/workflows/dependant-jobs-workflow.yml@main
+        uses: mohasarc/spec-mining/.github/workflows/dependant-jobs-workflow.yml@main
         with:
           jobName: ${{ matrix.job }}
