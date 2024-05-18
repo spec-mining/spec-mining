@@ -17,20 +17,9 @@ jobs:
 
   primary_job:
     needs: setup_matrix
-    runs-on: ubuntu-latest
+    uses: mohasarc/spec-mining/.github/workflows/dependant-jobs-workflow.yml@main
+    with:
+        jobName: ${{ matrix.job }}
     strategy:
       matrix:
         job: ${{ fromJson(needs.setup_matrix.outputs.matrix) }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Execute primary job ${{ matrix.job }}
-        run: |
-          echo "Running primary job ${{ matrix.job }}"
-
-      - name: Trigger dependent workflows
-        uses: mohasarc/spec-mining/.github/workflows/dependant-jobs-workflow.yml@main
-        with:
-          jobName: ${{ matrix.job }}
