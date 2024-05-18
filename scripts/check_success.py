@@ -21,7 +21,7 @@ def get_result_line(filename):
         return None
 
 def check_success():
-    file_name = os.environ.get('REPORT_FILE')
+    file_name = 'pymop_ORIGINAL.out'
     result_line = get_result_line(file_name)
 
     print('Result Line of file', file_name, 'is: \n', result_line)

@@ -104,8 +104,6 @@ jobs:
             cd ./projects/reports/$REPO_NAME
             cp ../../../scripts/check_success.py .
             python3 check_success.py
-          env:
-            REPORT_FILE: ${{env.REPO_NAME}}_ORIGINAL.out
 
   run-algos:
     needs: run-original
