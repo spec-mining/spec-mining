@@ -13,14 +13,14 @@ jobs:
     steps:
       - id: set-matrix
         run: |
-          echo "::set-output name=matrix::$(jq -c . <<<'{\"jobs\":[\"Alpha\",\"Beta\",\"Gamma\"]}')"
+          echo "::set-output name=matrix::$(jq -c . <<<'[\"Alpha\",\"Beta\",\"Gamma\"]')"
 
   primary_job:
     needs: setup_matrix
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        job: ${{ fromJson(needs.setup_matrix.outputs.matrix).jobs }}
+        job: ${{ fromJson(needs.setup_matrix.outputs.matrix) }}
     steps:
       - name: Execute primary job ${{ matrix.job }}
         run: |
