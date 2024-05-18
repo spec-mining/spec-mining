@@ -2,7 +2,7 @@
 if [ -z "$1" ]
   then
     echo "No argument supplied"
-    echo "Usage: ./run-mop-new.sh <path-to-project> <extra-args>"
+    echo "Usage: ./run-mop-new.sh <path-to-project> <algos> <extra-args>"
     exit 1
 fi
 
@@ -26,7 +26,6 @@ call_pymop(){
     fi
     set +x
     
-
     ls -l
 
     mv .report.json $report/$algo.report.json
@@ -34,10 +33,7 @@ call_pymop(){
     mv "$algo"-violations.json $report/$algo-violations.json
     mv "$algo"-time.json $report/$algo-time.json
 
-
-
     gzip -f $report/$algo.report.json $report/pymop_$algo.out
-
 }
 
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -45,26 +41,27 @@ report_folder=$HERE/reports
 mkdir -p $report_folder
 
 project_dir="$1"
-shift 1
+algos="$2"
+shift 2
 extra_args="$@"
+
+# Remove trailing slash if present
 project_dir=${project_dir%*/}
 echo "Running MOP for $project_dir"
 
 report="$report_folder/$project_dir"
 mkdir -p $report
 
-
 cd "$project_dir" || exit
 # Navigate into the folder
 rm -f .pymon
 source env/bin/activate
 
-algos=("$2")
-#algos=("B")
-# algos=("ORIGINAL" "D")
+# Convert algos string into an array
+IFS=',' read -r -a algo_array <<< "$algos"
 
-# Iterate over the strings using a for loop
-for algo in "${algos[@]}"; do
+# Iterate over the array using a for loop
+for algo in "${algo_array[@]}"; do
     echo "----------"
     echo "Current algo: $algo"
     call_pymop $algo $project_dir $report $extra_args

@@ -58,7 +58,7 @@ jobs:
             REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
             echo "Repository Name: $REPO_NAME"
             chmod +x ./run-mop-new.sh
-            ./run-mop-new.sh ./$REPO_NAME ORIGINAL
+            ./run-mop-new.sh ./$REPO_NAME "ORIGINAL"
     
             # extract all .gz files
             cd ./reports/$REPO_NAME
@@ -143,7 +143,7 @@ jobs:
             REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
             echo "Repository Name: $REPO_NAME"
             chmod +x ./run-mop-new.sh
-            ./run-mop-new.sh ./$REPO_NAME ${{matrix.algorithm}}
+            ./run-mop-new.sh ./$REPO_NAME "${{matrix.algorithm}}"
     
             # extract all .gz files
             cd ./reports/$REPO_NAME
