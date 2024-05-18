@@ -5,6 +5,7 @@ def get_result_line(filename):
     try:
         last_line = subprocess.check_output(
             ['tail', '-1', filename]).decode('utf-8').strip()
+        print('last line', last_line)
         # if the last line is not the one we want, get the last 100 lines and search
         if 'in' not in last_line or "passed" not in last_line:
             last_lines = subprocess.check_output(
@@ -22,7 +23,7 @@ def check_success():
     file_name = os.environ.get('REPORT_FILE')
     result_line = get_result_line(file_name)
 
-    print('Result Line: ', result_line)
+    print('Result Line: ', result_line, 'of file', file_name)
 
     if result_line is None:
         print('exiting with an error')
