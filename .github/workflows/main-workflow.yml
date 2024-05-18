@@ -27,9 +27,6 @@ jobs:
           echo "Running primary job ${{ matrix.job }}"
 
       - name: Trigger dependent workflows
-        uses: benc-uk/workflow-dispatch@v1
+        uses: ./.github/workflows/dependant-jobs-workflow.yml@main
         with:
-          workflow: Dependent Jobs Workflow
-          token: ${{ secrets.GH_ACCESS_TOKEN }}
-          inputs: '{"jobName": "${{ matrix.job }}"}'
-          ref: ${{ github.ref }}
+          jobName: ${{ matrix.job }}

@@ -1,15 +1,11 @@
 name: Dependent Jobs Workflow
+
 on:
   workflow_call:
     inputs:
       jobName:
         required: true
         type: string
-  workflow_dispatch:
-    inputs:
-        jobName:
-          required: true
-          type: string 
 
 jobs:
   dependent_jobs:
