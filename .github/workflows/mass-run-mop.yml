@@ -63,6 +63,7 @@ jobs:
     with:
       project-link: ${{ matrix.repo }}
       release-name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
+    secrets: inherit
     strategy:
       fail-fast: false
       matrix:
