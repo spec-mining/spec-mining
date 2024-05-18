@@ -40,12 +40,12 @@ jobs:
             run: |
               cd ./projects/reports
     
-              # move ../../../scripts/parse-reports.py to ./projects/reports
-              cp ../../scripts/parse-reports.py .
+              # move ../../../scripts/parse_reports.py to ./projects/reports
+              cp ../../scripts/parse_reports.py .
               
               ls -l
               # run the python script
-              python3 parse-reports.py
+              python3 parse_reports.py
               ls -l
       
               # print the contents of results.csv

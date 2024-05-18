@@ -140,9 +140,12 @@ def get_result_line(filename):
 def get_results(filename, project, algorithm):
     # check filename
     if not os.path.isfile(filename):
+        print('file not found')
         add_problem(project, algorithm, "File not found")
         return None
+    
     last_line = get_result_line(filename)
+    print('last line', last_line)
     try:
         # print('line', last_line)
         time = last_line.split('in ')[1].split('s')[0].strip()
