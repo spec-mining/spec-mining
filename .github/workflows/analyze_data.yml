@@ -11,6 +11,10 @@ on:
         description: 'The tag of the release to download logs from.'
         required: true
         type: string
+      repositories:
+        description: 'Space-separated list of repositories in the format owner/repo.'
+        required: true
+        type: string
 
 jobs:
     analyze_data:
@@ -20,17 +24,20 @@ jobs:
             with:
               fetch-depth: 0
     
-          - name: download files from release
-            uses: robinraju/release-downloader@v1.10
-            with:
-              preRelease: true
-              tag: ${{inputs.release-tag}}
-              fileName: '*.zip'
-              out-file-path: './projects/reports/'
-              extract: false
-              token: ${{ secrets.GITHUB_TOKEN }}
+          - name: Setup working directories
+            run: |
+              mkdir -p ./projects/reports
+            
+          - name: Download files from multiple releases
+            run: |
+              for repo in ${{ github.event.inputs.repositories }}; do
+                echo "Downloading from $repo"
+                gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports
+              done
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
-          - name: extract zip files into folders with the same name
+          - name: Extract zip files into folders with cleaned base name
             run: |
               cd ./projects/reports
               for f in *.zip; do
@@ -45,7 +52,7 @@ jobs:
     
               # move ../../../scripts/parse_reports.py to ./projects/reports
               cp ../../scripts/parse_reports.py .
-              
+
               ls -l
               # run the python script
               python3 parse_reports.py
