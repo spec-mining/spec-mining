@@ -13,7 +13,7 @@ jobs:
     steps:
       - id: set-matrix
         run: |
-          echo "::set-output name=matrix::$(jq -c . <<<'[\"Alpha\",\"Beta\",\"Gamma\"]')"
+          echo "::set-output name=matrix::$(jq -c . <<<[\"Alpha\",\"Beta\",\"Gamma\"])"
 
   primary_job:
     needs: setup_matrix
