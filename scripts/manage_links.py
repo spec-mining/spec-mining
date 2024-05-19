@@ -3,21 +3,29 @@ import math
 import os
 import pygsheets
 
-def calculate_chunk_size(total_links, num_repositories):
+def calculate_chunk_size(total_links, num_repositories, min):
     # Start by checking max possible chunk size
     for size in range(256, 39, -1):  # from 256 down to 40
         if total_links / size >= num_repositories:
             return size
-    return 40  # Minimum size if no ideal size found within range
+    return min  # Minimum size if no ideal size found within range
 
 def authenticate_gsheets():
     # Authenticate using service account credentials from an environment variable or a file
     gc = pygsheets.authorize(service_account_env_var='GOOGLE_CREDENTIALS')  # Ensure GOOGLE_CREDENTIALS is set in your env
     return gc
 
-def prepare_chunks(links, repos, prefix, gc, sheet_id):
+def prepare_chunks(links, repos, isPro, gc, sheet_id):
     num_repos = len(repos)
-    chunk_size = calculate_chunk_size(len(links), num_repos)
+
+    if (isPro):
+        prefix = 'pro_links_chunk_'
+        min = 40
+    else:
+        prefix = 'reg_links_chunk_'
+        min = 10
+
+    chunk_size = calculate_chunk_size(len(links), num_repos, min)
 
     # Create chunks
     chunks = [links[i:i + chunk_size] for i in range(0, len(links), chunk_size)]
@@ -77,12 +85,12 @@ def main():
     links_for_pro = links[:num_links_for_pro]
     links_for_regular = links[num_links_for_pro:]
 
-    pro_chunks = prepare_chunks(links_for_pro, proRepoNamesList, 'pro_links_chunk_', gc, sheet_id)
-    regular_chunks = prepare_chunks(links_for_regular, regularRepoNamesList, 'reg_links_chunk_',gc, sheet_id)
+    pro_chunks = prepare_chunks(links_for_pro, proRepoNamesList, True, gc, sheet_id)
+    regular_chunks = prepare_chunks(links_for_regular, regularRepoNamesList, False,gc, sheet_id)
 
     # Output the number of chunks to be used in later steps
-    print(f"::set-output name=pro_chunk_count::{len(pro_chunks)}")
-    print(f"::set-output name=reg_chunk_count::{len(regular_chunk_size)}")
+    print(f"::set-output name=pro_chunk_count::{pro_chunks}")
+    print(f"::set-output name=reg_chunk_count::{regular_chunk_size}")
 
 if __name__ == "__main__":
     main()
