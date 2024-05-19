@@ -52,6 +52,14 @@ jobs:
             cp ../scripts/* .
             ls -l
 
+        - name: Install Dependencies
+          run: |
+            echo "================== Installing Dependencies =================="
+            cd ./projects
+            ls -l
+            chmod +x ./install.sh
+            ./install.sh ${{ inputs.project-link }}
+
         - name: Remove unnecessary specs
           run: |
             cd ./projects/$REPO_NAME
@@ -61,13 +69,8 @@ jobs:
     
         - name: Install Dependencies and Run MOP
           run: |
-            echo "================== Installing Dependencies =================="
-            cd ./projects
-            ls -l
-            chmod +x ./install.sh
-            ./install.sh ${{ inputs.project-link }}
-    
             echo "================== Running MOP =================="
+            cd ./projects
             REPO_URL="${{ inputs.project-link }}"
 
             echo "Repository Name: $REPO_NAME"
@@ -156,6 +159,14 @@ jobs:
             cp ../scripts/* .
             ls -l
 
+        - name: Install Dependencies
+          run: |
+            echo "================== Installing Dependencies =================="
+            cd ./projects
+            ls -l
+            chmod +x ./install.sh
+            ./install.sh ${{ inputs.project-link }}
+
         - name: Remove unnecessary specs
           run: |
             cd ./projects/$REPO_NAME
@@ -165,13 +176,8 @@ jobs:
 
         - name: Install Dependencies and Run MOP
           run: |
-            echo "================== Installing Dependencies =================="
-            cd ./projects
-            ls -l
-            chmod +x ./install.sh
-            ./install.sh ${{ inputs.project-link }}
-    
             echo "================== Running MOP =================="
+            cd ./projects
             REPO_URL="${{ inputs.project-link }}"
             echo "Repository Name: $REPO_NAME"
             chmod +x ./run-mop-new.sh
