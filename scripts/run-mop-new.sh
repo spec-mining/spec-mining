@@ -12,6 +12,10 @@ call_pymop(){
     report="$3"
     shift 3
     extra_args="$@"
+
+    echo ============= Specs being used are =============
+    ls -al "$PWD"/../mop-with-dynapt/specs-new/
+    echo ================================================ 
     
     echo "--->Running MOP for $folder with algo $algo and extra args $extra_args"
 
