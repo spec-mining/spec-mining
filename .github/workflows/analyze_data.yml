@@ -50,16 +50,19 @@ jobs:
             run: |
               cd ./projects/reports
     
-              # move ../../../scripts/parse_reports.py to ./projects/reports
+              # move ../../../scripts/parse_reports.py and sanity_check.py to ./projects/reports
               cp ../../scripts/parse_reports.py .
+              cp ../../scripts/sanity_check.py .
 
               ls -l
-              # run the python script
+
               python3 parse_reports.py
-              ls -l
-      
-              # print the contents of results.csv
+
               echo "================================== Results =================================="
+              cat results.csv
+
+              python3 sanity_check.py
+              echo "========================= Results after Sanity check ========================"
               cat results.csv
     
             shell: bash
@@ -72,7 +75,9 @@ jobs:
               attempt_limit: 10
               action: softprops/action-gh-release@v1
               with: |
-                files: ./projects/reports/results.csv
+                files: |
+                  ./projects/reports/results.csv
+                  ./projects/reports/new-results.csv
                 tag_name: all-results-${{inputs.release-tag}}
                 name: all-results-${{inputs.release-tag}}
                 draft: false
