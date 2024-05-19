@@ -39,11 +39,44 @@ jobs:
           
           - name: Extract zip files into folders with cleaned base name
             run: |
+              # Navigate to the directory containing the zip files
               cd ./projects/reports
+
+              # Extract zip files into folders with the same name
               for f in *.zip; do
-                folder_name=$(echo "${f%.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
-                unzip -o -d "$folder_name" "$f"
+                  folder_name="${f%.*}"
+                  unzip -o -d "$folder_name" "$f"
               done
+
+              # Within each folder, rename the file db.pymon to db.pymon_ext
+              for folder in */; do
+                  base_name=$(echo "$folder" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)\/$//')
+                  ext=$(echo "$folder" | grep -oE '(_ORIGINAL|_A|_B|_C\+?|_D)\/' | sed 's/\///g')
+                  if [[ -f "$folder/db.pymon" ]]; then
+                      mv "$folder/db.pymon" "$folder/db.pymon_$ext"
+                  fi
+
+                  # Prepare to merge folders
+                  mkdir -p "./merged/$base_name"
+                  mv "$folder"/* "./merged/$base_name/"
+                  rmdir "$folder"
+              done
+
+              # Final merging step, move and overwrite all items to their respective base folders
+              for folder in ./merged/*; do
+                  base_name=$(basename "$folder")
+                  if [[ ! -d "../$base_name" ]]; then
+                      mv "$folder" "../$base_name"
+                  else
+                      mv "$folder"/* "../$base_name/"
+                      rmdir "$folder"
+                  fi
+              done
+
+              # Clean up the temporary merged directory
+              rmdir ./merged
+
+              # List the contents of the current directory to verify
               ls -l
     
           - name: Generate report csv

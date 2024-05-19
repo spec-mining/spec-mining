@@ -178,7 +178,7 @@ def get_memory_from_db(projectname, algorithm):
     # run sqlite3 db.pymon < test.sql and get the output
     try:
         output_lines = subprocess.check_output(
-            ['sqlite3', 'db.pymon', SQL_QUERY_MEM], stderr=subprocess.DEVNULL).decode('utf-8').strip().split('\n')
+            ['sqlite3', f'db.pymon_{algorithm}', SQL_QUERY_MEM], stderr=subprocess.DEVNULL).decode('utf-8').strip().split('\n')
     except Exception as e:
         add_problem(projectname, algorithm, f"Error running SQL query.")
         return 0.0
@@ -202,7 +202,7 @@ def get_time_from_db(projectname, algorithm):
     # run sqlite3 db.pymon < test.sql and get the output
     try:
         output_lines = subprocess.check_output(
-            ['sqlite3', 'db.pymon', SQL_QUERY_TIME2], stderr=subprocess.DEVNULL).decode('utf-8').strip().split('\n')
+            ['sqlite3', f'db.pymon_{algorithm}', SQL_QUERY_TIME2], stderr=subprocess.DEVNULL).decode('utf-8').strip().split('\n')
     except Exception as e:
         add_problem(projectname, algorithm, f"Error running SQL query.")
         return 0.0
