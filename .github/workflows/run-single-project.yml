@@ -51,6 +51,13 @@ jobs:
             cd ./projects
             cp ../scripts/* .
             ls -l
+
+        - name: Remove unnecessary specs
+          run: |
+            cd ./projects/$REPO_NAME
+            cp ../../scripts/remove-unnecessary-specs.sh .
+            chmod +x ./remove-unnecessary-specs.sh
+            ./remove-unnecessary-specs.sh
     
         - name: Install Dependencies and Run MOP
           run: |
@@ -148,7 +155,14 @@ jobs:
             cd ./projects
             cp ../scripts/* .
             ls -l
-    
+
+        - name: Remove unnecessary specs
+          run: |
+            cd ./projects/$REPO_NAME
+            cp ../../scripts/remove-unnecessary-specs.sh .
+            chmod +x ./remove-unnecessary-specs.sh
+            ./remove-unnecessary-specs.sh
+
         - name: Install Dependencies and Run MOP
           run: |
             echo "================== Installing Dependencies =================="
