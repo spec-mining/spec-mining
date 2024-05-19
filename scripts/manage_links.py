@@ -90,7 +90,7 @@ def main():
 
     # Output the number of chunks to be used in later steps
     print(f"::set-output name=pro_chunk_count::{pro_chunks}")
-    print(f"::set-output name=reg_chunk_count::{regular_chunk_size}")
+    print(f"::set-output name=reg_chunk_count::{regular_chunks}")
 
 if __name__ == "__main__":
     main()
