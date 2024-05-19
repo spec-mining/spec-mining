@@ -15,6 +15,17 @@ def authenticate_gsheets():
     gc = pygsheets.authorize(service_account_env_var='GOOGLE_CREDENTIALS')  # Ensure GOOGLE_CREDENTIALS is set in your env
     return gc
 
+def prepare_chunks(links, repos, prefix, gc, sheet_id):
+    num_repos = len(repos)
+    chunk_size = calculate_chunk_size(links, num_repos)
+
+    # Create chunks
+    chunks = [links[i:i + chunk_size] for i in range(0, links, chunk_size)]
+
+    add_data_to_sheet(gc, sheet_id, prefix, chunks)
+
+    return len(chunks)
+
 def add_data_to_sheet(gc, sheet_id, prefix, chunks):
     sheet = gc.open_by_key(sheet_id)
     for index, chunk in enumerate(chunks):
@@ -75,14 +86,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-def prepare_chunks(links, repos, prefix, gc, sheet_id):
-    num_repos = len(repos)
-    chunk_size = calculate_chunk_size(links, num_repos)
-
-    # Create chunks
-    chunks = [links[i:i + chunk_size] for i in range(0, links, chunk_size)]
-
-    add_data_to_sheet(gc, sheet_id, prefix, chunks)
-
-    return len(chunks)
