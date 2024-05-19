@@ -9,9 +9,12 @@ on:
         links_tab_name:
           description: 'Title of the tab containing the links.'
           required: true
-        github_repositories:
-          description: 'Space-separated list of GitHub repositories in the format owner/repo-name.'
+        pro_github_repositories:
+          description: 'Space-separated list of pro GitHub repositories in the format owner/repo-name.'
           required: true
+        reg_github_repositories:
+          description: 'Space-separated list of regular GitHub repositories in the format owner/repo-name.'
+          required: false
         release_name:
           description: 'Name of the release to be created.'
           default: all-results-2024-05-18-morning
@@ -62,7 +65,8 @@ jobs:
           echo "$JSON_STRING"
           echo "$JSON_STRING" > links.json
           cat links.json
-          echo "${{ github.event.inputs.github_repositories }}" > github_repos.txt
+          echo "${{ github.event.inputs.pro_github_repositories }}" > pro_github_repos.txt
+          echo "${{ github.event.inputs.reg_github_repositories }}" > regular_github_repos.txt
       
       - name: Install Dependencies
         run: pip3 install pygsheets PyGithub
@@ -74,11 +78,23 @@ jobs:
             GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
             GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
   
-      - name: Trigger Workflows
+      - name: Trigger Workflows on Pro Repos
         run: python3 scripts/trigger_workflows.py
         env:
             GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
             GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
-            CHUNK_COUNT: ${{ steps.prepare-chunks.outputs.chunk_count }}
+            CHUNK_COUNT: ${{ steps.prepare-chunks.outputs.pro_chunk_count }}
             RELEASE_NAME: ${{ github.event.inputs.release_name }}
+            PREFIX: 'pro_links_chunk_'
+            REPOS_FILE_NAME: 'pro_github_repos.txt'
+
+      - name: Trigger Workflows on Regular Repos
+        run: python3 scripts/trigger_workflows.py
+        env:
+            GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+            GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
+            CHUNK_COUNT: ${{ steps.prepare-chunks.outputs.reg_chunk_count }}
+            RELEASE_NAME: ${{ github.event.inputs.release_name }}
+            PREFIX: 'reg_links_chunk_'
+            REPOS_FILE_NAME: 'regular_github_repos.txt'
   

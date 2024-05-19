@@ -35,21 +35,24 @@ def trigger_workflow(repo_name, google_sheet_id, tab_name, release_name, token):
 
 
 def main():
-    with open('github_repos.txt') as repoFile:
-        repoNames = repoFile.read()
-        repoNamesList = repoNames.split()
-        print('repos:\n', repoNamesList)
-
+    repos_file_name = os.getenv('REPOS_FILE_NAME')
     token = os.getenv('GITHUB_TOKEN')
     google_sheet_id = os.getenv('GOOGLE_SHEET_ID')
     chunk_count = os.getenv('CHUNK_COUNT')
     release_name = os.getenv('RELEASE_NAME')
+    prefix = os.getenv('PREFIX')
+
+    with open(repos_file_name) as repoFile:
+        repoNames = repoFile.read()
+        repoNamesList = repoNames.split()
+        print('repos:\n', repoNamesList)
+
     num_repos = len(repoNamesList)
 
     # interate over all chunks and distribute them among repos
     latestRepoIndex = 0
     for j in range(int(chunk_count)):
-        tab_name = f'links_chunk_{j + 1}'
+        tab_name = f'{prefix}{j + 1}'
         repo_name = repoNamesList[latestRepoIndex]
 
         trigger_workflow(repo_name, google_sheet_id, tab_name, release_name, token)
