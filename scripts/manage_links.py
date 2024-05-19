@@ -17,7 +17,7 @@ def authenticate_gsheets():
 
 def prepare_chunks(links, repos, prefix, gc, sheet_id):
     num_repos = len(repos)
-    chunk_size = calculate_chunk_size(links, num_repos)
+    chunk_size = calculate_chunk_size(len(links), num_repos)
 
     # Create chunks
     chunks = [links[i:i + chunk_size] for i in range(0, links, chunk_size)]
