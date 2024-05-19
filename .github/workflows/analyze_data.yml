@@ -54,7 +54,7 @@ jobs:
                   echo $base_name
                   ext=$(echo "$folder" | grep -oE '(_ORIGINAL|_A|_B|_C\+?|_D)\/' | sed 's/\///g')
                   if [[ -f "$folder/db.pymon" ]]; then
-                      mv "$folder/db.pymon" "$folder/db.pymon_$ext"
+                      mv "$folder/db.pymon" "$folder/db.pymon$ext"
                   fi
 
                   # Prepare to merge folders
