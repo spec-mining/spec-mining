@@ -15,6 +15,7 @@ on:
 jobs:
   run-original:
     runs-on: ubuntu-latest
+    timeout-minutes: 185
     steps:
         - uses: actions/checkout@v4
           with:
@@ -121,6 +122,7 @@ jobs:
     strategy:
       matrix:
         algorithm: ['A', 'B', 'C', 'C+', 'D']
+    timeout-minutes: 185
     steps:
         - uses: actions/checkout@v4
           with:
