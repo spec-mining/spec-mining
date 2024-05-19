@@ -32,7 +32,7 @@ jobs:
             run: |
               for repo in ${{ github.event.inputs.repositories }}; do
                 echo "Downloading from $repo"
-                gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports
+                gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports --clobber
               done
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
