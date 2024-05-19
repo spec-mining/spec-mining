@@ -20,7 +20,7 @@ def prepare_chunks(links, repos, prefix, gc, sheet_id):
     chunk_size = calculate_chunk_size(len(links), num_repos)
 
     # Create chunks
-    chunks = [links[i:i + chunk_size] for i in range(0, links, chunk_size)]
+    chunks = [links[i:i + chunk_size] for i in range(0, len(links), chunk_size)]
 
     add_data_to_sheet(gc, sheet_id, prefix, chunks)
 
