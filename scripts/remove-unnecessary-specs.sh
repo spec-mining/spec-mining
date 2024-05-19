@@ -28,7 +28,9 @@ find . -type d -name env -prune -o -type d -print -exec bash -c 'echo Searching 
 # Check if TensorFlow was never found
 if [ ! -f "$flag_file" ]; then
   echo "TensorFlow not found anywhere, removing TfFunction_NoSideEffect"
+  ls ../mop-with-dynapt/specs-new/
   rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
+  ls ../mop-with-dynapt/specs-new/
 fi
 
 # Cleanup flag file at the end
