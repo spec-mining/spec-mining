@@ -78,10 +78,10 @@ def main():
     pro_repo_count = len(proRepoNamesList)
     reg_repo_count = len(regularRepoNamesList)
 
-    total_concurrency = pro_repo_count * 4 + reg_repo_count
+    total_concurrency = pro_repo_count * 3 + reg_repo_count
     links_per_concurrent_job = len(links) / total_concurrency
 
-    num_links_for_pro = math.ceil(links_per_concurrent_job * pro_repo_count * 4)
+    num_links_for_pro = math.ceil(links_per_concurrent_job * pro_repo_count * 3)
     links_for_pro = links[:num_links_for_pro]
     links_for_regular = links[num_links_for_pro:]
 
