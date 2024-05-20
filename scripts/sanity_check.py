@@ -1,6 +1,8 @@
 import csv
 import json
+import sys
 
+csv.field_size_limit(sys.maxsize)
 
 def read_csv_to_list_dict(file_name):
     with open(file_name) as file:
