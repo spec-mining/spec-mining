@@ -41,7 +41,7 @@ jobs:
                 for char in "${chars[@]}"; do
                   echo "Attempting to download files starting with $char from $repo"
                   # Sleep for 10 seconds before each download attempt
-                  sleep 5
+                  sleep 2
 
                   # Try to download files starting with the current character, log failures
                   if ! gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports --clobber --pattern "$char*"; then
