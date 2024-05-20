@@ -30,9 +30,20 @@ def get_time_from_json(projectname, algorithm):
     # }
     #
     #
-    instrumentation_duration = json_data['instrumentation_duration']
-    create_monitor_duration = json_data['create_monitor_duration']
-    test_duration = json_data['test_duration']
+    try:
+        instrumentation_duration = json_data['instrumentation_duration']
+    except:
+        instrumentation_duration = 0
+    
+    try:
+        create_monitor_duration = json_data['create_monitor_duration']
+    except:
+        create_monitor_duration = 0
+
+    try:
+        test_duration = json_data['test_duration']
+    except:
+        test_duration = 0
 
     return instrumentation_duration, create_monitor_duration, test_duration
 
