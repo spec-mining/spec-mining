@@ -52,6 +52,8 @@ jobs:
                   echo "No assets found or error in release data for $repo."
                 fi
               done
+
+              ls -al ./projects/reports
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
