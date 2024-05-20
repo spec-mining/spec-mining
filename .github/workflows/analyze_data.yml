@@ -39,15 +39,19 @@ jobs:
                 # Use curl to fetch the latest release data
                 RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
                   "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release-tag }}")
-                # Extract the URLs of all assets
-                ASSET_URLS=$(echo $RELEASE_DATA | jq -r '.assets[].browser_download_url')
-                # Loop over each asset URL and download
-                for url in $ASSET_URLS; do
-                  ASSET_NAME=$(basename $url)
-                  curl -L -o "./projects/reports/$ASSET_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
-                done
+                # Check if the release data contains assets
+                if echo "$RELEASE_DATA" | jq -e '.assets | length > 0' >/dev/null; then
+                  # Extract the URLs of all assets
+                  ASSET_URLS=$(echo $RELEASE_DATA | jq -r '.assets[].browser_download_url')
+                  # Loop over each asset URL and download
+                  for url in $ASSET_URLS; do
+                    ASSET_NAME=$(basename $url)
+                    curl -L -o "./projects/reports/$ASSET_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
+                  done
+                else
+                  echo "No assets found or error in release data for $repo."
+                fi
               done
-
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
