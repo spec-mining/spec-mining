@@ -30,10 +30,25 @@ jobs:
             
           - name: Download files from multiple releases
             run: |
+              # Array containing the alphabet and numbers for iterating
+              chars=( {a..z} {0..9} )
+
+              # Loop through each repository provided in the GitHub Action input
               for repo in ${{ github.event.inputs.repositories }}; do
                 echo "Downloading from $repo"
-                gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports --clobber
+                
+                # Loop through each character in the array
+                for char in "${chars[@]}"; do
+                  echo "Attempting to download files starting with $char from $repo"
+                  
+                  # Try to download files starting with the current character, log failures
+                  if ! gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports --clobber --pattern "$char*"; then
+                    echo "Failed to download files starting with $char from $repo" >> download_failures.log
+                  fi
+                done
               done
+
+              echo "Download process completed. Check download_failures.log for any issues."
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
