@@ -30,32 +30,43 @@ jobs:
             
           - name: Download files from multiple releases
             run: |
-              # Array containing the alphabet and numbers for iterating
-              chars=( {a..z} {0..9} )
+                # Array containing the alphabet and numbers for iterating
+                chars=( {a..z} {0..9} )
 
-              # Loop through each repository provided in the GitHub Action input
-              for repo in ${{ github.event.inputs.repositories }}; do
-                echo "Downloading from $repo"
-                
-                # Loop through each character in the array
-                for char in "${chars[@]}"; do
-                  echo "Attempting to download files starting with $char from $repo"
-                  # Sleep for 10 seconds before each download attempt
-                  sleep 2
-
-                  # Try to download files starting with the current character, log failures
-                  if ! gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports --clobber --pattern "$char*"; then
-                    echo "Failed to download files starting with $char from $repo" >> download_failures.log
-                  fi
+                # Loop through each repository provided in the GitHub Action input
+                for repo in ${{ github.event.inputs.repositories }}; do
+                  echo "Downloading from $repo"
+                  
+                  # Loop through each character in the array
+                  for char in "${chars[@]}"; do
+                    echo "Attempting to download files starting with $char from $repo"
+                    
+                    # Flag to control the retry mechanism
+                    retry_needed=true
+                    while [ "$retry_needed" = true ]; do
+                      # Attempt to download files and capture stderr to check for rate limit error
+                      error_message=$(gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports --clobber --pattern "$char*" 2>&1 > /dev/null)
+                      
+                      if [[ "$error_message" == *"HTTP 403: API rate limit exceeded for site ID installation"* ]]; then
+                        echo "Rate limit exceeded, waiting 30 seconds before retrying..."
+                        sleep 30
+                      else
+                        retry_needed=false
+                        if [[ -n "$error_message" ]]; then
+                          echo "Failed to download files starting with $char from $repo. Error: $error_message" >> download_failures.log
+                        else
+                          echo "Download successful for files starting with $char from $repo"
+                        fi
+                      fi
+                    done
+                  done
                 done
-              done
 
-              # Counting the number of zip files in the output directory
-              zip_count=$(find ./projects/reports -type f -name '*.zip' | wc -l)
+                # Counting the number of zip files in the output directory
+                zip_count=$(find ./projects/reports -type f -name '*.zip' | wc -l)
 
-              echo "Download process completed. Check download_failures.log for any issues."
-              echo "Total number of .zip files downloaded: $zip_count"
-
+                echo "Download process completed. Check download_failures.log for any issues."
+                echo "Total number of .zip files downloaded: $zip_count"
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
