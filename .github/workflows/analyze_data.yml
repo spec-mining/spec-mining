@@ -30,44 +30,23 @@ jobs:
             
           - name: Download files from multiple releases
             run: |
-              # Array containing the alphabet and numbers for iterating
-              chars=( {a..z} {0..9} )
-
-              # Loop through each repository provided in the GitHub Action input
               for repo in ${{ github.event.inputs.repositories }}; do
                 echo "Downloading from $repo"
-                
-                # Loop through each character in the array
-                for char in "${chars[@]}"; do
-                  echo "Attempting to download files starting with $char from $repo"
-                  
-                  # Flag to control the retry mechanism
-                  retry_needed=true
-                  while [ "$retry_needed" = true ]; do
-                    # Attempt to download files and capture both stdout and stderr to check for errors
-                    output=$(gh release download ${{ github.event.inputs.release-tag }} -R $repo -D ./projects/reports --clobber --pattern "$char*" 2>&1)
-                    
-                    if [[ "$output" == *"HTTP 403: API rate limit exceeded for site ID installation"* ]]; then
-                      echo "Rate limit exceeded, waiting 30 seconds before retrying..."
-                      sleep 30
-                    else
-                      retry_needed=false
-                      # Check if the command exited with an error
-                      if [[ $? -ne 0 ]]; then
-                        echo "Failed to download files starting with $char from $repo. Error: $output" >> download_failures.log
-                      else
-                        echo "Download successful for files starting with $char from $repo"
-                      fi
-                    fi
-                  done
+                # Parse the owner and repo name
+                IFS='/' read -ra REPO_PARTS <<< "$repo"
+                OWNER=${REPO_PARTS[0]}
+                REPO=${REPO_PARTS[1]}
+                # Use curl to fetch the latest release data
+                RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
+                  "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release-tag }}")
+                # Extract the URLs of all assets
+                ASSET_URLS=$(echo $RELEASE_DATA | jq -r '.assets[].browser_download_url')
+                # Loop over each asset URL and download
+                for url in $ASSET_URLS; do
+                  ASSET_NAME=$(basename $url)
+                  curl -L -o "./projects/reports/$ASSET_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
                 done
               done
-
-              # Counting the number of zip files in the output directory
-              zip_count=$(find ./projects/reports -type f -name '*.zip' | wc -l)
-
-              echo "Download process completed. Check download_failures.log for any issues."
-              echo "Total number of .zip files downloaded: $zip_count"
 
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
