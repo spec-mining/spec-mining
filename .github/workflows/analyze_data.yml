@@ -18,7 +18,7 @@ on:
 
 jobs:
     analyze_data:
-        runs-on: warp-ubuntu-2204-x64-2x-spot
+        runs-on: warp-ubuntu-2204-x64-4x-spot
         steps:
           - uses: actions/checkout@v4
             with:
