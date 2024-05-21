@@ -18,7 +18,7 @@ on:
 
 jobs:
     analyze_data:
-        runs-on: ubuntu-latest
+        runs-on: warp-ubuntu-2204-x64-2x-spot
         steps:
           - uses: actions/checkout@v4
             with:
@@ -56,13 +56,13 @@ jobs:
               done
               
               ls -al ./projects/reports
-
+            
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
           - name: Extract zip files into folders with cleaned base name
             run: |
-              # # Navigate to the directory containing the zip files
+              # Navigate to the directory containing the zip files
               cd ./projects/reports
 
               # # Extract zip files into folders with the same name
