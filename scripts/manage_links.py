@@ -20,10 +20,10 @@ def prepare_chunks(links, repos, isPro, gc, sheet_id):
 
     if (isPro):
         prefix = 'pro_links_chunk_'
-        min = 40
+        min = 6 # each link corresponds to 6 jobs, so 40/6
     else:
         prefix = 'reg_links_chunk_'
-        min = 10
+        min = 3 # each link corresponds to 6 jobs, so 20/6
 
     chunk_size = calculate_chunk_size(len(links), num_repos, min)
 
