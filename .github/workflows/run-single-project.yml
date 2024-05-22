@@ -118,7 +118,6 @@ jobs:
 
   run-algos:
     needs: run-original
-    if: ${{ true == false }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
