@@ -5,6 +5,7 @@ from collections import OrderedDict
 from collections import Counter
 import re
 import csv
+from memory_parser import process_memory_file
 
 SQL_QUERY_MEM = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_usage FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 SQL_QUERY_TIME2 = 'SELECT t.RUN_DESCRIPTION, SUM(m.USER_TIME) AS total_user_time FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
@@ -34,7 +35,7 @@ def get_time_from_json(projectname, algorithm):
         instrumentation_duration = json_data['instrumentation_duration']
     except:
         instrumentation_duration = 0
-    
+
     try:
         create_monitor_duration = json_data['create_monitor_duration']
     except:
@@ -154,7 +155,7 @@ def get_results(filename, project, algorithm):
         print('file not found')
         add_problem(project, algorithm, "File not found")
         return None
-    
+
     last_line = get_result_line(filename)
     print('last line', last_line)
     try:
@@ -373,6 +374,11 @@ def main():
                 filename = f'pymop_{algorithm}.out'
                 line = get_results(filename, projectname, algorithm)
                 if line is not None:
+
+                    # get the memory from the output file
+                    total_memory_bytes = process_memory_file(filename)
+                    total_memory_kb = round(total_memory / 1024, 2)
+                    line['usage_memory'] = total_memory_kb
 
                     # get time from json produced by pymop
                     ret_time = get_time_from_json(projectname, algorithm)

@@ -22,8 +22,8 @@ call_pymop(){
     #run and print this command
     set -x
     export PYTHONIOENCODING=utf8
-    timeout 14400 pytest -p pythonmop -p monitor -rA  --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo \
-    --continue-on-collection-errors --json-report --json-report-indent=2  --description ALGO_$algo --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
+    timeout 14400 pytest -p pythonmop  -rA  --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo --memray --trace-python-allocators --most-allocations=0  \
+    --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
     # if process stop by timeout, then print timeout
     if [ $? -eq 124 ]; then
         echo "PROJECT TIMEOUT: ALGO_$algo" > $report/TIMEOUT-pymop_$algo.out
@@ -71,8 +71,6 @@ for algo in "${algo_array[@]}"; do
     call_pymop $algo $project_dir $report $extra_args
 done
 
-cp .pymon $report/db.pymon
-gzip $report/db.pymon
 deactivate
 
 ls -l $report
