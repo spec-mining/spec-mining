@@ -1,6 +1,10 @@
 import re
 import sys
 
+##################
+# THE CODES FROM THIS FILE HAVE BEEN MOVED TO parse_reports.py
+##################
+
 
 def convert_to_bytes(value, unit):
     units = {

@@ -5,12 +5,43 @@ from collections import OrderedDict
 from collections import Counter
 import re
 import csv
-from memory_parser import process_memory_file
 
 SQL_QUERY_MEM = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_usage FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 SQL_QUERY_TIME2 = 'SELECT t.RUN_DESCRIPTION, SUM(m.USER_TIME) AS total_user_time FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 problems = {}
 NUM_ALGORITHMS = 6
+
+
+def convert_to_bytes(value, unit):
+    units = {
+        'B': 1,
+        'KB': 1024,
+        'MB': 1024 ** 2,
+        'GB': 1024 ** 3,
+        'TB': 1024 ** 4,
+        'KiB': 1024,
+        'MiB': 1024 ** 2,
+        'GiB': 1024 ** 3,
+        'TiB': 1024 ** 4,
+    }
+    return value * units[unit]
+
+
+def process_memory_file(file_path):
+    total_memory_bytes = 0
+    regex = re.compile(r"Total memory allocated: (\d+\.?\d*)([a-zA-Z]+)")
+
+    with open(file_path, 'r') as file:
+        for line in file:
+            match = regex.search(line)
+            if match:
+                value = float(match.group(1))
+                unit = match.group(2)
+
+                # convert to bytes
+                total_memory_bytes += convert_to_bytes(value, unit)
+
+    return total_memory_bytes
 
 
 def get_time_from_json(projectname, algorithm):
