@@ -408,7 +408,7 @@ def main():
 
                     # get the memory from the output file
                     total_memory_bytes = process_memory_file(filename)
-                    total_memory_kb = round(total_memory / 1024, 2)
+                    total_memory_kb = round(total_memory_bytes / 1024, 2)
                     line['usage_memory'] = total_memory_kb
 
                     # get time from json produced by pymop
