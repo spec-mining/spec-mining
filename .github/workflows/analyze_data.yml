@@ -1,6 +1,5 @@
 name: Analyzes the data and generate a report.csv
 
-
 permissions:
   contents: write
 
@@ -17,139 +16,169 @@ on:
         type: string
 
 jobs:
-    analyze_data:
-        runs-on: ubicloud
-        steps:
-          - uses: actions/checkout@v4
-            with:
-              fetch-depth: 0
+  prepare_data:
+    runs-on: ubuntu-latest
+    outputs:
+      chunks: ${{ steps.set_chunks.outputs.chunks }}
+      repositories: ${{ steps.prepare_repos.outputs.repos }}
+    steps:
+      - name: Generate character chunks
+        id: set_chunks
+        run: |
+          chunks='[
+            ["a", "e", "i", "o", "u"], 
+            ["t", "n", "s", "h", "r"], 
+            ["d", "l", "c", "m", "p"], 
+            ["y", "f", "g", "w", "b"], 
+            ["v", "k", "j", "x", "q"], 
+            ["z", "_", "-", "."], 
+            ["0", "1", "2", "3", "4"], 
+            ["5", "6", "7", "8", "9"]
+          ]'
+          echo "::set-output name=chunks::$chunks"
+
+      - name: Prepare repository list
+        id: prepare_repos
+        run: |
+          repos_json=$(echo "${{ github.event.inputs.repositories }}" | jq -R 'split(" ") | map(@json)')
+          echo "::set-output name=repos::$repos_json"
+
+
+  analyze_data:
+    needs: prepare_data
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        repository: ${{ fromJson(fromJson(needs.prepare_data.outputs.repositories) ) }}
+        chunk: ${{fromJson(needs.prepare_data.outputs.chunks)}}
     
-          - name: Setup working directories
-            run: |
-              mkdir -p ./projects/reports
-            
-          - name: Download files from multiple releases
-            run: |
-              for repo in ${{ github.event.inputs.repositories }}; do
-                echo "Downloading from $repo"
-                # Parse the owner and repo name
-                IFS='/' read -ra REPO_PARTS <<< "$repo"
-                OWNER=${REPO_PARTS[0]}
-                REPO=${REPO_PARTS[1]}
-                # Use curl to fetch the latest release data
-                RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
-                  "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release-tag }}")
-                # Check if the release data contains assets
-                if echo "$RELEASE_DATA" | jq -e '.assets | length > 0' >/dev/null; then
-                  # Extract the URLs of all assets
-                  ASSET_URLS=$(echo $RELEASE_DATA | jq -r '.assets[].browser_download_url')
-                  # Loop over each asset URL and download
-                  for url in $ASSET_URLS; do
-                    ASSET_NAME=$(basename $url)
-                    # Decode URL-encoded characters
-                    DECODED_NAME=$(printf "%b" "${ASSET_NAME//%/\\x}")
-                    curl -L -o "./projects/reports/$DECODED_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
-                  done
-                else
-                  echo "No assets found or error in release data for $repo."
-                fi
-              done
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup working directories
+        run: |
+          mkdir -p ./projects/reports
+
+      - name: Download and process files based on chunk
+        run: |
+          echo "Processing repository ${{ matrix.repository }} with chunk ${{ toJson(matrix.chunk) }}"
+          IFS='/' read -ra REPO_PARTS <<< "${{ matrix.repository }}"
+          OWNER=${REPO_PARTS[0]}
+          REPO=${REPO_PARTS[1]}
+          RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
+            "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release-tag }}")
+          if echo "$RELEASE_DATA" | jq -e '.assets | length > 0' >/dev/null; then
+            # Build regex pattern from the chunk array, regex is designed to be case-insensitive
+            REGEX_PATTERN="^[$(echo "${{ toJson(matrix.chunk) }}" | sed 's/["\[\],]//g')]"
+            ASSET_URLS=$(echo $RELEASE_DATA | jq -r ".assets[] | select(.name | test('${REGEX_PATTERN}', 'i')) | .browser_download_url")
+            for url in $ASSET_URLS; do
+              ASSET_NAME=$(basename $url)
+              DECODED_NAME=$(printf "%b" "${ASSET_NAME//%/\\x}")
+              echo "Downloading $url to ./projects/reports/$DECODED_NAME"
+              curl -L -o "./projects/reports/$DECODED_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
+            done
+          else
+            echo "No matching assets found or error in release data for ${{ matrix.repository }}."
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: Extract zip files into folders with cleaned base name
+        run: |
+          # Navigate to the directory containing the zip files
+          cd ./projects/reports
+
+          # # Extract zip files into folders with the same name
+          for f in *.zip; do
+            folder_name="${f%.*}"
+            unzip -o -d "$folder_name" "$f"
+            # Delete the zip file after extracting
+            rm "$f"
+          done
+
+          # Within each folder, rename the file db.pymon to db.pymon_ext
+          for folder in */; do
+              base_name=$(echo "$folder" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)\/$//')
+              ext=$(echo "$folder" | grep -oE '(_ORIGINAL|_A|_B|_C\+?|_D)\/' | sed 's/\///g')
+              echo Processing folder $folder with base name $base_name and ext $ext
               
-              ls -al ./projects/reports
-            
-            env:
-              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
-          - name: Extract zip files into folders with cleaned base name
-            run: |
-              # Navigate to the directory containing the zip files
-              cd ./projects/reports
-
-              # # Extract zip files into folders with the same name
-              for f in *.zip; do
-                folder_name="${f%.*}"
-                unzip -o -d "$folder_name" "$f"
-                # Delete the zip file after extracting
-                rm "$f"
-              done
-
-              # Within each folder, rename the file db.pymon to db.pymon_ext
-              for folder in */; do
-                  base_name=$(echo "$folder" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)\/$//')
-                  ext=$(echo "$folder" | grep -oE '(_ORIGINAL|_A|_B|_C\+?|_D)\/' | sed 's/\///g')
-                  echo Processing folder $folder with base name $base_name and ext $ext
-                  
-                  if [[ -f "$folder/db.pymon" && -n "$ext" ]]; then
-                      new_file_name="$folder/db.pymon$ext"
-                      if [[ "$folder/db.pymon" != "$new_file_name" ]]; then
-                          mv "$folder/db.pymon" "$new_file_name"
-                      fi
+              if [[ -f "$folder/db.pymon" && -n "$ext" ]]; then
+                  new_file_name="$folder/db.pymon$ext"
+                  if [[ "$folder/db.pymon" != "$new_file_name" ]]; then
+                      mv "$folder/db.pymon" "$new_file_name"
                   fi
+              fi
 
-                  # Prepare to merge folders
-                  mkdir -p "./merged/$base_name"
-                  mv "$folder"/* "./merged/$base_name/"
+              # Prepare to merge folders
+              mkdir -p "./merged/$base_name"
+              mv "$folder"/* "./merged/$base_name/"
+              rmdir "$folder"
+          done
+
+          # Final merging step, move and overwrite all items to their respective base folders
+          for folder in ./merged/*; do
+              base_name=$(basename "$folder")
+              target_folder="./$base_name"
+              echo filder $folder
+              echo base name $base_name
+              echo target folder $base_name
+              ls -al $folder
+              if [[ ! -d "$target_folder" ]]; then
+                  echo moving "$folder" to "$target_folder"
+                  mv "$folder" "$target_folder"
+              else
+                  echo moving "$folder"/ to "$target_folder/"
+                  mv "$folder"/* "$target_folder/"
                   rmdir "$folder"
-              done
+              fi
+          done
 
-              # Final merging step, move and overwrite all items to their respective base folders
-              for folder in ./merged/*; do
-                  base_name=$(basename "$folder")
-                  target_folder="./$base_name"
-                  echo filder $folder
-                  echo base name $base_name
-                  echo target folder $base_name
-                  ls -al $folder
-                  if [[ ! -d "$target_folder" ]]; then
-                      echo moving "$folder" to "$target_folder"
-                      mv "$folder" "$target_folder"
-                  else
-                      echo moving "$folder"/ to "$target_folder/"
-                      mv "$folder"/* "$target_folder/"
-                      rmdir "$folder"
-                  fi
-              done
+          # Clean up the temporary merged directory
+          rmdir ./merged
 
-              # Clean up the temporary merged directory
-              rmdir ./merged
+          # List the contents of the current directory to verify
+          ls -l
 
-              # List the contents of the current directory to verify
-              ls -l
-    
-          - name: Generate report csv
-            run: |
-              cd ./projects/reports
-    
-              # move ../../../scripts/parse_reports.py and sanity_check.py to ./projects/reports
-              cp ../../scripts/parse_reports.py .
-              cp ../../scripts/sanity_check.py .
+      - name: Generate report csv
+        run: |
+          cd ./projects/reports
 
-              ls -l
+          # move ../../../scripts/parse_reports.py and sanity_check.py to ./projects/reports
+          cp ../../scripts/parse_reports.py .
+          cp ../../scripts/sanity_check.py .
 
-              python3 parse_reports.py
+          ls -l
 
-              echo "================================== Results =================================="
-              cat results.csv
+          python3 parse_reports.py
 
-              python3 sanity_check.py
-              echo "========================= Results after Sanity check ========================"
-              cat results.csv
-    
-            shell: bash
-            continue-on-error: true
-    
-          - name: Upload report to GitHub Release
-            uses: Wandalen/wretry.action@master
-            with:
-              attempt_delay: 60000 # 1 min
-              attempt_limit: 10
-              action: softprops/action-gh-release@v1
-              with: |
-                files: |
-                  ./projects/reports/results.csv
-                  ./projects/reports/new-results.csv
-                tag_name: all-results-${{inputs.release-tag}}
-                name: all-results-${{inputs.release-tag}}
-                draft: false
-                prerelease: true
-                token: ${{ secrets.GITHUB_TOKEN }}
+          echo "================================== Results =================================="
+          cat results.csv
+
+          # rename results.csv to results[job-number].csv
+          mv results.csv results-${{ github.run_id }}.csv
+
+          python3 sanity_check.py
+          echo "========================= Results after Sanity check ========================"
+          cat new-results.csv
+          mv new-results.csv new-results-${{ github.run_id }}.csv
+
+
+        shell: bash
+        continue-on-error: true
+
+      - name: Upload report to GitHub Release
+        uses: Wandalen/wretry.action@master
+        with:
+          attempt_delay: 60000 # 1 min
+          attempt_limit: 10
+          action: softprops/action-gh-release@v1
+          with: |
+            files: |
+              ./projects/reports/results-${{ github.run_id }}.csv
+              ./projects/reports/new-results-${{ github.run_id }}.csv
+            tag_name: all-results-${{inputs.release-tag}}
+            name: all-results-${{inputs.release-tag}}
+            draft: false
+            prerelease: true
+            token: ${{ secrets.GITHUB_TOKEN }}
