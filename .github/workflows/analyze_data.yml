@@ -116,6 +116,24 @@ jobs:
           # Navigate to the directory containing the zip files
           cd ./projects/reports
 
+          (
+              while true; do
+                  echo "----- System Monitoring -----"
+                  date "+%Y-%m-%d %H:%M:%S"
+                  echo "CPU Load:"
+                  uptime
+                  echo "Memory Usage:"
+                  free -h
+                  echo "Disk Usage:"
+                  df -h
+                  echo "----------------------------"
+                  sleep 1  # Log every 1 second
+              done
+          ) &
+
+          # The PID of the background monitoring process
+          monitor_pid=$!
+
           # # Extract zip files into folders with the same name
           for f in *.zip; do
               folder_name="${f%.*}"
