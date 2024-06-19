@@ -110,51 +110,27 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install 7-Zip
-        run: sudo apt-get update && sudo apt-get install -y p7zip-full
         
       - name: Extract zip files into folders with cleaned base name
         run: |
-
           # Navigate to the directory containing the zip files
           cd ./projects/reports
-
-          (
-              while true; do
-                  echo "----- System Monitoring -----"
-                  date "+%Y-%m-%d %H:%M:%S"
-                  echo "CPU Load:"
-                  uptime
-                  echo "Memory Usage:"
-                  free -h
-                  echo "Disk Usage:"
-                  df -h
-                  echo "----------------------------"
-                  sleep 1  # Log every 1 second
-              done
-          ) &
-
-          # The PID of the background monitoring process
-          monitor_pid=$!
 
           # # Extract zip files into folders with the same name
           for f in *.zip; do
             folder_name="${f%.*}"
-            echo "Folder name: $folder_name"
-            # Use 7za to extract the zip file
-            if ! 7za x "$f" -o"$folder_name" > 7za_output.log 2>&1; then
-                echo "Error extracting $f - see 7za_output.log for details"
-                cat 7za_output.log
-                exit 1  # Exit the script with an error status
+            echo "folder name: $folder_name"
+            
+            # Attempt to unzip
+            if unzip -o -d "$folder_name" "$f"; then
+              echo "unzip finished: $folder_name"
+              # Delete the zip file after extracting
+              rm "$f"
             else
-                echo "Extraction finished: $folder_name"
-                # Optionally, remove the log file after successful extraction
-                rm 7za_output.log
+              echo "Error unzipping file: $f" >&2
+              # Optionally, handle the error, e.g., move the problematic zip to another directory
+              # mv "$f" /path/to/error/folder/
             fi
-            # Delete the zip file after extracting
-            echo "Removing zip file: $f"
-            rm "$f"
           done
 
           # Within each folder, rename the file db.pymon to db.pymon_ext
