@@ -67,7 +67,7 @@ jobs:
           echo "Processing repository ${{ matrix.repository }} with chunk ${{ toJson(matrix.chunk) }}"
           IFS='/' read -ra REPO_PARTS <<< "${{ matrix.repository }}"
 
-          exho here 1
+          echo here 1
 
           echo REPO_PARTS: $REPO_PARTS
           OWNER=${REPO_PARTS[0]}
