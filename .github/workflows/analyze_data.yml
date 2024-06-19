@@ -94,6 +94,7 @@ jobs:
             ASSET_URLS=$(echo "$RELEASE_DATA" | jq -r ".assets[] | select(.name | test(\"${REGEX_PATTERN}\"; \"i\")) | .browser_download_url")
             
             echo here 6
+            echo the urls $ASSET_URLS
             
             for url in $ASSET_URLS; do
 
