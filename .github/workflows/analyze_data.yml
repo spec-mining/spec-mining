@@ -118,7 +118,6 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-          --memory-swap -1
 
           # Navigate to the directory containing the zip files
           cd ./projects/reports
