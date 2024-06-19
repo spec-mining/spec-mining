@@ -75,7 +75,7 @@ jobs:
 
           echo here 2
 
-          RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
+          RELEASE_DATA=$(curl --silent -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
             "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release-tag }}")
 
           echo here 3
@@ -102,7 +102,7 @@ jobs:
               ASSET_NAME=$(basename $url)
               DECODED_NAME=$(printf "%b" "${ASSET_NAME//%/\\x}")
               echo "Downloading $url to ./projects/reports/$DECODED_NAME"
-              curl -L -o "./projects/reports/$DECODED_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
+              curl -L -o "./projects/reports/$DECODED_NAME" -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" "$url"
             done
           else
             echo "No matching assets found or error in release data for ${{ matrix.repository }}."
