@@ -119,7 +119,9 @@ jobs:
           # # Extract zip files into folders with the same name
           for f in *.zip; do
             folder_name="${f%.*}"
+            echo folder name: $folder_name
             unzip -o -d "$folder_name" "$f"
+            echo unzip finished: $folder_name
             # Delete the zip file after extracting
             rm "$f"
           done
