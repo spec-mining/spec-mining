@@ -24,7 +24,7 @@ jobs:
       - name: Prepare repository list
         id: prepare_repos
         run: |
-          repos_json=$(echo "${{ github.event.inputs.repositories }}" | jq -R 'split(" ")') | tr -d '\n'
+          repos_json=$(echo "${{ github.event.inputs.repositories }}" | jq -R 'split(" ")' | tr -d '\n')
           echo repos json: $repos_json
           echo "::set-output name=repos::$repos_json"
 
