@@ -106,6 +106,7 @@ jobs:
             done
           else
             echo "No matching assets found or error in release data for ${{ matrix.repository }}."
+          fi
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
