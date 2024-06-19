@@ -19,22 +19,31 @@ jobs:
   prepare_data:
     runs-on: ubuntu-latest
     outputs:
-      repositories: ${{ steps.prepare_repos.outputs.repos }}
+      repos: ${{ steps.prepare_repos.outputs.repos }}
     steps:
       - name: Prepare repository list
         id: prepare_repos
         run: |
-          repos_json=$(echo "${{ github.event.inputs.repositories }}" | jq -R 'split(" ")') | tr -d '\n' | sed "s/.*/'&'/"
+          repos_json=$(echo "${{ github.event.inputs.repositories }}" | jq -R 'split(" ")')
           echo repos json: $repos_json
           echo "::set-output name=repos::$repos_json"
 
+
+  test:
+    needs: prepare_data
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo repos: ${{needs.prepare_data.outputs.repos}}
+          echo from json: ${{fromJson('["mohasarc/spec-mining"]')}}
+          echo from json: ${{fromJson(needs.prepare_data.outputs.repos)}}
 
   analyze_data:
     needs: prepare_data
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repository: ${{ fromJson(needs.prepare_data.outputs.repositories) }}
+        repository: ${{ fromJson(needs.prepare_data.outputs.repos) }}
         chunk: [
             "['a', 'e', 'i', 'o', 'u']", 
             "['t', 'n', 's', 'h', 'r']", 
