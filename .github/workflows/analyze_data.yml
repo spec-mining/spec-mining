@@ -118,12 +118,21 @@ jobs:
 
           # # Extract zip files into folders with the same name
           for f in *.zip; do
-            folder_name="${f%.*}"
-            echo folder name: $folder_name
-            unzip -o -d "$folder_name" "$f"
-            echo unzip finished: $folder_name
-            # Delete the zip file after extracting
-            rm "$f"
+              folder_name="${f%.*}"
+              echo "Folder name: $folder_name"
+              # Attempt to unzip the file into the specified folder
+              if ! unzip -o -d "$folder_name" "$f" 2>&1 | tee unzip_log.txt; then
+                  # If unzip fails, print error message from log
+                  echo "Error unzipping $f"
+                  cat unzip_log.txt
+                  exit 1  # Exit the script with an error status
+              else
+                  echo "Unzip finished: $folder_name"
+                  # Optionally, you can remove the log file after successful unzip
+                  rm unzip_log.txt
+              fi
+              # Delete the zip file after extracting
+              rm "$f"
           done
 
           # Within each folder, rename the file db.pymon to db.pymon_ext
