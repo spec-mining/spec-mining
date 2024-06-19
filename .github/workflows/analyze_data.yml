@@ -19,24 +19,8 @@ jobs:
   prepare_data:
     runs-on: ubuntu-latest
     outputs:
-      chunks: ${{ steps.set_chunks.outputs.chunks }}
       repositories: ${{ steps.prepare_repos.outputs.repos }}
     steps:
-      - name: Generate character chunks
-        id: set_chunks
-        run: |
-          chunks='[
-            "[\'a\', \'e\', \'i\', \'o\', \'u\']", 
-            "[\'t\', \'n\', \'s\', \'h\', \'r\']", 
-            "[\'d\', \'l\', \'c\', \'m\', \'p\']", 
-            "[\'y\', \'f\', \'g\', \'w\', \'b\']", 
-            "[\'v\', \'k\', \'j\', \'x\', \'q\']", 
-            "[\'z\', \'_\', \'-\', \'.\']",
-            "[\'0\', \'1\', \'2\', \'3\', \'4\']", 
-            "[\'5\', \'6\', \'7\', \'8\', \'9\']"
-          ]'
-          echo "::set-output name=chunks::$chunks"
-
       - name: Prepare repository list
         id: prepare_repos
         run: |
@@ -51,7 +35,16 @@ jobs:
     strategy:
       matrix:
         repository: ${{ fromJson(needs.prepare_data.outputs.repositories) }}
-        chunk: ${{fromJson(needs.prepare_data.outputs.chunks)}}
+        chunk: [
+            "['a', 'e', 'i', 'o', 'u']", 
+            "['t', 'n', 's', 'h', 'r']", 
+            "['d', 'l', 'c', 'm', 'p']", 
+            "['y', 'f', 'g', 'w', 'b']", 
+            "['v', 'k', 'j', 'x', 'q']", 
+            "['z', '_', '-', '.']",
+            "['0', '1', '2', '3', '4']", 
+            "['5', '6', '7', '8', '9']"
+        ]
     
     steps:
       - uses: actions/checkout@v4
