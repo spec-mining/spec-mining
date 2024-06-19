@@ -66,15 +66,39 @@ jobs:
         run: |
           echo "Processing repository ${{ matrix.repository }} with chunk ${{ toJson(matrix.chunk) }}"
           IFS='/' read -ra REPO_PARTS <<< "${{ matrix.repository }}"
+
+          exho here 1
+
+          echo REPO_PARTS: $REPO_PARTS
           OWNER=${REPO_PARTS[0]}
           REPO=${REPO_PARTS[1]}
+
+          echo here 2
+
           RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
             "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release-tag }}")
+
+          echo here 3
+          echo $RELEASE_DATA
+
           if echo "$RELEASE_DATA" | jq -e '.assets | length > 0' >/dev/null; then
+            
+            echo here 4
+
             # Build regex pattern from the chunk array, regex is designed to be case-insensitive
             REGEX_PATTERN="^[$(echo "${{ toJson(matrix.chunk) }}" | sed 's/["\[\],]//g')]"
+
+            echo here 5
+            echo $REGEX_PATTERN
+
             ASSET_URLS=$(echo $RELEASE_DATA | jq -r ".assets[] | select(.name | test('${REGEX_PATTERN}', 'i')) | .browser_download_url")
+            
+            echo here 6
+            
             for url in $ASSET_URLS; do
+
+              echo here 7
+
               ASSET_NAME=$(basename $url)
               DECODED_NAME=$(printf "%b" "${ASSET_NAME//%/\\x}")
               echo "Downloading $url to ./projects/reports/$DECODED_NAME"
