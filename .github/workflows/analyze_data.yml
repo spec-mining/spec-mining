@@ -34,9 +34,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - run: |
-          echo repos: ${{needs.prepare_data.outputs.repos}}
-          echo from json: ${{fromJson('["mohasarc/spec-mining"]')}}
-          echo from json: ${{fromJson(needs.prepare_data.outputs.repos)}}
+          echo repos: "${{needs.prepare_data.outputs.repos}}"
+          echo from json: "${{fromJson('["mohasarc/spec-mining"]')}}"
+          echo from json: "${{fromJson(needs.prepare_data.outputs.repos)}}"
 
   analyze_data:
     needs: prepare_data
