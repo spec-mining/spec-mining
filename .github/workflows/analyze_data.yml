@@ -40,7 +40,7 @@ jobs:
       - name: Prepare repository list
         id: prepare_repos
         run: |
-          repos_json=$(echo "${{ github.event.inputs.repositories }}" | jq -R 'split(" ") | map(. | @uri)')
+          repos_json=$(echo "${{ github.event.inputs.repositories }}" | jq -R 'split(" ")')
           echo repos json: $repos_json
           echo "::set-output name=repos::$repos_json"
 
@@ -50,7 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        repository: ${{ fromJson(fromJson(needs.prepare_data.outputs.repositories) ) }}
+        repository: ${{ fromJson(needs.prepare_data.outputs.repositories) }}
         chunk: ${{fromJson(needs.prepare_data.outputs.chunks)}}
     
     steps:
