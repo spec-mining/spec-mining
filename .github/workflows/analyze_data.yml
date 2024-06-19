@@ -107,8 +107,8 @@ jobs:
           else
             echo "No matching assets found or error in release data for ${{ matrix.repository }}."
           fi
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Extract zip files into folders with cleaned base name
         run: |
