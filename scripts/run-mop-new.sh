@@ -56,8 +56,16 @@ echo "Running MOP for $project_dir"
 report="$report_folder/$project_dir"
 mkdir -p $report
 
+
 cd "$project_dir" || exit
 # Navigate into the folder
+
+# add git infos:
+sha=$(git rev-parse HEAD | cut -c1-7)
+url=$(git remote get-url origin)
+echo "sha-commit,$sha" > $report/project_info.out
+echo "project-url,$url" >> $report/project_info.out
+
 rm -f .pymon
 source env/bin/activate
 
