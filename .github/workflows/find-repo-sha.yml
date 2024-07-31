@@ -22,6 +22,9 @@ jobs:
         - name: Install jq
           run: sudo apt-get install jq
 
+        - name: Install Dependencies
+          run: pip3 install pygsheets PyGithub
+
         - name: Update sha values
           id: update-sha
           run: python3 scripts/find_head_sha.py
