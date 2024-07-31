@@ -33,7 +33,7 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
         repo_ids = [f"repo:{link.split('github.com/')[1]}" for link in batch]
         variables = {"repos": repo_ids}
 
-        print(f'Processing batch {i}/{len(repo_links)/batch_size}...')
+        print(f'Processing repos {i}-{i+batch_size}/{len(repo_links)}')
 
         try_count = 0
         while try_count < retries:
@@ -52,6 +52,8 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
                         sha = node['defaultBranchRef']['target']['oid']
                         shas[repo_name] = sha
 
+                print(f'Batch {i} response', data)
+
                 break  # Break the retry loop if the request is successful
             except requests.RequestException as e:
                 if response.status_code == 403 and 'rate limit exceeded' in str(e).lower():
@@ -62,7 +64,6 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
                     print(f"Failed to fetch SHAs for batch {i // batch_size + 1}: {e}")
                     break
         
-        print(f'Batch {i} response', response)
 
     return shas
 
