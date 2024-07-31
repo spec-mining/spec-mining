@@ -9,8 +9,7 @@ def authenticate_gsheets():
 def get_github_sha(repo_link):
     try:
         api_url = f"https://api.github.com/repos/{repo_link.split('github.com/')[1]}/commits"
-        headers = {'Authorization': f'token {os.getenv("GITHUB_TOKEN")}'}
-        response = requests.get(api_url, headers=headers)
+        response = requests.get(api_url)
         response.raise_for_status()  # Raise an error for bad responses
         sha = response.json()[0]['sha']
         return sha
