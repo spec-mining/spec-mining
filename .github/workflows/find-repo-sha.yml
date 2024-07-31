@@ -31,3 +31,4 @@ jobs:
           env:
               GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
               GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
+              GITHUB_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
