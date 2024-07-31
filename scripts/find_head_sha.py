@@ -7,7 +7,7 @@ def authenticate_gsheets():
     gc = pygsheets.authorize(service_account_env_var='GOOGLE_CREDENTIALS')
     return gc
 
-def get_github_sha(repo_link, retries=15, wait=15):
+def get_github_sha(repo_link, retries=15, wait=30):
     try_count = 0
     while try_count < retries:
         try:
@@ -15,6 +15,7 @@ def get_github_sha(repo_link, retries=15, wait=15):
             response = requests.get(api_url)
             response.raise_for_status()  # Raise an error for bad responses
             sha = response.json()[0]['sha']
+            print(f'Fetched SHA for {api_url}:{sha}')
             return sha
         except requests.RequestException as e:
             if response.status_code == 403 and 'rate limit exceeded' in str(e).lower():
