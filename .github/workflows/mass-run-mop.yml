@@ -47,15 +47,13 @@ jobs:
     uses: mohasarc/spec-mining/.github/workflows/run-single-project.yml@main
     with:
       project-link: ${{ matrix.repo-link }}
-      project-sha: ${{ matrix.repo-sha }}
       release-name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
     secrets:
       GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
-        repo-link: ${{ fromJson(needs.fetch_data.outputs.matrix).link }}
-        repo-sha: ${{ fromJson(needs.fetch_data.outputs.matrix).sha }}
+        repo-link: ${{ fromJson(needs.fetch_data.outputs.matrix) }}
 
   analyze_data:
     needs: run_jobs

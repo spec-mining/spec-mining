@@ -8,16 +8,30 @@ if [ -z "$1" ]; then
 fi
 
 # Clone project and create environment
-url=$1
-target_sha=$2
+
+# Argument containing the link and SHA
+input=$1
+
+# Split the input into link and sha
+IFS=':' read -r url target_sha <<< "$input"
+
+# Output the url
+echo "Url: $url"
+
 git clone --depth=5 $url
 folder=$(basename $url .git)
 
 # Navigate to project directory
 cd $folder || exit
 
-# checkout to the target sha
-git checkout $target_sha || true
+# If sha is not empty, attempt to checkout the sha
+if [ -n "$target_sha" ]; then
+  echo "SHA exists: $target_sha"
+  # Assuming you have already cloned the repo and are in the repo directory
+  git checkout "$target_sha"
+else
+  echo "SHA is empty, no checkout performed."
+fi
 
 sha=$(git rev-parse HEAD | cut -c1-7)
 echo "current sha commit: $sha"

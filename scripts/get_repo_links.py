@@ -31,10 +31,11 @@ def main():
 
     for idx, link in enumerate(repo_links):
         sha = repo_shas[idx]
-        repo_details_list.append({
-            link,
-            sha,
-        })
+
+        if sha is None:
+            sha = ''
+
+        repo_details_list.append(f'{link}:{sha}')
     
     print('links: ', repo_links)
     print('shas: ', repo_shas)

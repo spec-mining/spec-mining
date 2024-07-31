@@ -6,9 +6,6 @@ on:
       project-link:
         required: true
         type: string
-      project-sha:
-        required: false
-        type: string
       release-name:
         required: true
         type: string
@@ -62,7 +59,7 @@ jobs:
             cd ./projects
             ls -l
             chmod +x ./install.sh
-            ./install.sh ${{ inputs.project-link }} ${{ inputs.project-sha }}
+            ./install.sh ${{ inputs.project-link }}
 
         - name: Remove unnecessary specs
           run: |
