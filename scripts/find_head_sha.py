@@ -1,6 +1,7 @@
 import os
 import pygsheets
 import requests
+import time
 
 def authenticate_gsheets():
     gc = pygsheets.authorize(service_account_env_var='GOOGLE_CREDENTIALS')
