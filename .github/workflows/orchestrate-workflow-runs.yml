@@ -35,36 +35,9 @@ jobs:
       - name: Install jq
         run: sudo apt-get install jq
   
-      - name: Fetch Repository Links
-        id: fetch-repos
-        uses: jroehl/gsheet.action@v2.0.0
-        with:
-          spreadsheetId: ${{ github.event.inputs.google_sheet_id }}
-          commands: |
-            [
-              {
-                "command": "getData",
-                "args": {
-                  "worksheetTitle": "${{ github.event.inputs.links_tab_name }}",
-                  "range": "${{ github.event.inputs.links_tab_name }}!A1:A"
-                }
-              }
-            ]
-        env:
-          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
-          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
-  
-      - name: Prepate links and github repos
+      - name: Prepate github repos
         id: encode-decode
         run: |
-          # Base64 encode the results to avoid shell parsing issues
-          ENCODED_RESULTS=$(echo '${{ steps.fetch-repos.outputs.results }}' | base64)
-          # Decode and parse using jq
-          JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -c '[.results[].result.rawData[][]]')
-          echo "Extracted JSON String:"
-          echo "$JSON_STRING"
-          echo "$JSON_STRING" > links.json
-          cat links.json
           echo "${{ github.event.inputs.pro_github_repositories }}" > pro_github_repos.txt
           echo "${{ github.event.inputs.reg_github_repositories }}" > regular_github_repos.txt
       
@@ -77,6 +50,7 @@ jobs:
         env:
             GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
             GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
+            LINKS_TAB_NAME: ${{github.event.inputs.links_tab_name}}
   
       - name: Trigger Workflows on Pro Repos
         run: python3 scripts/trigger_workflows.py
