@@ -43,7 +43,7 @@ def add_data_to_sheet(gc, sheet_id, prefix, chunks):
             wks = sheet.worksheet_by_title(tab_name)
         except pygsheets.WorksheetNotFound:
             # If it does not exist, create a new one
-            wks = sheet.add_worksheet(title=tab_name, rows=len(chunk), cols=1)
+            wks = sheet.add_worksheet(title=tab_name, rows=len(chunk), cols=2)
             # If a new worksheet is created, resize it if the chunk is smaller than the default number of rows
             if len(chunk) < 1000:  # Default number of rows is typically 1000
                 wks.rows = len(chunk)
