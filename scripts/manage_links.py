@@ -80,7 +80,7 @@ def main():
         print('regular repos:\n', regularRepoNamesList)
 
     sheet = gc.open_by_key(sheet_id)
-    wks = sheet['links_tab_name']
+    wks = sheet[links_tab_name]
     
     repo_links = wks.get_col(1, include_tailing_empty=False)
     repo_shas = wks.get_col(2, include_tailing_empty=False)
