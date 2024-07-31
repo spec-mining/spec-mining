@@ -39,7 +39,7 @@ def main():
     for repo_link in repo_links:
         print(f'Processing {cur_repo_index}/{repo_count}')
         sha_values.append(get_github_sha(repo_link))
-        time.sleep(0.5)  # Wait for 500 milliseconds
+        time.sleep(0.7)  # Wait for 700 milliseconds
         cur_repo_index = cur_repo_index + 1
 
     update_google_sheet_in_bulk(gc, sheet_id, sha_values)
