@@ -31,6 +31,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install Dependencies
+        run: pip3 install pygsheets PyGithub
+
       - name: Prepare matrix
         id: set-matrix
         run: python3 scripts/get_repo_links.py
