@@ -13,9 +13,9 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
     
     def create_query(repos):
         query_parts = []
-        for owner, name in repos:
+        for idx, (owner, name) in enumerate(repos):
             query_parts.append(f"""
-                {name}: repository(owner: "{owner}", name: "{name}") {{
+                repo{idx}: repository(owner: "{owner}", name: "{name}") {{
                     defaultBranchRef {{
                         target {{
                             oid
@@ -47,9 +47,9 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
                 data = response.json()
                 print(f'Batch {i} response', data)
 
-                for repo in repos:
-                    name = repo[1]
-                    repo_data = data['data'].get(name)
+                for idx, repo in enumerate(repos):
+                    repo_key = f"repo{idx}"
+                    repo_data = data['data'].get(repo_key)
                     if repo_data:
                         sha = repo_data['defaultBranchRef']['target']['oid']
                         shas[f"{repo[0]}/{repo[1]}"] = sha
