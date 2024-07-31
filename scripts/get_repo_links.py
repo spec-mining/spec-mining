@@ -35,7 +35,7 @@ def main():
         if sha is None:
             sha = ''
 
-        repo_details_list.append(f'{link}:{sha}')
+        repo_details_list.append(f'{link};{sha}')
     
     print('links: ', repo_links)
     print('shas: ', repo_shas)

@@ -13,7 +13,7 @@ fi
 input=$1
 
 # Split the input into link and sha
-IFS=':' read -r url target_sha <<< "$input"
+IFS=';' read -r url target_sha <<< "$input"
 
 # Output the url
 echo "Url: $url"
