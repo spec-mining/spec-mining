@@ -44,14 +44,16 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
                 response.raise_for_status()
 
                 data = response.json()
+                print(f'Batch {i} response', data)
+
                 for repo in repos:
                     name = repo[1]
                     repo_data = data['data'].get(name)
                     if repo_data:
                         sha = repo_data['defaultBranchRef']['target']['oid']
                         shas[f"{repo[0]}/{repo[1]}"] = sha
-                print(f'Batch {i} response', data)
                 break  # Break the retry loop if the request is successful
+
             except requests.RequestException as e:
                 if response.status_code == 403 and 'rate limit exceeded' in str(e).lower():
                     print(f"Rate limit exceeded. Retrying in {wait} seconds...")
@@ -60,7 +62,7 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
                 else:
                     print(f"Failed to fetch SHAs for batch {i // batch_size + 1}: {e}")
                     break
-        
+
 
     return shas
 
