@@ -10,50 +10,47 @@ def authenticate_gsheets():
 def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
     github_token = os.getenv('GITHUB_TOKEN')
     headers = {'Authorization': f'bearer {github_token}'}
-    query = """
-    query($repos: [ID!]!) {
-      nodes(ids: $repos) {
-        ... on Repository {
-          nameWithOwner
-          defaultBranchRef {
-            target {
-              ... on Commit {
-                oid
-              }
-            }
-          }
-        }
-      }
-    }
-    """
+    
+    def create_query(repos):
+        query_parts = []
+        for owner, name in repos:
+            query_parts.append(f"""
+                {name}: repository(owner: "{owner}", name: "{name}") {{
+                    defaultBranchRef {{
+                        target {{
+                            oid
+                        }}
+                    }}
+                }}
+            """)
+        query = "query {" + " ".join(query_parts) + "}"
+        return query
 
     shas = {}
     for i in range(0, len(repo_links), batch_size):
         batch = repo_links[i:i + batch_size]
-        repo_ids = [f"repo:{link.split('github.com/')[1]}" for link in batch]
-        variables = {"repos": repo_ids}
-
+        repo_names = [link.split('github.com/')[1] for link in batch]
+        repos = [tuple(repo.split('/')) for repo in repo_names]
         print(f'Processing repos {i}-{i+batch_size}/{len(repo_links)}')
-
         try_count = 0
         while try_count < retries:
+            query = create_query(repos)
             try:
                 response = requests.post(
                     'https://api.github.com/graphql',
-                    json={'query': query, 'variables': variables},
+                    json={'query': query},
                     headers=headers
                 )
                 response.raise_for_status()
 
                 data = response.json()
-                for node in data['data']['nodes']:
-                    if node:
-                        repo_name = node['nameWithOwner']
-                        sha = node['defaultBranchRef']['target']['oid']
-                        shas[repo_name] = sha
-
+                for repo in repos:
+                    name = repo[1]
+                    repo_data = data['data'].get(name)
+                    if repo_data:
+                        sha = repo_data['defaultBranchRef']['target']['oid']
+                        shas[f"{repo[0]}/{repo[1]}"] = sha
                 print(f'Batch {i} response', data)
-
                 break  # Break the retry loop if the request is successful
             except requests.RequestException as e:
                 if response.status_code == 403 and 'rate limit exceeded' in str(e).lower():
