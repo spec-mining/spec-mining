@@ -35,6 +35,7 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
         try_count = 0
         while try_count < retries:
             query = create_query(repos)
+            print('Will query:\n', query)
             try:
                 response = requests.post(
                     'https://api.github.com/graphql',
