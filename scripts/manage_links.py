@@ -84,7 +84,7 @@ def main():
     print('the sheet: ', sheet)
     print('the tab name: ', links_tab_name)
 
-    wks = sheet[links_tab_name]
+    wks = sheet.worksheet_by_title(links_tab_name)
 
     print('wks: ', wks)
     
