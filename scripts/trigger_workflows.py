@@ -22,7 +22,7 @@ def trigger_workflow(repo_name, google_sheet_id, tab_name, release_name, token):
         "client_payload": {
             "google_sheet_id": google_sheet_id,
             "links_worksheetTitle": tab_name,
-            "release_name": release_name
+            "release_name": f"{release_name}-{tab_name}"
         }
     }
 
