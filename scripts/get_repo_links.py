@@ -36,6 +36,10 @@ def main():
             sha,
         })
     
+    print('links: ', repo_links)
+    print('shas: ', repo_shas)
+    print('all details: ', repo_details_list)
+
     print(f"::set-output name=matrix::{repo_details_list}")
 
 if __name__ == "__main__":
