@@ -27,48 +27,28 @@ jobs:
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: Fetch Repository Links
-        id: fetch-repos
-        uses: jroehl/gsheet.action@v2.0.0
-        with:
-          spreadsheetId: ${{ github.event.inputs.google_sheet_id || github.event.client_payload.google_sheet_id }}
-          commands: |
-            [
-              {
-                "command": "getData",
-                "args": {
-                  "worksheetTitle": "${{ github.event.inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle }}",
-                  "range": "${{ github.event.inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle }}!A1:A"
-                }
-              }
-            ]
-        env:
-          GSHEET_CLIENT_EMAIL: ${{ secrets.GSHEET_CLIENT_EMAIL }}
-          GSHEET_PRIVATE_KEY: ${{ secrets.GSHEET_PRIVATE_KEY }}
-
-      - name: Set up matrix for job
+      - name: Prepare matrix
         id: set-matrix
-        run: |
-          # Base64 encode the results to avoid shell parsing issues
-          ENCODED_RESULTS=$(echo '${{ steps.fetch-repos.outputs.results }}' | base64)
-          # Decode and parse using jq
-          JSON_STRING=$(echo "$ENCODED_RESULTS" | base64 --decode | jq -c '[.results[].result.rawData[][]]')
-          echo "Extracted JSON String:"
-          echo "$JSON_STRING"
-          echo "::set-output name=matrix::$JSON_STRING"
+        run: python3 scripts/get_repo_links.py
+        env:
+            GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+            GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id || github.event.client_payload.google_sheet_id }}
+            LINKS_TAB_NAME: ${{github.event.inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}
 
   run_jobs:
     needs: fetch_data
     uses: mohasarc/spec-mining/.github/workflows/run-single-project.yml@main
     with:
-      project-link: ${{ matrix.repo }}
+      project-link: ${{ matrix.repo-link }}
+      project-sha: ${{ matrix.repo-sha }}
       release-name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
     secrets:
       GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
     strategy:
       fail-fast: false
       matrix:
-        repo: ${{ fromJson(needs.fetch_data.outputs.matrix) }}
+        repo-link: ${{ fromJson(needs.fetch_data.outputs.matrix).link }}
+        repo-sha: ${{ fromJson(needs.fetch_data.outputs.matrix).sha }}
 
   analyze_data:
     needs: run_jobs

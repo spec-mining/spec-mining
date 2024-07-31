@@ -9,11 +9,15 @@ fi
 
 # Clone project and create environment
 url=$1
+target_sha=$2
 git clone --depth=5 $url
 folder=$(basename $url .git)
 
 # Navigate to project directory
 cd $folder || exit
+
+# checkout to the target sha
+git checkout $target_sha || true
 
 sha=$(git rev-parse HEAD | cut -c1-7)
 echo "current sha commit: $sha"
