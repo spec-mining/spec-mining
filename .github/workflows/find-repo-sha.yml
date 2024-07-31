@@ -1,0 +1,30 @@
+name: Find Sha
+
+on:
+    workflow_dispatch:
+      inputs:
+        google_sheet_id:
+          description: 'ID of the Google Sheet containing repository links.'
+          required: true
+
+jobs:
+    find-sha:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout code
+          uses: actions/checkout@v2
+    
+        - name: Set up Python
+          uses: actions/setup-python@v2
+          with:
+            python-version: '3.9'
+    
+        - name: Install jq
+          run: sudo apt-get install jq
+
+        - name: Update sha values
+          id: update-sha
+          run: python3 scripts/find_head_sha.py
+          env:
+              GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
+              GOOGLE_SHEET_ID: ${{ github.event.inputs.google_sheet_id }}
