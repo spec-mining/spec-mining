@@ -28,7 +28,7 @@ jobs:
     
         - name: Setup variables
           run: |
-              REPO_URL="${{ inputs.project-link }}"
+              REPO_URL=$(echo "${{ inputs.project-link }}" | sed 's/;.*//')
               REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
               OWNER_NAME="${REPO_URL%/$REPO_NAME}"  # Removes the repo name from the URL, leaving the owner path
               OWNER_NAME="${OWNER_NAME##*/}"  # Extracts only the owner name
@@ -38,6 +38,7 @@ jobs:
               echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
               echo "FULL_REPO_NAME=$FULL_REPO_NAME" >> $GITHUB_ENV
               echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+              echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
           shell: bash
     
         - name: clone SoftEngResearch/mop-with-dynapt
@@ -72,7 +73,6 @@ jobs:
           run: |
             echo "================== Running MOP =================="
             cd ./projects
-            REPO_URL="${{ inputs.project-link }}"
 
             echo "Repository Name: $REPO_NAME"
             chmod +x ./run-mop-new.sh
@@ -135,8 +135,7 @@ jobs:
     
         - name: Setup variables
           run: |
-              REPO_URL="${{ inputs.project-link }}"
-
+            REPO_URL=$(echo "${{ inputs.project-link }}" | sed 's/;.*//')
               REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
               OWNER_NAME="${REPO_URL%/$REPO_NAME}"  # Removes the repo name from the URL, leaving the owner path
               OWNER_NAME="${OWNER_NAME##*/}"  # Extracts only the owner name
@@ -146,6 +145,7 @@ jobs:
               echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
               echo "FULL_REPO_NAME=$FULL_REPO_NAME" >> $GITHUB_ENV
               echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+              echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
           shell: bash
     
         - name: clone SoftEngResearch/mop-with-dynapt
@@ -180,7 +180,6 @@ jobs:
           run: |
             echo "================== Running MOP =================="
             cd ./projects
-            REPO_URL="${{ inputs.project-link }}"
             echo "Repository Name: $REPO_NAME"
             chmod +x ./run-mop-new.sh
             ./run-mop-new.sh ./$REPO_NAME "${{matrix.algorithm}}"

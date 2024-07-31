@@ -17,6 +17,7 @@ IFS=';' read -r url target_sha <<< "$input"
 
 # Output the url
 echo "Url: $url"
+echo "Sha: $target_sha"
 
 git clone --depth=5 $url
 folder=$(basename $url .git)
