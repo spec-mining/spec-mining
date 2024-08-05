@@ -80,6 +80,7 @@ jobs:
           for f in *.zip; do
             folder_name=$(echo "${f%.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
             unzip -o -d "$folder_name" "$f"
+            rm "$f"
           done
           ls -l
 
