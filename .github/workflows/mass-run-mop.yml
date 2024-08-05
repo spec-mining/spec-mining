@@ -64,15 +64,37 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: download files from release
-        uses: robinraju/release-downloader@v1.10
-        with:
-          preRelease: true
-          tag: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
-          fileName: '*.zip'
-          out-file-path: './projects/reports/'
-          extract: false
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Download files from multiple releases
+        run: |
+          for repo in  ${{ github.repository }} do
+            echo "Downloading from $repo"
+            # Parse the owner and repo name
+            IFS='/' read -ra REPO_PARTS <<< "$repo"
+            OWNER=${REPO_PARTS[0]}
+            REPO=${REPO_PARTS[1]}
+            # Use curl to fetch the latest release data
+            RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
+              "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release_name || github.event.client_payload.release_name }}")
+            # Check if the release data contains assets
+            if echo "$RELEASE_DATA" | jq -e '.assets | length > 0' >/dev/null; then
+              # Extract the URLs of all assets
+              ASSET_URLS=$(echo $RELEASE_DATA | jq -r '.assets[].browser_download_url')
+              # Loop over each asset URL and download
+              for url in $ASSET_URLS; do
+                ASSET_NAME=$(basename $url)
+                # Decode URL-encoded characters
+                DECODED_NAME=$(printf "%b" "${ASSET_NAME//%/\\x}")
+                curl -L -o "./projects/reports/$DECODED_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
+              done
+            else
+              echo "No assets found or error in release data for $repo."
+            fi
+          done
+          
+          ls -al ./projects/reports
+        
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
       - name: extract zip files into folders with the same name
         run: |
