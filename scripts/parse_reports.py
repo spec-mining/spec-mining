@@ -167,15 +167,16 @@ def get_result_line(filename):
         last_line = subprocess.check_output(
             ['tail', '-1', filename]).decode('utf-8').strip()
         # if the last line is not the one we want, get the last 100 lines and search
-        if 'in' not in last_line or "passed" not in last_line:
+        if 'in' in last_line and re.search(r'\b(passed|errors|error)\b', last_line):
+            return last_line
+        else:
             last_lines = subprocess.check_output(
                 ['tail', '-500', filename]).decode('utf-8').strip().split('\n')
             for line in reversed(last_lines):
-                if 'in' in line and "passed" in line:
+                if 'in' in line and re.search(r'\b(passed|errors|error)\b', last_line):
                     last_line = line
                     return last_line
-        else:
-            return last_line
+            
     except:
         return None
 
