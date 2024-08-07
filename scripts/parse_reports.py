@@ -173,7 +173,7 @@ def get_result_line(filename):
             last_lines = subprocess.check_output(
                 ['tail', '-500', filename]).decode('utf-8').strip().split('\n')
             for line in reversed(last_lines):
-                if 'in' in line and re.search(r'\b(passed|errors|error)\b', last_line):
+                if 'in' in line and re.search(r'\b(passed|errors|error)\b', line):
                     last_line = line
                     return last_line
             
