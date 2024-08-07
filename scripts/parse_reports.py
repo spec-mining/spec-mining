@@ -10,7 +10,7 @@ SQL_QUERY_MEM = 'SELECT t.RUN_DESCRIPTION, AVG(m.MEM_USAGE) AS average_memory_us
 SQL_QUERY_TIME2 = 'SELECT t.RUN_DESCRIPTION, SUM(m.USER_TIME) AS total_user_time FROM TEST_METRICS m JOIN TEST_SESSIONS t ON m.SESSION_H = t.SESSION_H GROUP BY t.SESSION_H;'
 problems = {}
 NUM_ALGORITHMS = 6
-
+REGEX_MEMORY_FILE = re.compile(r"Total memory allocated: (\d+\.?\d*)([a-zA-Z]+)")
 
 def convert_to_bytes(value, unit):
     units = {
@@ -29,7 +29,7 @@ def convert_to_bytes(value, unit):
 
 def process_memory_file(file_path):
     total_memory_bytes = 0
-    regex = re.compile(r"Total memory allocated: (\d+\.?\d*)([a-zA-Z]+)")
+    regex = REGEX_MEMORY_FILE
 
     with open(file_path, 'r') as file:
         for line in file:
@@ -184,12 +184,12 @@ def get_result_line(filename):
 def get_results(filename, project, algorithm):
     # check filename
     if not os.path.isfile(filename):
-        print('file not found')
+        print('->file not found', filename)
         add_problem(project, algorithm, "File not found")
         return None
 
     last_line = get_result_line(filename)
-    print('last line', last_line)
+    print('--->last_line->', last_line)
     try:
         # print('line', last_line)
         time = last_line.split('in ')[1].split('s')[0].strip()
@@ -293,8 +293,9 @@ def compare(results, projectname):
             # Check if values are numeric before converting to integer
             if original_value_clean.isdigit() and result_value_clean.isdigit():
                 diff = int(original_value_clean) - int(result_value_clean)
-                message = f'DIFF: {key} is different from ORIGINAL. diff={diff}'
-                add_problem(projectname, result['algorithm'], message)
+                if diff != 0:
+                    message = f'DIFF: {key} is different from ORIGINAL. diff={diff}'
+                    add_problem(projectname, result['algorithm'], message)
             else:
                 message = f'Non-numeric or invalid data for comparison. Original: {original_value_clean}, Result: {result_value_clean}'
                 add_problem(projectname, result['algorithm'], message)
@@ -336,7 +337,7 @@ def results_csv_file(lines):
         for line in lines:
             try:
                 writer.writerow(line)
-                print('success writing line:', line.keys())
+                # print('success writing line:', line.keys())
             except Exception as e:
                 print('could not write line:', line.keys(), str(e))
 
@@ -397,12 +398,14 @@ def main():
             print(f'Project: {projectname}')
 
             os.chdir(projectname)
+            print("directory contents:", os.listdir())
 
             # Iterate through each algorithm
             algos = ["ORIGINAL", "A", "B", "C", "C+", "D"]
             results = []
 
             for algorithm in algos:
+                print(f'Algo: {algorithm}')
                 filename = f'pymop_{algorithm}.out'
                 line = get_results(filename, projectname, algorithm)
                 if line is not None:
@@ -422,12 +425,12 @@ def main():
                         line['test_duration'] = test_duration
 
                     # get time2 from db
-                    time2 = get_time_from_db(projectname, algorithm)
-                    line['time2'] = time2
+                    # time2 = get_time_from_db(projectname, algorithm)
+                    # line['time2'] = time2
 
                     # get memory from db
-                    mem = get_memory_from_db(projectname, algorithm)
-                    line['memory'] = mem
+                    # mem = get_memory_from_db(projectname, algorithm)
+                    # line['memory'] = mem
 
                     if algorithm != "ORIGINAL":
 
