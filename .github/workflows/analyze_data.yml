@@ -91,6 +91,11 @@ jobs:
     
             shell: bash
             continue-on-error: true
+
+          - name: printout the results
+            run: |
+              cd ./projects/reports
+              tail -n 7 output_sanity_check.txt
     
           - name: Upload report to GitHub Release
             uses: Wandalen/wretry.action@master
