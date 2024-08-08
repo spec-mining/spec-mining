@@ -15,17 +15,17 @@ def is_results_diff(lines, name):
     columns = ['passed', 'failed', 'skipped', 'errors']
     # check if the diffs are the same for all lines for all columns
     for c in columns:
-        results = []
+        results = set()
         for l in lines:
             # check if the value is a number using int
             try:
-                results.append(int(l[c]))
+                results.add(int(l[c]))
             except:
                 print(f'***Project {name} has non-integer {c} value')
                 return True
 
-            if len(set(results)) != 1:
-                print(f'!!!Project {name} has different {c} values')
+            if len(results) != 1:
+                print(f'!!!Project {name} has different {c} values. Algorithm: {l["algorithm"]}')
                 return True
     return False
 
@@ -63,13 +63,13 @@ def sanity_check(lines):
                 algos.append(line['algorithm'])
             print(algos)
         else:
-            for line in projects[p]:
-                mem = line['memory']
-                if mem in [None, '', ' '] or float(mem) == 0:
-                    line['memory'] = 1
-                    problems_memory += 1
-                elif float(mem) < 0:
-                    line['memory'] = float(mem) * -1
+            # for line in projects[p]:
+            #     mem = line['memory']
+            #     if mem in [None, '', ' '] or float(mem) == 0:
+            #         line['memory'] = 1
+            #         problems_memory += 1
+            #     elif float(mem) < 0:
+            #         line['memory'] = float(mem) * -1
 
             if not is_results_diff(projects[p], p):
                 # add the project to the new dict
@@ -85,7 +85,7 @@ def sanity_check(lines):
         f"num of problems related to different values across columns of the same project: {problems_diff_values} (skip these projects)")
 
     print(f'total input projects: {len(projects)}')
-    print(f'total projects: {len(new_projects)}')
+    print(f'total projects output: {len(new_projects)}')
 
     print(
         f"saving new csv, with only projects with {NUM_LINES_PER_PROJECT} lines")
