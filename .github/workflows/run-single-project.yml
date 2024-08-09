@@ -65,9 +65,15 @@ jobs:
         - name: Remove unnecessary specs
           run: |
             cd ./projects/$REPO_NAME
-            cp ../../scripts/remove-unnecessary-specs.sh .
-            chmod +x ./remove-unnecessary-specs.sh
-            ./remove-unnecessary-specs.sh
+            # cp ../../scripts/remove-unnecessary-specs.sh .
+            # chmod +x ./remove-unnecessary-specs.sh
+            # ./remove-unnecessary-specs.sh
+
+            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
+            rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
+            rm ../mop-with-dynapt/specs-new/File_MustClose.py
+            rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
+
     
         - name: Install Dependencies and Run MOP
           run: |
@@ -172,9 +178,14 @@ jobs:
         - name: Remove unnecessary specs
           run: |
             cd ./projects/$REPO_NAME
-            cp ../../scripts/remove-unnecessary-specs.sh .
-            chmod +x ./remove-unnecessary-specs.sh
-            ./remove-unnecessary-specs.sh
+            # cp ../../scripts/remove-unnecessary-specs.sh .
+            # chmod +x ./remove-unnecessary-specs.sh
+            # ./remove-unnecessary-specs.sh
+
+            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
+            rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
+            rm ../mop-with-dynapt/specs-new/File_MustClose.py
+            rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
 
         - name: Install Dependencies and Run MOP
           run: |
