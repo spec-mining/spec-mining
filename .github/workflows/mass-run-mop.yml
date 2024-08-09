@@ -66,7 +66,7 @@ jobs:
 
       - name: Download files from multiple releases
         run: |
-          for repo in  ${{ github.repository }} do
+          for repo in ${{ github.repository }}; do
             echo "Downloading from $repo"
             # Parse the owner and repo name
             IFS='/' read -ra REPO_PARTS <<< "$repo"
