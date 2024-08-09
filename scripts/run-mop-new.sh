@@ -22,7 +22,7 @@ call_pymop(){
     #run and print this command
     set -x
     export PYTHONIOENCODING=utf8
-    timeout 14400 pytest -v -p pythonmop  -rA  --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=$report/MEM_$algo \
+    timeout 14400 pytest --color=no -v -p pythonmop  -rA  --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=$report/MEM_$algo \
     --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
     # if process stop by timeout, then print timeout
     if [ $? -eq 124 ]; then
