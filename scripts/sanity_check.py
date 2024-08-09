@@ -39,7 +39,7 @@ def sanity_check(lines):
     problems_memory = 0
     problems_diff_values = 0
 
-    NUM_LINES_PER_PROJECT = 6
+    NUM_LINES_PER_PROJECT = 5
 
     original_keys = lines[0].keys()
 
