@@ -180,26 +180,40 @@ def get_result_line(filename):
     except:
         return None
 
+def find_problems(filename):
+    # look for keywords like fatal, sigmentation fault, core dump within the data in filename and return the line containing the error as well as 5 lines above and 10 after
+    try:
+        lines = subprocess.check_output(
+            ['grep', '-A', '10', '-B', '5', '-i', '-E', 'fatal|segmentation fault|core dump', filename]).decode('utf-8').strip().split('\n')
+        return lines
+    except:
+        return None
 
 def get_results(filename, project, algorithm):
     # check filename
     if not os.path.isfile(filename):
-        print('->file not found', filename)
         add_problem(project, algorithm, "File not found")
-        return None
+        raise Exception('File not found', filename)
 
     last_line = get_result_line(filename)
     print('--->last_line->', last_line)
     try:
-        # print('line', last_line)
         time = last_line.split('in ')[1].split('s')[0].strip()
     except Exception as e:
-        add_problem(project, algorithm,
-                    f"Error parsing time. last_line={last_line}")
-        return None
-    line = OrderedDict({'project': project, 'algorithm': algorithm,
-                        'passed': 0, 'failed': 0, 'skipped': 0, 'xfailed': 0, 'xpassed': 0, 'errors': 0,
-                        'time': time})
+        add_problem(project, algorithm,f"Error parsing time. last_line={last_line}")
+        raise Exception(f'Error parsing time. last_line={last_line}. Original Error: {e}')
+
+    line = OrderedDict({
+        'project': project,
+        'algorithm': algorithm,
+        'passed': 0,
+        'failed': 0,
+        'skipped': 0,
+        'xfailed': 0,
+        'xpassed': 0,
+        'errors': 0,
+        'time': time
+    })
 
     for att in last_line.split(','):
         for attribute in line.keys():
@@ -295,9 +309,11 @@ def compare(results, projectname):
                 diff = int(original_value_clean) - int(result_value_clean)
                 if diff != 0:
                     message = f'DIFF: {key} is different from ORIGINAL. diff={diff}'
+                    result['comparison_problems'] = f'{message}'
                     add_problem(projectname, result['algorithm'], message)
             else:
                 message = f'Non-numeric or invalid data for comparison. Original: {original_value_clean}, Result: {result_value_clean}'
+                result['comparison_problems'] = f'{message}'
                 add_problem(projectname, result['algorithm'], message)
 
 
@@ -407,7 +423,18 @@ def main():
             for algorithm in algos:
                 print(f'Algo: {algorithm}')
                 filename = f'pymop_{algorithm}.out'
-                line = get_results(filename, projectname, algorithm)
+                line = None
+                try:
+                    line = get_results(filename, projectname, algorithm)
+                except Exception as e:
+                    line = {
+                        'execution_problems': f'{e}'
+                    }
+
+                more_problems = find_problems(filename)
+                if more_problems:
+                    line['execution_problems'] = f'{line["execution_problems"]}\n\n{more_problems}'
+
                 if line is not None:
 
                     # get the memory from the output file
@@ -435,41 +462,54 @@ def main():
                     if algorithm != "ORIGINAL":
 
                         # get violations from json
-                        ret_violation = get_num_violations_from_json(
-                            projectname, algorithm)
+                        ret_violation = get_num_violations_from_json(projectname, algorithm)
 
                         if ret_violation is not None:
-                            (violations_str, total_violations, unique_violations_count, unique_violations_summary,
-                             unique_violations_test) = (ret_violation[0], ret_violation[1], ret_violation[2],
-                                                        ret_violation[3], ret_violation[4])
+                            (
+                                violations_str,
+                                total_violations,
+                                unique_violations_count,
+                                unique_violations_summary,
+                                unique_violations_test
+                            ) = (
+                                ret_violation[0],
+                                ret_violation[1],
+                                ret_violation[2],
+                                ret_violation[3],
+                                ret_violation[4]
+                            )
+                        
                             line['total_violations'] = total_violations
                             line['violations'] = violations_str
                             line['unique_violations_count'] = unique_violations_count
-                            str_unique_violations_summary = str(
-                                unique_violations_summary).replace(",", "<>")
+                            str_unique_violations_summary = str(unique_violations_summary).replace(",", "<>")
                             line['unique_violations_summary'] = str_unique_violations_summary
-                            str_unique_violations_test = str(
-                                unique_violations_test).replace(",", "<>")
+                            str_unique_violations_test = str(unique_violations_test).replace(",", "<>")
                             line['unique_violations_test'] = str_unique_violations_test
 
                         # get monitors and events from json
-                        ret_full = get_monitors_and_events_from_json(
-                            projectname, algorithm)
+                        ret_full = get_monitors_and_events_from_json(projectname, algorithm)
 
                         if ret_full is not None:
-                            monitors_str, events_str, total_monitors, total_events = ret_full[
-                                0], ret_full[1], ret_full[2], ret_full[3]
+                            monitors_str,
+                            events_str,
+                            total_monitors,
+                            total_events = ret_full[0], ret_full[1], ret_full[2], ret_full[3]
+
                             line['monitors'] = monitors_str
                             line['total_monitors'] = total_monitors
                             line['events'] = events_str
-                            line['total_events'] = total_events
-
-                    
+                            line['total_events'] = total_events                    
 
                     # check if log_link.txt exists
                     if os.path.isfile('logs_link.txt'):
                         with open('logs_link.txt', 'r') as file:
-                            line['log_file'] = file.read()
+                            log_file = file.read()
+
+                            # replace the last part of log_file from _(.+).zip to _{algorithm}.zip
+                            log_file = re.sub(r'_([A-Z]+).zip', f'_{algorithm}.zip', log_file)
+
+                            line['log_file'] = log_file
 
                     results.append(line)
             if len(results) == 0:
