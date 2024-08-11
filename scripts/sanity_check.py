@@ -90,9 +90,9 @@ def sanity_check(lines):
     print(
         f"saving new csv, with only projects with {NUM_LINES_PER_PROJECT} lines")
 
-    file_name = 'new-results.csv'
+    file_name = 'sanity-check-results.csv'
     save_new_csv(file_name, new_projects, original_keys)
-    print("saved new csv, file name: new-results.csv")
+    print("saved new csv, file name: sanity-check-results.csv")
 
 
 def save_new_csv(file_name, new_projects, original_keys):
