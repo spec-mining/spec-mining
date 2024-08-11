@@ -491,10 +491,7 @@ def main():
                         ret_full = get_monitors_and_events_from_json(projectname, algorithm)
 
                         if ret_full is not None:
-                            monitors_str,
-                            events_str,
-                            total_monitors,
-                            total_events = ret_full[0], ret_full[1], ret_full[2], ret_full[3]
+                            monitors_str, events_str, total_monitors, total_events = ret_full[0], ret_full[1], ret_full[2], ret_full[3]
 
                             line['monitors'] = monitors_str
                             line['total_monitors'] = total_monitors
