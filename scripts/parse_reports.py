@@ -435,7 +435,7 @@ def main():
                 if more_problems:
                     line['execution_problems'] = f'{line["execution_problems"]}\n\n{more_problems}'
 
-                if line is not None:
+                if not 'File not found' in line['execution_problems']:
 
                     # get the memory from the output file
                     total_memory_bytes = process_memory_file(filename)
