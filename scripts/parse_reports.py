@@ -429,6 +429,8 @@ def main():
                     line = get_results(filename, projectname, algorithm)
                 except Exception as e:
                     line = {
+                        'project': project,
+                        'algorithm': algorithm,
                         'execution_problems': f'{e}'
                     }
 
