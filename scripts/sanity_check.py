@@ -10,6 +10,19 @@ def read_csv_to_list_dict(file_name):
         reader = csv.DictReader(file)
         return list(reader)
 
+def find_missing_required_algo(project_lines, name, required_algos):
+    # return an array of the missing required algorithm
+    missing = []
+    for algo in required_algos:
+        found = False
+        for line in project_lines:
+            if line['algorithm'] == algo:
+                found = True
+                break
+        if not found:
+            missing.append(algo)
+    return missing
+
 
 def is_results_diff(lines, name):
     columns = ['passed', 'failed', 'skipped', 'errors']
@@ -33,13 +46,20 @@ def is_results_diff(lines, name):
 def sanity_check(lines):
     # lopp through all lines, create a dict by project and add the lines to the dict
     projects = {}
-    new_projects = {}
+    successful_projects = {}
 
     problems = 0
     problems_memory = 0
     problems_diff_values = 0
 
-    NUM_LINES_PER_PROJECT = 5
+    REQUIRED_ALGOS = [
+        'ORIGINAL',
+        # 'A',
+        'B',
+        'C',
+        'C+',
+        'D'
+    ]
 
     original_keys = lines[0].keys()
 
@@ -53,15 +73,17 @@ def sanity_check(lines):
 
     # check if all projects have 6 lines
     for p in projects:
-        if len(projects[p]) != NUM_LINES_PER_PROJECT:
+        missing_required_algos = find_missing_required_algo(projects[p], p, REQUIRED_ALGOS)
+
+        if len(missing_required_algos) > 0:
             problems += 1
             print('---')
-            print(f"Project {p} has {len(projects[p])} lines")
-            algos = []
-            # print(projects[p])
+            found_algos = []
+
             for line in projects[p]:
-                algos.append(line['algorithm'])
-            print(algos)
+                found_algos.append(line['algorithm'])
+
+            print(f"Project {p} did not run on all required algos. Required: {REQUIRED_ALGOS}. Found: {found_algos}. Missing: {missing_required_algos}")
         else:
             # for line in projects[p]:
             #     mem = line['memory']
@@ -73,7 +95,7 @@ def sanity_check(lines):
 
             if not is_results_diff(projects[p], p):
                 # add the project to the new dict
-                new_projects[p] = projects[p]
+                successful_projects[p] = projects[p]
             else:
                 problems_diff_values += 1
 
@@ -85,13 +107,13 @@ def sanity_check(lines):
         f"num of problems related to different values across columns of the same project: {problems_diff_values} (skip these projects)")
 
     print(f'total input projects: {len(projects)}')
-    print(f'total projects output: {len(new_projects)}')
+    print(f'total projects output: {len(successful_projects)}')
 
     print(
-        f"saving new csv, with only projects with {NUM_LINES_PER_PROJECT} lines")
+        f"saving new csv, with only projects that successfully ran algos {REQUIRED_ALGOS} ")
 
     file_name = 'sanity-check-results.csv'
-    save_new_csv(file_name, new_projects, original_keys)
+    save_new_csv(file_name, successful_projects, original_keys)
     print("saved new csv, file name: sanity-check-results.csv")
 
 
