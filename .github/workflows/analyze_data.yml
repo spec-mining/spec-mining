@@ -80,12 +80,14 @@ jobs:
 
               # ls -l
 
-              python3 parse_reports.py &> output_parse_reports.txt
+              python3 parse_reports.py
+              # &> output_parse_reports.txt
 
               echo "================================== Results =================================="
               # cat results.csv
 
-              python3 sanity_check.py &> output_sanity_check.txt
+              python3 sanity_check.py
+              # &> output_sanity_check.txt
               echo "========================= Results after Sanity check ========================"
               #cat sanity-check-results.csv
     
@@ -107,8 +109,6 @@ jobs:
                 files: |
                   ./projects/reports/results.csv
                   ./projects/reports/sanity-check-results.csv
-                  ./projects/reports/output_parse_reports.txt
-                  ./projects/reports/output_sanity_check.txt
                 tag_name: ${{inputs.release-tag}}
                 name: ${{inputs.release-tag}}
                 draft: false
