@@ -95,9 +95,9 @@ jobs:
           - name: print logs
             run: |
               cd ./projects/reports
-              cat "======================== parse_reports.py ====================="
+              echo "======================== parse_reports.py ====================="
               cat ./output_parse_reports.txt
-              cat "======================== sanity_check.py ====================="
+              echo "======================== sanity_check.py ====================="
               cat ./output_sanity_check.txt
 
           - name: printout the results
