@@ -446,7 +446,12 @@ def main():
                     line['usage_memory'] = total_memory_kb
 
                     # get time from json produced by pymop
-                    ret_time = get_time_from_json(projectname, algorithm)
+                    try:
+                        ret_time = get_time_from_json(projectname, algorithm)
+                    except Exception as e:
+                        line['execution_problems'] = f'{line["execution_problems"]}\n\nCould not get_time_from_json. Original error: {e}'
+                        ret_time = None
+
                     if ret_time is not None:
                         (instrumentation_duration,
                          create_monitor_duration, test_duration) = ret_time
