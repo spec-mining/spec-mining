@@ -212,7 +212,8 @@ def get_results(filename, project, algorithm):
         'xfailed': 0,
         'xpassed': 0,
         'errors': 0,
-        'time': time
+        'time': time,
+        'execution_problems': ''
     })
 
     for att in last_line.split(','):
