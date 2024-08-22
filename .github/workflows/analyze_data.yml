@@ -18,7 +18,7 @@ on:
 
 jobs:
     analyze_data:
-        runs-on: blacksmith-32vcpu-ubuntu-2204
+        runs-on: namespace-profile-default
         steps:
           - uses: actions/checkout@v4
             with:
