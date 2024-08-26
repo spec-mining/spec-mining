@@ -69,11 +69,23 @@ jobs:
             # chmod +x ./remove-unnecessary-specs.sh
             # ./remove-unnecessary-specs.sh
 
-            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
-            rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
-            rm ../mop-with-dynapt/specs-new/File_MustClose.py
-            rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
+            echo "======================= specs before removing unwanted specs ========================"
+            ls -al ../mop-with-dynapt/specs-new
+            
+            declare -a all_specs=($(ls ../mop-with-dynapt/specs-new | grep -v -E 'bin|__pycache__'))
+            declare -a specs_to_keep=("ArgParse_Parent" "Arrays_SortBeforeBinarySearch" "faulthandler_disableBeforeClose" "faulthandler_tracetrackDumpBeforeClose" "faulthandler_unregisterBeforeClose" "File_MustClose" "NLTK_MissingMegamExplicitArg" "NLTK_MissingMegamFvalsArg" "NLTK_MustImplementEntries" "NLTK_NonterminalSymbolMutability" "RandomMustUseSeed" "Requests_PreparedRequestInit" "StringTemplate_ChangeAfterCreate" "Turtle_LastStatementDone" "UseProtp_in_FTP_TLS" "XMLParser_ParseMustFinalize")
 
+          
+            # delete all specs that don't appear in specs_to_keep. don't forget that spec file names end with .py as they're python files
+            
+            for spec in "${all_specs[@]}"; do
+              if [[ ! " ${specs_to_keep[@]} " =~ " ${spec%.*} " ]]; then
+                rm ../mop-with-dynapt/specs-new/$spec
+              fi
+            done
+
+            echo "=================== specs after removing unwanted ones ================="
+            ls -al ../mop-with-dynapt/specs-new
     
         - name: Install Dependencies and Run MOP
           run: |
@@ -182,10 +194,23 @@ jobs:
             # chmod +x ./remove-unnecessary-specs.sh
             # ./remove-unnecessary-specs.sh
 
-            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
-            rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
-            rm ../mop-with-dynapt/specs-new/File_MustClose.py
-            rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
+            echo "======================= specs before removing unwanted specs ========================"
+            ls -al ../mop-with-dynapt/specs-new
+            
+            declare -a all_specs=($(ls ../mop-with-dynapt/specs-new | grep -v -E 'bin|__pycache__'))
+            declare -a specs_to_keep=("ArgParse_Parent" "Arrays_SortBeforeBinarySearch" "faulthandler_disableBeforeClose" "faulthandler_tracetrackDumpBeforeClose" "faulthandler_unregisterBeforeClose" "File_MustClose" "NLTK_MissingMegamExplicitArg" "NLTK_MissingMegamFvalsArg" "NLTK_MustImplementEntries" "NLTK_NonterminalSymbolMutability" "RandomMustUseSeed" "Requests_PreparedRequestInit" "StringTemplate_ChangeAfterCreate" "Turtle_LastStatementDone" "UseProtp_in_FTP_TLS" "XMLParser_ParseMustFinalize")
+
+          
+            # delete all specs that don't appear in specs_to_keep. don't forget that spec file names end with .py as they're python files
+            
+            for spec in "${all_specs[@]}"; do
+              if [[ ! " ${specs_to_keep[@]} " =~ " ${spec%.*} " ]]; then
+                rm ../mop-with-dynapt/specs-new/$spec
+              fi
+            done
+
+            echo "=================== specs after removing unwanted ones ================="
+            ls -al ../mop-with-dynapt/specs-new
 
         - name: Install Dependencies and Run MOP
           run: |
