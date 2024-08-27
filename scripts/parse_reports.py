@@ -441,8 +441,13 @@ def main():
                 if not 'File not found' in line['execution_problems']:
 
                     # get the memory from the output file
-                    total_memory_bytes = process_memory_file(filename)
-                    total_memory_kb = round(total_memory_bytes / 1024, 2)
+                    try:
+                        total_memory_bytes = process_memory_file(filename)
+                        total_memory_kb = round(total_memory_bytes / 1024, 2)
+                    except Exception as e:
+                        line['execution_problems'] = f'{line["execution_problems"]}\n\nCould not process_memory_file. Original error: {e}'
+                        total_memory_kb = None
+
                     line['usage_memory'] = total_memory_kb
 
                     # get time from json produced by pymop
