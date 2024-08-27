@@ -84,6 +84,11 @@ jobs:
               fi
             done
 
+            # also delete these (causing issues)
+            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
+            rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
+            rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
+
             echo "=================== specs after removing unwanted ones ================="
             ls -al ../mop-with-dynapt/specs-new
     
@@ -208,6 +213,11 @@ jobs:
                 rm ../mop-with-dynapt/specs-new/$spec
               fi
             done
+
+            # also delete these (causing issues)
+            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
+            rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
+            rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
 
             echo "=================== specs after removing unwanted ones ================="
             ls -al ../mop-with-dynapt/specs-new
