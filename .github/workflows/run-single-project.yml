@@ -79,7 +79,7 @@ jobs:
             # delete all specs that appear in specs_to_delete. don't forget that spec file names end with .py as they're python files
             
             for spec in "${all_specs[@]}"; do
-              if [[ ! " ${specs_to_delete[@]} " == " ${spec%.*} " ]]; then
+              if [[ " ${specs_to_delete[@]} " =~ " ${spec%.*} " ]]; then
                 rm ../mop-with-dynapt/specs-new/$spec
               fi
             done
