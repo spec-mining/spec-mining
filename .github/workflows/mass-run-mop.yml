@@ -64,6 +64,10 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Setup working directories
+        run: |
+          mkdir -p ./projects/reports
+        
       - name: Download files from multiple releases
         run: |
           for repo in ${{ github.repository }}; do
@@ -114,19 +118,32 @@ jobs:
           cp ../../scripts/parse_reports.py .
           cp ../../scripts/sanity_check.py .
 
-          ls -l
+          # ls -l
 
-          python3 parse_reports.py
+          python3 parse_reports.py &> output_parse_reports.txt
 
           echo "================================== Results =================================="
-          cat results.csv
+          # cat results.csv
 
-          python3 sanity_check.py
+          python3 sanity_check.py &> output_sanity_check.txt
           echo "========================= Results after Sanity check ========================"
-          cat results.csv
+          #cat sanity-check-results.csv
 
         shell: bash
         continue-on-error: true
+
+      - name: print logs
+        run: |
+          cd ./projects/reports
+          echo "======================== parse_reports.py ====================="
+          cat ./output_parse_reports.txt
+          echo "======================== sanity_check.py ====================="
+          cat ./output_sanity_check.txt
+
+      - name: printout the results
+        run: |
+          cd ./projects/reports
+          tail -n 7 output_sanity_check.txt
 
       - name: Upload report to GitHub Release
         uses: Wandalen/wretry.action@master
@@ -137,9 +154,11 @@ jobs:
           with: |
             files: |
               ./projects/reports/results.csv
-              ./projects/reports/new-results.csv
-            tag_name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
-            name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
+              ./projects/reports/sanity-check-results.csv
+              ./projects/reports/output_parse_reports.txt
+              ./projects/reports/output_sanity_check.txt
+            tag_name: ${{github.event.inputs.release_name || github.event.client_payload.release_name}}
+            name: ${{github.event.inputs.release_name || github.event.client_payload.release_name}}
             draft: false
             prerelease: true
             token: ${{ secrets.GITHUB_TOKEN }}
