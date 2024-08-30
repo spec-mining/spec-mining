@@ -78,11 +78,11 @@ jobs:
           
             # delete all specs that appear in specs_to_delete. don't forget that spec file names end with .py as they're python files
             
-            for spec in "${all_specs[@]}"; do
-              if [[ " ${specs_to_delete[@]} " =~ " ${spec%.*} " ]]; then
-                rm ../mop-with-dynapt/specs-new/$spec
-              fi
-            done
+            # for spec in "${all_specs[@]}"; do
+            #   if [[ " ${specs_to_delete[@]} " =~ " ${spec%.*} " ]]; then
+            #     rm ../mop-with-dynapt/specs-new/$spec
+            #   fi
+            # done
 
             # also delete these (causing issues)
             rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
@@ -208,11 +208,11 @@ jobs:
           
             # delete all specs that appear in specs_to_delete. don't forget that spec file names end with .py as they're python files
             
-            for spec in "${all_specs[@]}"; do
-              if [[ " ${specs_to_delete[@]} " =~ " ${spec%.*} " ]]; then
-                rm ../mop-with-dynapt/specs-new/$spec
-              fi
-            done
+            # for spec in "${all_specs[@]}"; do
+            #   if [[ " ${specs_to_delete[@]} " =~ " ${spec%.*} " ]]; then
+            #     rm ../mop-with-dynapt/specs-new/$spec
+            #   fi
+            # done
 
             # also delete these (causing issues)
             rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
