@@ -76,6 +76,7 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
     return shas
 
 def update_google_sheet_in_bulk(gc, sheet_id, sha_values):
+    print('Updating google sheets with sha values', sha_values)
     sheet = gc.open_by_key(sheet_id)
     wks = sheet.sheet1
     sha_values = [['' if sha is None else sha] for sha in sha_values]
