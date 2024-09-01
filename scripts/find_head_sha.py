@@ -80,7 +80,9 @@ def update_google_sheet_in_bulk(gc, sheet_id, sha_values):
     sheet = gc.open_by_key(sheet_id)
     wks = sheet.sheet1
     sha_values = [['' if sha is None else sha] for sha in sha_values]
+    print('sha values', sha_values)
     wks.update_values(crange=f'B1:B{len(sha_values)}', values=sha_values)
+    print('after updated wks', wks)
 
 def main():
     gc = authenticate_gsheets()
