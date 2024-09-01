@@ -29,7 +29,15 @@ def get_github_shas(repo_links, batch_size=50, retries=15, wait=30):
     shas = {}
     for i in range(0, len(repo_links), batch_size):
         batch = repo_links[i:i + batch_size]
-        repo_names = [link.split('github.com/')[1] for link in batch]
+        repo_names = []
+
+        for link in batch:
+            try:
+                repo_name = link.split('github.com/')[1]
+                repo_names.append(repo_name)
+            except Exception as e:
+                print('failed to process link', link)
+
         repos = [tuple(repo.split('/')) for repo in repo_names]
         print(f'Processing repos {i}-{i+batch_size}/{len(repo_links)}')
         try_count = 0
