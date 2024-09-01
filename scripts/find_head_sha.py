@@ -90,7 +90,15 @@ def main():
     repo_links = wks.get_col(1, include_tailing_empty=False)
     shas = get_github_shas(repo_links)
 
-    sha_values = [shas.get(link.split('github.com/')[1], None) for link in repo_links]
+    sha_values = []
+
+    for link in repo_links:
+        try:
+            sha_value = shas.get(link.split('github.com/')[1], None)
+            sha_values.append(sha_value)
+        except Exception as e:
+            print('Faile to find sha for link', link)
+
     update_google_sheet_in_bulk(gc, sheet_id, sha_values)
 
 if __name__ == "__main__":
