@@ -30,7 +30,7 @@ for algo in "${algorithms[@]}"; do
             for violation in "${violations[@]}"; do
                 
                 # Run the Python script and capture the output
-                output=$(python3 ./tests/time/fake_single_param_spec.py "$algo" "$instance" "$event" "$violation")
+                output=$(python3 ./fake_spec.py "$algo" "$instance" "$event" "$violation")
                 
                 # Extract the time from the output
                 time=$(echo "$output" | grep -oP 'Time:\s*\K[\d.]+')
