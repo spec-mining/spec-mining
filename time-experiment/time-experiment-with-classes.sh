@@ -2,9 +2,9 @@
 
 # Define the ranges for algo, instance_count, event_count, and class_count
 algorithms=("B" "C" "C+" "D") # removed "A" because I want to test the other algorithms
-class_counts=(1 10 20 40)
-instance_counts=(1 25 50)
-event_counts=(5 100 250)
+class_counts=(1 10 20 40 80 160)
+instance_counts=(1 25 50 100 200)
+event_counts=(5 100 250 500 1000)
 
 # Create the CSV file and write the header row
 output_file="time-experiment-results.csv"
