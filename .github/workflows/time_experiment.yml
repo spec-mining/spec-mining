@@ -27,7 +27,7 @@ jobs:
         - name: Run the experiment
           run: |
             cd ./projects/mop-with-dynapt
-            cp ../time-experiment/* .
+            cp ../../time-experiment/* .
             ls -l
 
             chmod +x ./time-experiment.sh
