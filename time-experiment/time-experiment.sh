@@ -3,7 +3,7 @@
 # Define the ranges for algo, instance_count, event_count, and raises_violation
 # algorithms=("A" "B" "C" "C+" "D")
 algorithms=("D" "C+" "C" "B" "A")
-instance_counts=(1 100 500 1000 5000)
+instance_counts=(1 100 500)
 # instance_counts=(1 100)
 event_counts=(5 500 2500 5000 25000)
 # event_counts=(5 500)
