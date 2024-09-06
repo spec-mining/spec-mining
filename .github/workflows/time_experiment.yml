@@ -41,11 +41,12 @@ jobs:
             ls -l
 
             chmod +x ./time-experiment.sh
+            chmod +x ./time-experiment-denini.sh
             chmod +x ./time-experiment-with-classes.sh
 
             # if with-class-count is false 
             if [ "${{ github.event.inputs.with-class-count }}" == "false" ]; then
-                ./time-experiment.sh
+                ./time-experiment-denini.sh
             else
                 ./time-experiment-with-classes.sh
             fi
