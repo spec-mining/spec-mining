@@ -3,9 +3,9 @@
 # Define the ranges for algo, instance_count, event_count, and raises_violation
 algorithms=("D" "C+" "C" "B") # removed "A" because I want to test the other algorithms
 #instance_counts=(1 25 50 75 100)
-instance_counts=(1000)
+instance_counts=(1000, 2000, 5000, 10000)
 #event_counts=(5 100 500 750 1000)
-event_counts=(500)
+event_counts=(500, 1000 , 2000)
 violations=("True" "False")
 
 # Create the CSV file and write the header row
