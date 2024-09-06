@@ -32,6 +32,9 @@ jobs:
 
             chmod +x ./time-experiment.sh
             ./time-experiment.sh
+
+            # print the results
+            cat time-experiment-results.csv
     
         - name: Upload report to GitHub Release
           uses: Wandalen/wretry.action@master
