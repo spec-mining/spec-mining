@@ -37,15 +37,11 @@ jobs:
             cat time-experiment-results.csv
     
         - name: Upload report to GitHub Release
-          uses: Wandalen/wretry.action@master
+          uses: softprops/action-gh-release@v1
           with:
-            attempt_delay: 60000 # 1 min
-            attempt_limit: 10
-            action: softprops/action-gh-release@v1
-            with: |
-              files: ./projects/mop-with-dynapt/time-experiment-results.csv
-              tag_name: time-experiment-${{github.run_id}}
-              name: time-experiment-${{github.run_id}}
-              draft: false
-              prerelease: true
-              token: ${{ secrets.GITHUB_TOKEN }}
+            files: ./projects/mop-with-dynapt/time-experiment-results.csv
+            tag_name: time-experiment-${{github.run_id}}
+            name: time-experiment-${{github.run_id}}
+            draft: false
+            prerelease: true
+            token: ${{ secrets.GITHUB_TOKEN }}
