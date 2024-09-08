@@ -2,7 +2,7 @@
 
 # Define the ranges for algo, instance_count, and event_count
 algorithms=("A" "B" "C" "C+" "D")
-instance_counts=(1 50 100 200 400 800 1600 3200 6400 12800 25600)
+instance_counts=(1 50 100 200 400 800 1600 3200 6400)
 event_counts=(5 100 500 750 1000)
 
 # Create the CSV file and write the header row

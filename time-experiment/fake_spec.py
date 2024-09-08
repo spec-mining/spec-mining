@@ -26,6 +26,11 @@ args = parser.parse_args()
 
 # args = FakeArgs()
 
+class UniqueTemplate(Template):
+
+    def create():
+        pass
+
 original_print = builtins.print
 def mock_print():
     def fake_print(*args, **kwargs):
@@ -48,16 +53,16 @@ class StringTemplate_ChangeAfterCreate(Spec):
         super().__init__()
         self.created_classes_delimier = {}  # key: class, value: delimiter
 
-        @self.event_before(call(Template, '__init__'))
+        @self.event_before(call(UniqueTemplate, 'create'))
         def class_creation(**kw):
             obj = kw['obj']
             self.created_classes_delimier[obj] = obj.delimiter
 
-        @self.event_before(call(Template, 'substitute'))
+        @self.event_before(call(UniqueTemplate, 'substitute'))
         def call_substitute(**kw):
             return check_change(**kw)
 
-        @self.event_before(call(Template, 'safe_substitute'))
+        @self.event_before(call(UniqueTemplate, 'safe_substitute'))
         def call_safe_substitute(**kw):
             return check_change(**kw)
 
@@ -78,7 +83,7 @@ class StringTemplate_ChangeAfterCreate(Spec):
             f'file {call_file_name}, line {call_line_num}.')
 
 
-class MyTemplate(Template):
+class MyTemplate(UniqueTemplate):
     delimiter = '%'
 
 
