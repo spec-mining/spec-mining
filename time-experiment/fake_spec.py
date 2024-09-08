@@ -97,7 +97,11 @@ def execute_fake_program(instance_count, event_count):
     all_possible_events = ['substitute', 'safe_substitute']
     for i in range(instance_count):
         theInstance = MyTemplate('Hello')
-        theInstance.create()
+
+        # 10 % of the time, call creation event
+        if random.random() < 0.1:
+            theInstance.create()
+        
         all_instances.append(theInstance)
     for i in range(event_count):
         inst = random.choice(all_instances)
