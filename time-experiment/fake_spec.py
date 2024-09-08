@@ -28,8 +28,8 @@ args = parser.parse_args()
 
 class UniqueTemplate(Template):
 
-    def create():
-        pass
+    def create(self):
+        return self
 
 original_print = builtins.print
 def mock_print():
