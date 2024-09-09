@@ -3,12 +3,14 @@ import builtins
 import time
 import random
 import cProfile
+import json
 import argparse
-from pythonmop import Spec, call, TRUE_EVENT, FALSE_EVENT
+from pythonmop import Spec, call, TRUE_EVENT, FALSE_EVENT, StatisticsSingleton
 from string import Template
 import pythonmop.spec.spec as spec
 
 spec.DONT_MONITOR_PYTHONMOP = False
+StatisticsSingleton().set_full_statistics()
 random.seed(99)
 
 parser = argparse.ArgumentParser("Fakse Program")
@@ -16,6 +18,7 @@ parser.add_argument("algo", help="The algorithm to run", type=str, choices=['A',
 parser.add_argument("instance_count", help="The number of instances", type=int)
 parser.add_argument("event_count", help="The number of events", type=int)
 args = parser.parse_args()
+
 
 # Replace the argparse section with this:
 # class FakeArgs:
@@ -31,15 +34,20 @@ class UniqueTemplate(Template):
     def create(self):
         return self
 
+
 original_print = builtins.print
+
+
 def mock_print():
     def fake_print(*args, **kwargs):
         pass
 
     builtins.print = fake_print
 
+
 def unmock_print(*args, **kwargs):
     builtins.print = original_print
+
 
 class StringTemplate_ChangeAfterCreate(Spec):
     """
@@ -101,7 +109,7 @@ def execute_fake_program(instance_count, event_count):
         # 10 % of the time, call creation event
         if random.random() < 0.1:
             theInstance.create()
-        
+
         all_instances.append(theInstance)
     for i in range(event_count):
         inst = random.choice(all_instances)
@@ -126,3 +134,5 @@ print('Algo: ', args.algo)
 print('Instance Count: ', args.instance_count)
 print('Event Count: ', args.event_count)
 print('Time:', time_2 - time_1)
+print('Full statistics:')
+print(json.dumps(StatisticsSingleton().full_statistics_dict, indent=2))
