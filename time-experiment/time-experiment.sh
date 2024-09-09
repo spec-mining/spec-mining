@@ -21,7 +21,9 @@ for instance in "${instance_counts[@]}"; do
             
             # Extract the time from the output
             time=$(echo "$output" | grep -oP 'Time:\s*\K[\d.]+')
-            echo "  Time: $time"
+
+            # print full output
+            echo "$output"
             
             # Add the time to the current row
             row="$algo,$instance,$event,$time"
