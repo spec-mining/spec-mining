@@ -88,6 +88,10 @@ def execute_fake_program(instance_count, event_count):
     # create a spec
     the_spec = Fake_Spec()
     the_spec.create_monitor(args.algo)
+    creation_event_receiving_a_instances = []
+    creation_event_not_receiving_a_instances = []
+    b_instances_enabled = []
+    b_instances_not_enabled = []
 
     for i in range(instance_count):
         a = A()
@@ -96,18 +100,35 @@ def execute_fake_program(instance_count, event_count):
         # 30% of the time call the creation event
         # [so that 70% of the time algos C+ and D would skip creating a monitor]
         if i > (1 - (args.creation_event_percent / 100)) * instance_count:
-            a.a()
+            creation_event_receiving_a_instances.append(a)
+        else:
+            creation_event_not_receiving_a_instances.append(a)
 
         # 15% of the time call the enabling event (that is part of the enable set of c)
         # [so that 85% of the time algo D would skip creating a monitor]
         if i > (1 - (args.enable_event_percent / 100)) * instance_count:
-            b.b()
+            b_instances_enabled.append(b)
+        else:
+            b_instances_not_enabled.append(b)
 
-        for i in range(event_count): 
-            a.c()
+    for a in creation_event_receiving_a_instances:
+        a.a()
 
-        if i <= (1 - (args.enable_event_percent / 100)) * instance_count:
-            b.b()
+    for b in b_instances_enabled:
+        b.b()
+
+    for i in range(event_count):
+        # pick the next a instance
+        all_a_instances = []
+        all_a_instances.extend(creation_event_receiving_a_instances)
+        all_a_instances.extend(creation_event_not_receiving_a_instances)
+
+        a = all_a_instances[i % instance_count]
+        a.c()
+    
+    # enabling now shouldn't have an effect
+    for b in b_instances_not_enabled:
+        b.b()
 
     if args.algo == 'A':
         the_spec.get_monitor().refresh_monitor()
