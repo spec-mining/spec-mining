@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Define the ranges for algo, instance_count, and event_count
-algorithms=("A" "B" "C" "C+" "D")
-instance_counts=(128 256 512 1024)
-event_counts=(10 15 20 25)
+algorithms=("B" "C" "C+" "D")
+instance_counts=(128 256 512 1024 2048 4096)
+event_counts=(10 15 20 25 50 100)
 creation_event_percents=(100 90 80 70 60 50 40 30 20 10 0)
 enable_event_percents=(100 90 80 70 60 50 40 30 20 10 0) 
 
