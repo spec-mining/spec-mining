@@ -21,11 +21,11 @@ args = parser.parse_args()
 # Replace the argparse section with this:
 # class FakeArgs:
 #     def __init__(self):
-#         self.algo = 'C+'
-#         self.instance_count = 50
+#         self.algo = 'B'
+#         self.instance_count = 200
 #         self.event_count = 10
-#         self.creation_event_percent = 30
-#         self.enable_event_percent = 15
+#         self.creation_event_percent = 100
+#         self.enable_event_percent = 100
 
 # args = FakeArgs()
 
@@ -126,9 +126,9 @@ def execute_fake_program(instance_count, event_count):
         a = all_a_instances[i % instance_count]
         a.c()
     
-    # enabling now shouldn't have an effect
-    for b in b_instances_not_enabled:
-        b.b()
+    # # enabling now shouldn't have an effect
+    # for b in b_instances_not_enabled:
+    #     b.b()
 
     if args.algo == 'A':
         the_spec.get_monitor().refresh_monitor()
