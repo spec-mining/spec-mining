@@ -14,6 +14,8 @@ parser = argparse.ArgumentParser("Fake Program")
 parser.add_argument("algo", help="The algorithm to run", type=str, choices=['A', 'B', 'C', 'C+', 'D'])
 parser.add_argument("instance_count", help="The number of instances", type=int)
 parser.add_argument("event_count", help="The number of events", type=int)
+parser.add_argument("creation_event_percent", help="The percentage of time creation event will be called", type=int)
+parser.add_argument("enable_event_percent", help="The percentage of time enable event is called", type=int)
 args = parser.parse_args()
 
 # Replace the argparse section with this:
@@ -22,6 +24,8 @@ args = parser.parse_args()
 #         self.algo = 'C+'
 #         self.instance_count = 50
 #         self.event_count = 10
+#         self.creation_event_percent = 30
+#         self.enable_event_percent = 15
 
 # args = FakeArgs()
 
@@ -87,16 +91,16 @@ def execute_fake_program(instance_count, event_count):
 
     for i in range(instance_count):
         a = A()
+        b = B()
 
         # 30% of the time call the creation event
         # [so that 70% of the time algos C+ and D would skip creating a monitor]
-        if i > 0.7 * instance_count:
+        if i > (1 - (args.creation_event_percent / 100)) * instance_count:
             a.a()
 
         # 15% of the time call the enabling event (that is part of the enable set of c)
         # [so that 85% of the time algo D would skip creating a monitor]
-        if i > 0.85 * instance_count:
-            b = B()
+        if i > (1 - (args.enable_event_percent / 100)) * instance_count:
             b.b()
 
         for i in range(event_count): 
@@ -112,7 +116,7 @@ execute_fake_program(args.instance_count, args.event_count)
 time_2 = time.time()
 unmock_print()
 
-print(f'Running: algo {args.algo} Instance: {args.instance_count} Requested Event {args.event_count}')
+print(f'Running: algo {args.algo} Instance: {args.instance_count} Requested Events {args.event_count} Creation Events {args.creation_event_percent}% Enable Events {args.enable_event_percent}%')
 try:
     # get the count of all events by summing the values of all keys within events dict within StringTemplate_ChangeAfterCreate
     events = StatisticsSingleton().full_statistics_dict['Fake_Spec']['events']
