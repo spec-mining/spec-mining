@@ -2,10 +2,10 @@
 
 # Define the ranges for algo, instance_count, and event_count
 algorithms=("B" "C" "C+" "D")
-instance_counts=(128 256 512 1024 2048 4096)
-event_counts=(10 15 20 25 50 100)
-creation_event_percents=(100 90 80 70 60 50 40 30 20 10 0)
-enable_event_percents=(100 90 80 70 60 50 40 30 20 10 0) 
+instance_counts=(128 512 1024 4096)
+event_counts=(10 50 100)
+creation_event_percents=(100 50 10 0)
+enable_event_percents=(100 50 10 0)
 
 # Create the CSV file and write the header row
 output_file="time-experiment-results.csv"
