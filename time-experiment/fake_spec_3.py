@@ -105,7 +105,10 @@ def execute_fake_program(instance_count, event_count):
 
         for i in range(event_count): 
             a.c()
-    
+
+        if i <= (1 - (args.enable_event_percent / 100)) * instance_count:
+            b.b()
+
     if args.algo == 'A':
         the_spec.get_monitor().refresh_monitor()
 
