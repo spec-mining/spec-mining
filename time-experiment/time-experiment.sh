@@ -3,7 +3,7 @@
 # Define the ranges for algo, instance_count, and event_count
 algorithms=("B" "C" "C+" "D")
 instance_counts=(8192 16384)
-event_counts=(1000 4000)
+event_counts=(50 100)
 creation_event_percents=(100 50 10 0)
 enable_event_percents=(100 50 10 0)
 
