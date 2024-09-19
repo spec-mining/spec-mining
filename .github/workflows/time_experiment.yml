@@ -70,7 +70,7 @@ jobs:
 
             chmod +x ./time-experiment.sh
 
-            ./time-experiment.sh ${{ inputs.algorithms }} ${{ inputs.instance_count }} ${{ inputs.event_count }} ${{ inputs.creation_event_percent }} ${{ inputs.enable_event_percent }} ${{ inputs.file_name }}
+            ./time-experiment.sh "${{ inputs.algorithms }}" "${{ inputs.instance_count }}" "${{ inputs.event_count }}" "${{ inputs.creation_event_percent }}" "${{ inputs.enable_event_percent }}" "${{ inputs.file_name }}"
 
             # print the results
             cat time-experiment-results.csv
