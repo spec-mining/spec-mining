@@ -69,7 +69,6 @@ jobs:
             ls -l
 
             chmod +x ./time-experiment.sh
-            chmod +x ./time-experiment-with-classes.sh
 
             ./time-experiment.sh ${{ inputs.algorithms }} ${{ inputs.instance_count }} ${{ inputs.event_count }} ${{ inputs.creation_event_percent }} ${{ inputs.enable_event_percent }} ${{ inputs.file_name }}
 
