@@ -25,12 +25,12 @@ on:
         description: 'Percentage of creation events to be used in the experiment.'
         type: string
         required: false
-        default: '100'
+        default: '20 60 100'
       enable_event_percent:
         description: 'Percentage of enable events to be used in the experiment.'
         type: string
         required: false
-        default: '100'
+        default: '20 60 100'
       file_name:
         description: 'Name of the file to be used in the experiment.'
         type: choice
