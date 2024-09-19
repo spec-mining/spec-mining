@@ -6,12 +6,40 @@ permissions:
 on:
   workflow_dispatch:
     inputs:
-      with-class-count:
-        description: 'Number of classes to be used in the experiment.'
+      algorithms:
+        description: 'Algorithms to be used in the experiment.'
+        type: string
+        required: false
+        default: 'A B C C+ D'
+      instance_count:
+        description: 'Number of instances to be used in the experiment.'
+        type: string
+        required: false
+        default: '10 50 100'
+      event_count:
+        description: 'Number of events to be used in the experiment.'
+        type: string
+        required: false
+        default: '5 10 20'
+      creation_event_percent:
+        description: 'Percentage of creation events to be used in the experiment.'
+        type: string
+        required: false
+        default: '100'
+      enable_event_percent:
+        description: 'Percentage of enable events to be used in the experiment.'
+        type: string
+        required: false
+        default: '100'
+      file_name:
+        description: 'Name of the file to be used in the experiment.'
         type: choice
+        required: false
+        default: 'FakeSpec.py'
         options:
-          - false
-          - true
+          - 'FakeSpec.py'
+          - 'StringTemplate.py'
+          - 'UnsafeMapIterator.py'
 
 jobs:
   run-original:
@@ -43,12 +71,7 @@ jobs:
             chmod +x ./time-experiment.sh
             chmod +x ./time-experiment-with-classes.sh
 
-            # if with-class-count is false 
-            if [ "${{ github.event.inputs.with-class-count }}" == "false" ]; then
-                ./time-experiment.sh
-            else
-                ./time-experiment-with-classes.sh
-            fi
+            ./time-experiment.sh ${{ inputs.algorithms }} ${{ inputs.instance_count }} ${{ inputs.event_count }} ${{ inputs.creation_event_percent }} ${{ inputs.enable_event_percent }} ${{ inputs.file_name }}
 
             # print the results
             cat time-experiment-results.csv
