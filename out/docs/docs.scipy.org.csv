@@ -15926,3 +15926,6 @@ should now contain a user section with your name and email:",https://docs.scipy.
 note,Release notes,https://docs.scipy.org/doc/scipy/dev/gitwash/dot2_dot3.html
 only,"only A, B, and
 C).",https://docs.scipy.org/doc/scipy/dev/gitwash/dot2_dot3.html
+\b(?:first|initially).*?\b([\w]+\(.*?\)).*?\b(?:followed by|then|and then).*?\b([\w]+\(.*?\)),"That means, given two systems E1(s) and E2(s), their
+multiplication, H(s) = E1(s) * E2(s), means that applying H(s) to U(s)
+is equivalent to first applying E2(s), and then E1(s).",https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.StateSpace.__mul__.html#scipy.signal.StateSpace.__mul__

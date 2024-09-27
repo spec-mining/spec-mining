@@ -2861,3 +2861,6 @@ only,"It is commonly observed that a monotonically decreasing learning rate, who
 degree of change is carefully chosen, results in a better performing model.",https://keras.io/api/optimizers/learning_rate_schedules/polynomial_decay/
 must,Must be positive.,https://keras.io/api/optimizers/learning_rate_schedules/polynomial_decay/
 should,"cycle: A boolean, whether it should cycle beyond decay_steps.",https://keras.io/api/optimizers/learning_rate_schedules/polynomial_decay/
+\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\)),"Also, note that for the
+inverse to work, you must have already set the forward layer vocabulary
+either directly or via adapt() before calling get_vocabulary().",https://keras.io/api/layers/preprocessing_layers/categorical/integer_lookup
