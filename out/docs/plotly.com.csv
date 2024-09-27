@@ -22517,3 +22517,4 @@ should,"Note that the intensity parameter should have the same length as the num
 note,"In the three examples below, note that the default colormap is different whether isomin and isomax have the same sign or not.",https://plotly.com/python/3d-volume-plots/
 should,"The figure below shows that changing the opacity scale changes a lot the visualization, so that opacityscale should be chosen carefully (uniform corresponds to a uniform opacity, min/max maps the minimum/maximum value to a maximal opacity, and extremes maps both the minimum and maximum values to maximal opacity, with a dip in between).",https://plotly.com/python/3d-volume-plots/
 only,"In this example the isosurfaces are only partially filled so that the slice is more visible, and the caps were removed for the same purpose.",https://plotly.com/python/3d-volume-plots/
+
