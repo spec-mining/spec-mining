@@ -220,6 +220,7 @@ jobs:
             rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
             rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
             rm ../mop-with-dynapt/specs-new/UnsafeMapIterator.py
+            rm ../mop-with-dynapt/specs-new/UnsafeListIterator.py
 
             echo "=================== specs after removing unwanted ones ================="
             ls -al ../mop-with-dynapt/specs-new
