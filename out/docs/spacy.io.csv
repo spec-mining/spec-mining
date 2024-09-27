@@ -10,3 +10,4 @@ to specify how the new subtokens should be integrated into the dependency tree."
 only,"This property is only available when
 sentence boundaries have been set on the
 document by the parser, senter, sentencizer or some custom function.",https://spacy.io/api/doc
+

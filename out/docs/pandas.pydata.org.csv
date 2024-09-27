@@ -26833,3 +26833,7 @@ note,Release notes,https://pandas.pydata.org/docs/dev/reference/api/pandas.array
 note,Release notes,https://pandas.pydata.org/docs/dev/reference/api/pandas.arrays.IntervalArray.to_tuples.html
 note,Release notes,https://pandas.pydata.org/docs/dev/reference/api/pandas.IntervalDtype.subtype.html
 note,Release notes,https://pandas.pydata.org/docs/dev/reference/api/pandas.IntervalDtype.subtype.html
+\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\)),Date(s) before which the last row(s) are returned.,https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.asof.html
+\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\)),Date(s) before which the last row(s) are returned.,https://pandas.pydata.org/docs/reference/api/pandas.Series.asof.html
+\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\)),Date(s) before which the last row(s) are returned.,https://pandas.pydata.org/docs/dev/reference/api/pandas.Series.asof.html
+\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\)),Date(s) before which the last row(s) are returned.,https://pandas.pydata.org/docs/dev/reference/api/pandas.DataFrame.asof.html
