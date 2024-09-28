@@ -26,19 +26,21 @@ jobs:
 
       - name: Install Dependencies
         run: yarn install
+      
+      - run: mkdir docs-scanned
 
       - name: Crawl Documentation
-        run: yarn start docs -l out/docs/${{inputs.inFile}}
+        run: yarn start docs -l out/docs/${{inputs.inFile}} -o ./docs-scanned/
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
+      - name: Upload results to GitHub Release
+        uses: softprops/action-gh-release@v1
         with:
+          files: ./docs-scanned/*.csv
+          tag_name: docs-scan-${{github.run_id}}
+          name: docs-scan-${{github.run_id}}
+          draft: false
+          prerelease: true
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          commit-message: "data: add crawled docs"
-          branch: docs-data-${{github.run_id}}
-          title: "data: add crawled docs"
-          body: "This PR adds more crawled docs."
