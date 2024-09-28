@@ -6,68 +6,67 @@ import path from "path";
 
 const regexPatterns = [
     // 1. "X before Y"
-    /\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\))/i,
+    /(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 2. "X after Y"
-    /\b([\w]+\(.*?\)).*?\bafter.*?\b([\w]+\(.*?\))/i,
+    /(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?)/i,
 
     // 3. "Call/Invoke/Execute/Run/Perform X before Y"
-    /\b(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\))/i,
+    /(?:\bcall(?:s|ed|ing)?\b|\binvoke(?:s|d|ing)?\b|\bexecute(?:s|d|ing)?\b|\brun(?:s|ning)?\b|\bperform(?:s|ed|ing)?\b|\buse(?:s|d|ing)?\b|\bstart(?:s|ed|ing)?\b|\binitialize(?:s|d|ing)?\b|\bload(?:s|ed|ing)?\b|\bopen(?:s|ed|ing)?\b|\bconnect(?:s|ed|ing)?\b)\s+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 4. "Call/Invoke/Execute/Run/Perform X after Y"
-    /\b(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\bafter.*?\b([\w]+\(.*?\))/i,
+    /(?:\bcall(?:s|ed|ing)?\b|\binvoke(?:s|d|ing)?\b|\bexecute(?:s|d|ing)?\b|\brun(?:s|ning)?\b|\bperform(?:s|ed|ing)?\b|\buse(?:s|d|ing)?\b|\bstart(?:s|ed|ing)?\b|\binitialize(?:s|d|ing)?\b|\bload(?:s|ed|ing)?\b|\bopen(?:s|ed|ing)?\b|\bconnect(?:s|ed|ing)?\b)\s+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?)/i,
 
     // 5. "X depends on Y"
-    /\b([\w]+\(.*?\)).*?\bdepends on.*?\b([\w]+\(.*?\))/i,
+    /(.+?)\s+(?:depends on|relies on|contingent upon|requires|necessitates)\s+(.+?)/i,
 
     // 6. "Cannot call/invoke/execute/run/perform X until Y has been called/invoked"
-    /\bcannot.*?\b(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\buntil.*?\b([\w]+\(.*?\)).*?\bhas.*?\b(?:been\s+)?(?:called|calls|called|calling|invoked|invokes|invoked|invoking|executed|executes|executed|executing|run|runs|ran|running|performed|performs|performed|performing)/i,
+    /(?:\bcannot\b|\bcan't\b|\bdo not\b|\bdon't\b|\bshould not\b|\bshouldn't\b|\bunable to\b).*?(?:\bcall(?:s|ed|ing)?\b|\binvoke(?:s|d|ing)?\b|\bexecute(?:s|d|ing)?\b|\brun(?:s|ning)?\b|\bperform(?:s|ed|ing)?\b)\s+(.+?)\s+(?:until|before|after|when|once|unless)\s+(.+?)\s+has.*?(?:\bcalled\b|\binvoked\b|\bexecuted\b|\brun\b|\bperformed\b)/i,
 
     // 7. "Must call/invoke/execute/run/perform X before Y"
-    /\bmust.*?\b(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\b(?:prior to|before).*?\b([\w]+\(.*?\))/i,
+    /(?:\bmust\b|\bneeds to\b|\bneed to\b|\bshould\b|\bhave to\b|\bought to\b|\brequired to\b|\bessential to\b|\bcrucial to\b)\s+(?:call|invoke|execute|run|perform)\s+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 8. "Should call/invoke/execute/run/perform X after Y"
     /\bshould.*?\b(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\bafter.*?\b([\w]+\(.*?\))/i,
 
     // 9. "First X, followed by Y"
-    /\b(?:first|initially).*?\b([\w]+\(.*?\)).*?\b(?:followed by|then|and then).*?\b([\w]+\(.*?\))/i,
+    /(?:\bfirst\b|\binitially\b|\bto start\b|\bbeginning with\b|\bat first\b)\s+(.+?),?\s+(?:followed by|then|next|afterward|subsequently|and then)\s+(.+?)/i,
 
     // 10. "Once X is called/invoked, proceed with Y"
-    /\bonce.*?\b([\w]+\(.*?\)).*?\b(?:is|has been).*?\b(?:called|calls|called|calling|invoked|invokes|invoked|invoking|executed|executes|executed|executing|run|runs|ran|running|performed|performs|performed|performing).*?\b.*?\b(?:proceed with|continue to).*?\b(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\))/i,
+    /(?:\bonce\b)\s+(.+?)\s+(?:is|has been)\s+(?:called|invoked|executed|run|performed),?\s+(?:proceed with|proceed to|continue to|go ahead and|move on to|be sure to|ensure that you)\s+(?:call|invoke|execute|run|perform)\s+(.+?)/i,
 
     // 11. "X should always precede Y"
-    /\b([\w]+\(.*?\)).*?\bshould.*?\balways.*?\b(?:precede|come before).*?\b([\w]+\(.*?\))/i,
+    /(.+?)\s+(?:should|must|needs to)?\s*(?:always)?\s*(?:precede|come before)\s+(.+?)/i,
 
     // 12. "X cannot be called until Y"
-    /\b([\w]+\(.*?\)).*?\bcannot.*?\b(?:be\s+)?(?:called|calls|called|calling|invoked|invokes|invoked|invoking|executed|executes|executed|executing|run|runs|ran|running|performed|performs|performed|performing).*?\buntil.*?\b([\w]+\(.*?\))/i,
+    /(.+?)\s+(?:cannot|can't|should not|shouldn't|unable to)\s+be\s+(?:called|invoked|executed|run|performed)\s+(?:until|before|after|when|once|unless)\s+(.+?)/i,
 
     // 13. "Failure to call/invoke/execute/run/perform X before Y will cause"
-    /\bfailure to.*?\b(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\bbefore.*?\b([\w]+\(.*?\)).*?\bwill.*?\b(?:cause|result in)/i,
+    /(?:\bfailure to\b|\bneglecting to\b|\bomission of\b|\bnot\b|\bwithout\b)\s+(?:call|invoke|execute|run|perform)\s+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?).*?(?:will cause|results in|leads to|triggers|causes|may result in)/i,
 
     // 14. "X is required before Y"
-    /\b([\w]+\(.*?\)).*?\bis.*?\brequired.*?\b(?:before|prior to).*?\b([\w]+\(.*?\))/i,
+    /(.+?)\s+(?:is|are)\s+(?:required|essential|crucial)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 15. "Ensure/Make sure to call/invoke/execute/run/perform X before Y"
-    /\b(?:ensure|make sure).*?\b(?:to\s+)?(?:call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\b(?:before|prior to).*?\b([\w]+\(.*?\))/i,
+    /(?:\bensure\b|\bmake sure\b)\s+(?:to\s+)?(?:call|invoke|execute|run|perform)\s+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 16. "Do/Perform X before Y"
-    /\b(?:do|does|did|doing|perform|performs|performed|performing).*?\b([\w]+\(.*?\)).*?\b(?:before|prior to).*?\b([\w]+\(.*?\))/i,
+    /(?:\bdo\b|\bperform\b)\s+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 17. "You need to perform X first, followed by Y"
-    /\byou.*?\bneed.*?\bto.*?\b(?:do|does|did|doing|perform|performs|performed|performing|call|calls|called|calling|invoke|invokes|invoked|invoking|execute|executes|executed|executing|run|runs|ran|running).*?\b([\w]+\(.*?\)).*?\bfirst.*?\b(?:followed by|then).*?\b([\w]+\(.*?\))/i,
+    /(?:\byou\b|\bwe\b|\bthey\b|\bone must\b)\s+(?:need to|must|should)\s+(?:perform|call|invoke|execute|run)\s+(.+?)\s+(?:first|initially|to start|beginning with|at first),?\s+(?:followed by|then|next|afterward|subsequently|and then)\s+(.+?)/i,
 
     // 18. "X must be called prior to invoking Y"
-    /\b([\w]+\(.*?\)).*?\bmust.*?\b(?:be\s+)?(?:called|calls|called|calling|invoked|invokes|invoked|invoking|executed|executes|executed|executing|run|runs|ran|running|performed|performs|performed|performing).*?\bprior to.*?\b(?:calling|calls|called|calling|invoking|invokes|invoked|invoking|executing|executes|executed|executing|running|runs|ran|running|performing|performs|performed|performing).*?\b([\w]+\(.*?\))/i,
+    /(.+?)\s+(?:must|needs to|need to|should|have to|ought to|required to)\s+be\s+(?:called|invoked|executed|run|performed)\s+(?:prior to|before|preceding|ahead of|earlier than|in advance of)\s+(?:calling|invoking|executing|running|performing)\s+(.+?)/i,
 
+    // 19. Before Calling
+    /(?:before|prior to|preceding|ahead of|earlier than|in advance of)\s+(?:calling|invoking|executing|running|performing)\s+(.+?),\s+(?:must|need to|needs to|should|have to|ought to|required to)\s+(?:call|invoke|execute|run|perform)\s+(.+?)/i,
 
-  // 19. Before Calling
-  /\bbefore\s+(?:call(?:ing|ed|s)?|invoke(?:ing|d|s)?|execute(?:ing|d|s)?|run(?:ning|s)?|perform(?:ing|ed|s)?|use(?:ing|d|s)?|start(?:ing|ed|s)?|initialize(?:ing|d|s)?|load(?:ing|ed|s)?|open(?:ing|ed|s)?|connect(?:ing|ed|s)?)\s+([\w]+\(\))\s*,?\s*(?:must|need(?:\s+to)?|have\s+to|should|ought\s+to|has\s+to|had\s+to)\s*(?:first\s+)?(?:call|invoke|execute|run|perform|use|start|initialize|load|open|connect)\s+([\w]+\(\))/i,
+    // 20. After Completing
+    /(?:after|following|subsequent to|later than|afterward)\s+(?:completing|invoking|calling)\s+(.+?),\s+(?:proceed with|proceed to|continue to|go ahead and|move on to|be sure to|ensure that you)\s+(?:call|invoke|execute|run|perform)\s+(.+?)/i,
 
-  // 20. After Completing
-  /\bafter (?:completing|invoking|calling)\s+([\w]+\(\))\s*(?:method)?\s*,?\s*(?:the next step is to|you should proceed to|be sure to|you can then|proceed to|,)?\s*(?:call|invoke)\s+([\w]+\(\))/i,
-
-  // 21. Should Be Called Prior To
-  /(?:\bthe\s+)?([\w]+\(\))\s*(?:method)?\s*(?:should|must|needs to)?\s*be\s*(?:called|invoked)\s*(?:prior to|before)\s*(?:invoking|calling)\s+([\w]+\(\))/i,
+    // 21. Should Be Called Prior To
+    /(.+?)\s+(?:should|must|needs to|need to|have to|ought to)\s+be\s+(?:called|invoked|executed|run|performed)\s+(?:prior to|before|preceding|ahead of|earlier than|in advance of)\s+(?:invoking|calling|executing|running|performing)\s+(.+?)/i,
 ];
 
 interface KeywordMatch {
@@ -253,15 +252,20 @@ export const scanDocs = async (linksFile: string, outDir: string) => {
                         const sentences = text.match(/[^.!?]+[.!?]/g) || [text];
                         // Check each sentence for each keyword
                         sentences.forEach((sentence: string) => {
-                            regexPatterns.forEach((pattern) => {
-                                if (sentence.toLowerCase().match(pattern)) {
+                            const sentenceToCheck = sentence.replace(/(\r\n|\n|\r)/gm, " ")
+                            console.log('##############\nChecking sentence: \n', sentenceToCheck)
+                            for (const pattern of regexPatterns) {
+                                if (sentenceToCheck.toLowerCase().match(pattern)) {
+                                    console.log('Mattched!')
                                     allMatches.push({
                                         keyword: pattern.source,
                                         matchingSentence: sentence.trim(),
                                         pageUrl: url,
                                     });
+
+                                    break;
                                 }
-                            });
+                            }
                         });
                     });
                 }
