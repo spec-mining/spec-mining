@@ -178,3 +178,42 @@ Handling duplicate attributes
 Instantiating custom subclasses",https://www.crummy.com/software/BeautifulSoup/bs4/doc
 only,"Parsing only part of a document
 SoupStrainer",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?),"previous_sibling,
+because there’s nothing before the <b> tag on the same level of the
+tree.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?),"next_element attribute of a string or tag points to whatever
+was parsed immediately after the opening of the current tag or after
+the current string.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?),"That’s because in the original markup, the word “Tillie” appeared
+before that semicolon.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?),"It tells Beautiful Soup to
+stop gathering results after it’s found a certain number.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:should|must|needs to)?\s*(?:always)?\s*(?:precede|come before)\s+(.+?),"previous_siblings to iterate over an element’s
+siblings that precede it in the tree.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?),"next_elements to
+iterate over whatever tags and strings that come after it in the
+document.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?),"previous_elements to
+iterate over the tags and strings that came before it in the
+document.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?),"A
+<p> tag that contains an <a> tag must have shown up before the <a>
+tag it contains.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?),"The insert_before() method inserts tags or strings immediately
+before something else in the parse tree:",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?),"The insert_after() method inserts tags or strings immediately
+following something else in the parse tree:",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:depends on|relies on|contingent upon|requires|necessitates)\s+(.+?),"Here’s the same document parsed as XML (running this requires that you
+have lxml installed).",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?),"Sometimes it guesses correctly, but only after a
+byte-by-byte search of the document that takes a very long time.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?),"If
+you happen to know a document’s encoding ahead of time, you can avoid
+mistakes and delays by passing it to the BeautifulSoup constructor
+as from_encoding.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?),"detwingle() on your
+data before passing it into BeautifulSoup or the UnicodeDammit
+constructor.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:depends on|relies on|contingent upon|requires|necessitates)\s+(.+?),"Instead, it relies on external parsers.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?),"Some of the generators used to yield None after they were done, and
+then stop.",https://www.crummy.com/software/BeautifulSoup/bs4/doc
