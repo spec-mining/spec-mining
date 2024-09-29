@@ -93,8 +93,12 @@ fi
 # Complete the pytest command with the test directory path
 printf ", '%s/'])\n" "$(pwd)/$TEST_DIR" >> run_all_tests.py
 
-# Install the testing repository's dependencies if a requirements.txt file exists
-[ -f requirements.txt ] && pip install -r requirements.txt
+# Install any additional dependencies listed in the repository's requirement files
+for file in *.txt; do
+    if [ -f "$file" ]; then
+        pip install -r "$file" || { echo "Failed to install requirements from $file"; exit 1; }
+    fi
+done
 
 # Record the start time of the instrumentation process
 START_TIME=$(python -c 'import time; print(time.time())')
@@ -106,8 +110,12 @@ python -m dynapyt.run_instrumentation --dir . --analysis Combined_Specs
 END_TIME=$(python -c 'import time; print(time.time())')
 INSTRUMENTATION_TIME=$(python -c "print($END_TIME - $START_TIME)")
 
-# Install the package under test (custom install script or fallback to pip install)
-[ -f myInstall.sh ] && bash ./myInstall.sh || pip install .
+# Ensure that the package is installed with all necessary dependencies for testing, using a custom install script if available
+if [ -f myInstall.sh ]; then
+    bash ./myInstall.sh || { echo "Failed to run myInstall.sh"; exit 1; }
+else
+    pip install .[dev,test,tests,testing] || { echo "Failed to install dependencies"; exit 1; }
+fi
 
 # Record the start time of the test execution
 TEST_START_TIME=$(python -c 'import time; print(time.time())')
