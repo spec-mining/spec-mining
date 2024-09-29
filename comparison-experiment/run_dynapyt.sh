@@ -10,7 +10,7 @@ fi
 TESTING_REPO_URL="$1"
 
 # Define the fixed repository URL for the DynaPyt project
-DYNAPYT_REPO_URL="git@github.com:sola-st/DynaPyt.git"
+DYNAPYT_REPO_URL="https://github.com/sola-st/DynaPyt.git"
 
 # Extract the repository name from the provided URL, removing the .git suffix
 TESTING_REPO_NAME=$(basename -s .git "$TESTING_REPO_URL")
