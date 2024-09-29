@@ -79,7 +79,7 @@ cd "$TESTING_REPO_NAME" || { echo "Failed to return to directory $TESTING_REPO_N
 pip3 install pytest-json-report
 
 # Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json
+pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json > out.txt
 
 # Deactivate the virtual environment
 deactivate
@@ -91,6 +91,7 @@ mv ./.report.json ../../results/pymop/.report.json
 mv ./D-full.json ../../results/pymop/D-full.json
 mv ./D-time.json ../../results/pymop/D-time.json
 mv ./D-violations.json ../../results/pymop/D-violations.json
+mv ./out.txt ../../results/pymop/out.txt
 
 # Return to the initial script directory
 cd - || exit

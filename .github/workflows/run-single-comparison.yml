@@ -61,9 +61,9 @@ jobs:
 
         - name: Zip report files
           run: |
-            cd ./comparison-experiment
-            zip -r ../$ZIP_FILE .  # Create a zip file in the projects directory
-            ls -l ../
+            cd ./comparison-experiment/results
+            zip -r ../../$ZIP_FILE .  # Create a zip file in the projects directory
+            ls -l ../../
           shell: bash
     
         - name: Upload report to GitHub Release
