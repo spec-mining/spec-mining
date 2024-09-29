@@ -82,5 +82,8 @@ pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors
 # Deactivate the virtual environment
 deactivate
 
+# delete venv folder
+rm -rf ./venv
+
 # Return to the initial script directory
 cd - || exit
