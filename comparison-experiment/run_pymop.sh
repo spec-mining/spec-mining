@@ -87,5 +87,10 @@ deactivate
 # delete venv folder
 rm -rf ./venv
 
+mv ./.report.json ../../results/pymop/.report.json
+mv ./D-full.json ../../results/pymop/D-full.json
+mv ./D-time.json ../../results/pymop/D-time.json
+mv ./D-violations.json ../../results/pymop/D-violations.json
+
 # Return to the initial script directory
 cd - || exit

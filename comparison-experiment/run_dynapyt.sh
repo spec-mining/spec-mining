@@ -136,12 +136,12 @@ rm -rf venv
 cd ..
 
 # Save the instrumentation time, test time, and results to a new file
-RESULTS_FILE="${TESTING_REPO_NAME}_results.txt"
+RESULTS_FILE="../results/dynapyt/${TESTING_REPO_NAME}_results.txt"
 
 # Write the instrumentation and test times to the results file
 echo "Instrumentation Time: ${INSTRUMENTATION_TIME}s" > $RESULTS_FILE
 echo "Test Time: ${TEST_TIME}s" >> $RESULTS_FILE
 
 # Copy the test output file to the current directory
-cp "./DynaPyt/under_test/${TESTING_REPO_NAME}_Combined_Specs/${TESTING_REPO_NAME}_Combined_Specs_output.txt" .
+cp "./DynaPyt/under_test/${TESTING_REPO_NAME}_Combined_Specs/${TESTING_REPO_NAME}_Combined_Specs_output.txt" ../results/dynapyt/
 
