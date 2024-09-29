@@ -1,0 +1,75 @@
+name: Run Single Comparison
+
+on:
+  workflow_call:
+    inputs:
+      project-link:
+        required: true
+        type: string
+      release-name:
+        required: true
+        type: string
+    secrets: 
+      GH_ACCESS_TOKEN:
+        required: true 
+jobs:
+  run-original:
+    runs-on: ubuntu-latest
+    timeout-minutes: 185
+    steps:
+        - uses: actions/checkout@v4
+          with:
+            fetch-depth: 0
+    
+        - name: Setup variables
+          run: |
+              REPO_URL=$(echo "${{ inputs.project-link }}" | sed 's/;.*//')
+              REPO_NAME="${REPO_URL##*/}"  # This strips everything before the last '/' character
+              OWNER_NAME="${REPO_URL%/$REPO_NAME}"  # Removes the repo name from the URL, leaving the owner path
+              OWNER_NAME="${OWNER_NAME##*/}"  # Extracts only the owner name
+              FULL_REPO_NAME="$OWNER_NAME-$REPO_NAME"  # Combines owner and repository names with a dash
+
+              ZIP_FILE="${FULL_REPO_NAME}_ORIGINAL.zip"
+              echo "REPO_NAME=$REPO_NAME" >> $GITHUB_ENV
+              echo "FULL_REPO_NAME=$FULL_REPO_NAME" >> $GITHUB_ENV
+              echo "ZIP_FILE=$ZIP_FILE" >> $GITHUB_ENV
+              echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
+          shell: bash
+    
+        - name: Run Dynapyt Experiment
+          run: |
+            cd ./comparison-experiment
+            ls -l
+            chmod +x ./run_dynapyt.sh
+            ./run_dynapyt.sh "${{ inputs.project-link }}"
+            
+        - name: Run PyMop Experiment
+          run: |
+            cd ./comparison-experiment
+            ls -l
+            chmod +x ./run_pymop.sh
+            ./run_pymop.sh "${{ inputs.project-link }}"
+          env:
+            GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
+        - name: Zip report files
+          run: |
+            cd ./comparison-experiment
+            zip -r comparison-experiment.zip .  # Create a zip file in the projects directory
+            ls -l ../
+          shell: bash
+    
+        - name: Upload report to GitHub Release
+          uses: Wandalen/wretry.action@master
+          with:
+            attempt_delay: 60000 # 1 min
+            attempt_limit: 10
+            action: softprops/action-gh-release@v1
+            with: |
+              files: ./comparison-experiment.zip
+              tag_name: ${{ inputs.release-name }}
+              name: ${{ inputs.release-name }}
+              draft: false
+              prerelease: true
+              token: ${{ secrets.GITHUB_TOKEN }}
+
