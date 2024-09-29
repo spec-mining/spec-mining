@@ -7,7 +7,14 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Assign the command line argument to the testing repository variable
-TESTING_REPO_URL="$1"
+repo_url_with_sha="$1"
+
+# Split the input into link and sha
+IFS=';' read -r TESTING_REPO_URL target_sha <<< "$repo_url_with_sha"
+
+# Output the url
+echo "Url: $TESTING_REPO_URL"
+echo "Sha: $target_sha"
 
 # Fixed repository URL for the mop-with-dynapt project
 PYMOP_REPO_URL="https://$GH_ACCESS_TOKEN@github.com/SoftEngResearch/mop-with-dynapt.git"

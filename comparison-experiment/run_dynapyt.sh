@@ -7,7 +7,14 @@ if [ "$#" -ne 1 ]; then
 fi
 
 # Assign the provided argument (repository URL) to a variable
-TESTING_REPO_URL="$1"
+repo_url_with_sha="$1"
+
+# Split the input into link and sha
+IFS=';' read -r TESTING_REPO_URL target_sha <<< "$repo_url_with_sha"
+
+# Output the url
+echo "Url: $TESTING_REPO_URL"
+echo "Sha: $target_sha"
 
 # Define the fixed repository URL for the DynaPyt project
 DYNAPYT_REPO_URL="https://github.com/sola-st/DynaPyt.git"
