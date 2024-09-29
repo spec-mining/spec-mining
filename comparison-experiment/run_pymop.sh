@@ -77,7 +77,7 @@ cd ..
 cd "$TESTING_REPO_NAME" || { echo "Failed to return to directory $TESTING_REPO_NAME"; exit 1; }
 
 # Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors
+pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors  --json-report --json-report-indent=2 --statistics --statistics_file="D".json
 
 # Deactivate the virtual environment
 deactivate
