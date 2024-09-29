@@ -76,8 +76,10 @@ pip install -e ".[dev]" || { echo "Failed to install mop-with-dynapt"; exit 1; }
 cd ..
 cd "$TESTING_REPO_NAME" || { echo "Failed to return to directory $TESTING_REPO_NAME"; exit 1; }
 
+pip3 install pytest-json-report
+
 # Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors  --json-report --json-report-indent=2 --statistics --statistics_file="D".json
+pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json
 
 # Deactivate the virtual environment
 deactivate
