@@ -25,6 +25,8 @@ TESTING_REPO_NAME=$(basename -s .git "$TESTING_REPO_URL")
 # Create a new directory name by appending _PyMOP to the repository name
 CLONE_DIR="${TESTING_REPO_NAME}_PyMOP"
 
+rm -rf $CLONE_DIR
+
 # Create the directory if it does not exist
 mkdir -p "$CLONE_DIR"
 
