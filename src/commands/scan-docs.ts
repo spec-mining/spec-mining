@@ -9,13 +9,13 @@ const regexPatterns = [
     /(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 2. "X after Y"
-    /(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?)/i,
+    /(.+?)\s+(?:after|subsequent to|later than|afterward)\s+(.+?)/i,
 
     // 3. "Call/Invoke/Execute/Run/Perform X before Y"
     /(?:\bcall(?:s|ed|ing)?\b|\binvoke(?:s|d|ing)?\b|\bexecute(?:s|d|ing)?\b|\brun(?:s|ning)?\b|\bperform(?:s|ed|ing)?\b|\buse(?:s|d|ing)?\b|\bstart(?:s|ed|ing)?\b|\binitialize(?:s|d|ing)?\b|\bload(?:s|ed|ing)?\b|\bopen(?:s|ed|ing)?\b|\bconnect(?:s|ed|ing)?\b)\s+(.+?)\s+(?:before|prior to|preceding|earlier than|ahead of|in advance of)\s+(.+?)/i,
 
     // 4. "Call/Invoke/Execute/Run/Perform X after Y"
-    /(?:\bcall(?:s|ed|ing)?\b|\binvoke(?:s|d|ing)?\b|\bexecute(?:s|d|ing)?\b|\brun(?:s|ning)?\b|\bperform(?:s|ed|ing)?\b|\buse(?:s|d|ing)?\b|\bstart(?:s|ed|ing)?\b|\binitialize(?:s|d|ing)?\b|\bload(?:s|ed|ing)?\b|\bopen(?:s|ed|ing)?\b|\bconnect(?:s|ed|ing)?\b)\s+(.+?)\s+(?:after|following|subsequent to|later than|afterward)\s+(.+?)/i,
+    /(?:\bcall(?:s|ed|ing)?\b|\binvoke(?:s|d|ing)?\b|\bexecute(?:s|d|ing)?\b|\brun(?:s|ning)?\b|\bperform(?:s|ed|ing)?\b|\buse(?:s|d|ing)?\b|\bstart(?:s|ed|ing)?\b|\binitialize(?:s|d|ing)?\b|\bload(?:s|ed|ing)?\b|\bopen(?:s|ed|ing)?\b|\bconnect(?:s|ed|ing)?\b)\s+(.+?)\s+(?:after|subsequent to|later than|afterward)\s+(.+?)/i,
 
     // 5. "X depends on Y"
     /(.+?)\s+(?:depends on|relies on|contingent upon|requires|necessitates)\s+(.+?)/i,
@@ -67,6 +67,12 @@ const regexPatterns = [
 
     // 21. Should Be Called Prior To
     /(.+?)\s+(?:should|must|needs to|need to|have to|ought to)\s+be\s+(?:called|invoked|executed|run|performed)\s+(?:prior to|before|preceding|ahead of|earlier than|in advance of)\s+(?:invoking|calling|executing|running|performing)\s+(.+?)/i,
+
+    // 22. "Do not forget/miss to perform/invoke X"
+    /(?:do not|don't|never|should not|must not)\s+(?:forget|miss|neglect|fail)\s+(?:to\s+)?(?:perform|invoke|call|free|close|execute)\s+(.+?)/i,
+
+    // 23. "Remember to perform/invoke X"
+    /(?:remember|reminder|be sure|make sure|ensure|always)\s+(?:to\s+)?(?:perform|invoke|call|free|close|execute)\s+(.+?)/i,
 ];
 
 interface KeywordMatch {
