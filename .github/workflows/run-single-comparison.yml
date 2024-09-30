@@ -42,6 +42,13 @@ jobs:
             mkdir ./results
             mkdir ./results/pymop
             mkdir ./results/dynapyt
+
+        - name: Run Original Experiment
+          run: |
+            cd ./comparison-experiment
+            ls -l
+            chmod +x ./run_original.sh
+            ./run_original.sh "${{ inputs.project-link }}"
     
         - name: Run Dynapyt Experiment
           run: |
