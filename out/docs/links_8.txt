@@ -1,0 +1,3 @@
+https://docs.celeryq.dev/en/stable/
+https://docs.twisted.org/en/stable/
+https://www.pygame.org/docs/
