@@ -49,7 +49,9 @@ jobs:
             ls -l
             chmod +x ./run_original.sh
             ./run_original.sh "${{ inputs.project-link }}"
-    
+          env:
+            GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+
         - name: Run Dynapyt Experiment
           run: |
             cd ./comparison-experiment
