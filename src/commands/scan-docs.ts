@@ -73,6 +73,12 @@ const regexPatterns = [
 
     // 23. "Remember to perform/invoke X"
     /(?:remember|reminder|be sure|make sure|ensure|always)\s+(?:to\s+)?(?:perform|invoke|call|free|close|execute)\s+(.+?)/i,
+
+    // 24. "To avoid this do|call|.... that"
+
+    // if ... no effect|unnecessary|redundant etc..
+
+    // keep in mind ...
 ];
 
 interface KeywordMatch {
