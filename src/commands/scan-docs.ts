@@ -79,6 +79,15 @@ const regexPatterns = [
     // if ... no effect|unnecessary|redundant etc..
 
     // keep in mind ...
+
+    // Recommend recommended not recommended etc...
+
+    // you need to explicitly overwrite
+
+    // you Must sth after sth
+    // you must sth at the end/eventually
+    //
+
 ];
 
 interface KeywordMatch {
