@@ -210,24 +210,351 @@ export const specIDList: Array<SpecID> = [
     //     githubQuery: 'xml AND parsers AND expat AND ParserCreate(',
     //     dependencyName: 'pydocs'
     // },
+    // {
+    //     specName: 'Flask_NoModifyAfterServe',
+    //     regexQuery: 'flask AND /.config\[(?:[^\[\]]*|\[[^\[\]]*\])*\]/',
+    //     githubQuery: 'flask AND .config[',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_NoOptionsChangeAfterEnvCreate',
+    //     regexQuery: 'flask AND /.jinja_options\[(?:[^\[\]]*|\[[^\[\]]*\])*\] =/',
+    //     githubQuery: 'flask AND .config[ =',
+    //     dependencyName: 'flask'
+    // },
+    // Lowercase letters 'a' to 'z'
     {
-        specName: 'Flask_NoModifyAfterServe',
-        regexQuery: 'flask AND /.config\[(?:[^\[\]]*|\[[^\[\]]*\])*\]/',
-        githubQuery: 'flask AND .config[',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_NoOptionsChangeAfterEnvCreate',
-        regexQuery: 'flask AND /.jinja_options\[(?:[^\[\]]*|\[[^\[\]]*\])*\] =/',
-        githubQuery: 'flask AND .config[ =',
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(a',
         dependencyName: 'flask'
     },
     {
         specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\(\s*([a-zA-Z_][a-zA-Z0-9_]*(?:\s*,\s*[a-zA-Z_][a-zA-Z0-9_]*)*)/',
-        githubQuery: 'flask AND send_file(a OR send_file(b OR send_file(c OR send_file(d OR send_file(e OR send_file(f OR send_file(g OR send_file(h OR send_file(i OR send_file(j OR send_file(k OR send_file(l OR send_file(m OR send_file(n OR send_file(o OR send_file(p OR send_file(q OR send_file(r OR send_file(s OR send_file(t OR send_file(u OR send_file(v OR send_file(w OR send_file(x OR send_file(y OR send_file(z OR send_file(A OR send_file(B OR send_file(C OR send_file(D OR send_file(E OR send_file(F OR send_file(G OR send_file(H OR send_file(I OR send_file(J OR send_file(K OR send_file(L OR send_file(M OR send_file(N OR send_file(O OR send_file(P OR send_file(Q OR send_file(R OR send_file(S OR send_file(T OR send_file(U OR send_file(V OR send_file(W OR send_file(X OR send_file(Y OR send_file(Z OR send_file(_ OR send_file(f\'',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(b',
         dependencyName: 'flask'
-    }
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(c',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(d',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(e',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(f',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(g',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(h',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(i',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(j',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(k',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(l',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(m',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(n',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(o',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(p',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(q',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(r',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(s',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(t',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(u',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(v',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(w',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(x',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(y',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(z',
+        dependencyName: 'flask'
+    },
+    // Uppercase letters 'A' to 'Z'
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(A',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(B',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(C',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(D',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(E',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(F',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(G',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(H',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(I',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(J',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(K',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(L',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(M',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(N',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(O',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(P',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(Q',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(R',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(S',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(T',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(U',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(V',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(W',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(X',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(Y',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(Z',
+        dependencyName: 'flask'
+    },
+    // Underscore '_'
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(_',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(f\'',
+        dependencyName: 'flask'
+    },
+    {
+        specName: 'Flask_UnsafeFilePath',
+        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+        githubQuery: 'flask AND send_file(f"',
+        dependencyName: 'flask'
+    },
 ]
 
 
