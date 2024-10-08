@@ -3,6 +3,7 @@ import cheerio from "cheerio";
 import { createObjectCsvWriter } from "csv-writer";
 import fs from "fs";
 import path from "path";
+import { split, TxtParentNodeWithSentenceNodeContent } from "sentence-splitter";
 
 const regexPatterns = [
     // 1. "X before Y"
@@ -94,7 +95,7 @@ const regexPatterns = [
 
     // 30. "Must do X at the end/eventually"
     /(?:must|need to|should|have to|ought to|required to)\s+(?:call|invoke|execute|run|perform|do)\s+(.+?)\s+(?:at the end|eventually|finally|after all operations)/i,
-];
+].reverse();
 
 interface KeywordMatch {
     keyword: string;
@@ -276,9 +277,14 @@ export const scanDocs = async (linksFile: string, outDir: string) => {
                     content("p, li, h1, h2, h3, h4, h5, h6").each((_, element) => {
                         const text = content(element).text();
                         // Split the text into sentences
-                        const sentences = text.match(/[^.!?]+[.!?]/g) || [text];
+                        const sentences = split(text)
                         // Check each sentence for each keyword
-                        sentences.forEach((sentence: string) => {
+                        sentences.forEach((sentenceNode: TxtParentNodeWithSentenceNodeContent) => {
+                            if (sentenceNode.type !== 'Sentence') {
+                                return
+                            }
+                            const sentence = sentenceNode.raw
+
                             const sentenceToCheck = sentence.replace(/(\r\n|\n|\r)/gm, " ")
                             console.log('##############\nChecking sentence: \n', sentenceToCheck)
                             for (const pattern of regexPatterns) {
