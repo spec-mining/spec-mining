@@ -74,20 +74,26 @@ const regexPatterns = [
     // 23. "Remember to perform/invoke X"
     /(?:remember|reminder|be sure|make sure|ensure|always)\s+(?:to\s+)?(?:perform|invoke|call|free|close|execute)\s+(.+?)/i,
 
-    // 24. "To avoid this do|call|.... that"
+    // 24. "To avoid X, do Y"
+    /(?:to avoid|to prevent|in order to avoid|in order to prevent)\s+(.+?),?\s*(?:do|call|invoke|execute|run|perform)\s+(.+?)/i,
 
-    // if ... no effect|unnecessary|redundant etc..
+    // 25. "If X, Y is unnecessary/redundant"
+    /(?:if|when|in case)\s+(.+?),?\s*(?:doing\s+)?(.+?)\s*(?:is)?\s*(?:unnecessary|redundant|superfluous|pointless|ineffective)/i,
 
-    // keep in mind ...
+    // 26. "Keep in mind to do X"
+    /(?:keep in mind|remember|note|be aware|ensure|make sure)\s+(?:that\s+)?(.+?)/i,
 
-    // Recommend recommended not recommended etc...
+    // 27. "Recommended to do X"
+    /(?:not\s+)?(?:recommended|advised|suggested|encouraged|discouraged|inadvisable|unadvisable)\s+(?:to\s+)?(.+?)/i,
 
-    // you need to explicitly overwrite
+    // 28. "Need to explicitly overwrite X"
+    /(?:need to|must|should|have to|ought to)\s+(?:explicitly|manually)?\s*(?:overwrite|set|define|specify|provide)\s+(.+?)/i,
 
-    // you Must sth after sth
-    // you must sth at the end/eventually
-    //
+    // 29. "Must do X after Y"
+    /(?:must|need to|should|have to|ought to|required to)\s+(?:call|invoke|execute|run|perform|do)\s+(.+?)\s+(?:after|once|when|afterward)\s+(.+?)/i,
 
+    // 30. "Must do X at the end/eventually"
+    /(?:must|need to|should|have to|ought to|required to)\s+(?:call|invoke|execute|run|perform|do)\s+(.+?)\s+(?:at the end|eventually|finally|after all operations)/i,
 ];
 
 interface KeywordMatch {
