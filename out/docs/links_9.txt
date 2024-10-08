@@ -1,1 +1,1 @@
-https://www.tensorflow.org/api_docs/python/tf/all_symbols
+https://www.tensorflow.org/guide
