@@ -1,4 +1,3 @@
 https://matplotlib.org/stable/index.html
 https://spacy.io/api/doc
 https://www.tornadoweb.org/en/stable/
-https://pandas.pydata.org/docs/
