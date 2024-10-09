@@ -38,6 +38,11 @@ export const sortList = async (inFilePath: string, options: {
     const records: CsvRecord[] = [];
     
     return new Promise<void>((resolve, reject) => {
+        if (!fs.existsSync(inFilePath)) {
+            console.log('File does not exist', inFilePath);
+            resolve()
+        }
+
         fs.createReadStream(inFilePath)
         .pipe(csv())
         .on("headers", (headers: string[]) => {
