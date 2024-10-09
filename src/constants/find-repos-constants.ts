@@ -223,337 +223,374 @@ export const specIDList: Array<SpecID> = [
     //     dependencyName: 'flask'
     // },
     // Lowercase letters 'a' to 'z'
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(a',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(b',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(c',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(d',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(e',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(f',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(g',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(h',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(i',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(j',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(k',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(l',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(m',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(n',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(o',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(p',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(q',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(r',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(s',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(t',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(u',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(v',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(w',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(x',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(y',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(z',
+    //     dependencyName: 'flask'
+    // },
+    // // Uppercase letters 'A' to 'Z'
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(A',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(B',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(C',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(D',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(E',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(F',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(G',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(H',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(I',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(J',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(K',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(L',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(M',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(N',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(O',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(P',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(Q',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(R',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(S',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(T',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(U',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(V',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(W',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(X',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(Y',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(Z',
+    //     dependencyName: 'flask'
+    // },
+    // // Underscore '_'
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(_',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(f\'',
+    //     dependencyName: 'flask'
+    // },
+    // {
+    //     specName: 'Flask_UnsafeFilePath',
+    //     regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
+    //     githubQuery: 'flask AND send_file(f"',
+    //     dependencyName: 'flask'
+    // },
+    // Tornado
     {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(a',
-        dependencyName: 'flask'
+        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+        regexQuery: 'tornado AND web AND RequestHandler AND /self.render\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'tornado AND web AND RequestHandler AND self.render(',
+        dependencyName: 'tornado'
     },
     {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(b',
-        dependencyName: 'flask'
+        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+        regexQuery: 'tornado AND web AND RequestHandler AND /self.write\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'tornado AND web AND RequestHandler AND self.write',
+        dependencyName: 'tornado'
     },
     {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(c',
-        dependencyName: 'flask'
+        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+        regexQuery: 'tornado AND web AND RequestHandler AND /self.set_header\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'tornado AND web AND RequestHandler AND self.set_header',
+        dependencyName: 'tornado'
     },
     {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(d',
-        dependencyName: 'flask'
+        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+        regexQuery: 'tornado AND web AND RequestHandler AND /self.add_header\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'tornado AND web AND RequestHandler AND self.add_header',
+        dependencyName: 'tornado'
     },
     {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(e',
-        dependencyName: 'flask'
+        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+        regexQuery: 'tornado AND web AND RequestHandler AND /self.clear_header\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'tornado AND web AND RequestHandler AND self.clear_header',
+        dependencyName: 'tornado'
     },
     {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(f',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(g',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(h',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(i',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(j',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(k',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(l',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(m',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(n',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(o',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(p',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(q',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(r',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(s',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(t',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(u',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(v',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(w',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(x',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(y',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(z',
-        dependencyName: 'flask'
-    },
-    // Uppercase letters 'A' to 'Z'
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(A',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(B',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(C',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(D',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(E',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(F',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(G',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(H',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(I',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(J',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(K',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(L',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(M',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(N',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(O',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(P',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(Q',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(R',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(S',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(T',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(U',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(V',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(W',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(X',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(Y',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(Z',
-        dependencyName: 'flask'
-    },
-    // Underscore '_'
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(_',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(f\'',
-        dependencyName: 'flask'
-    },
-    {
-        specName: 'Flask_UnsafeFilePath',
-        regexQuery: 'flask AND /send_file\\(\\s*([a-zA-Z_][a-zA-Z0-9_]*)/',
-        githubQuery: 'flask AND send_file(f"',
-        dependencyName: 'flask'
+        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+        regexQuery: 'tornado AND web AND RequestHandler AND /self.set_status\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'tornado AND web AND RequestHandler AND self.set_status',
+        dependencyName: 'tornado'
     },
 ]
 
