@@ -558,6 +558,12 @@ export const specIDList: Array<SpecID> = [
     // Tornado
     {
         specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+        regexQuery: 'tornado AND RequestHandler',
+        githubQuery: 'tornado AND RequestHandler',
+        dependencyName: 'tornado'
+    },
+    {
+        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
         regexQuery: 'tornado AND web AND RequestHandler AND /self.render\((?:[^()]*|\([^()]*\))*\)/',
         githubQuery: 'tornado AND web AND RequestHandler AND self.render(',
         dependencyName: 'tornado'
