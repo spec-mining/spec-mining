@@ -16,6 +16,11 @@ export const removeRepetition = async (inFilePath: string, uniqueFieldName: stri
   let originalRecordCount = 0;
 
   return new Promise<void>((resolve, reject) => {
+    if (!fs.existsSync(inFilePath)) {
+      console.log('File does not exist', inFilePath)
+      resolve()
+    }
+
     fs.createReadStream(inFilePath)
       .pipe(csv())
       .on("headers", (headers: string[]) => {
