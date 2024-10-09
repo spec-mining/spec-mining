@@ -25,9 +25,6 @@ TESTING_REPO_NAME=$(basename -s .git "$TESTING_REPO_URL")
 # Create a new directory name by appending _PyMOP to the repository name
 CLONE_DIR="${TESTING_REPO_NAME}_PyMOP"
 
-rm -rf ./$CLONE_DIR
-rm -rf ./mop-with-dynapt
-
 # Create the directory if it does not exist
 mkdir -p "$CLONE_DIR"
 
@@ -82,7 +79,7 @@ cd "$TESTING_REPO_NAME" || { echo "Failed to return to directory $TESTING_REPO_N
 pip3 install pytest-json-report
 
 # Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json > pymop_out.txt
+pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json > out.txt
 
 # Deactivate the virtual environment
 deactivate
@@ -94,7 +91,7 @@ mv ./.report.json ../../results/pymop/.report.json
 mv ./D-full.json ../../results/pymop/D-full.json
 mv ./D-time.json ../../results/pymop/D-time.json
 mv ./D-violations.json ../../results/pymop/D-violations.json
-mv ./pymop_out.txt ../../results/pymop/pymop_out.txt
+mv ./out.txt ../../results/pymop/out.txt
 
 # Return to the initial script directory
 cd - || exit

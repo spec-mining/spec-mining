@@ -16,14 +16,11 @@ IFS=';' read -r TESTING_REPO_URL target_sha <<< "$repo_url_with_sha"
 echo "Url: $TESTING_REPO_URL"
 echo "Sha: $target_sha"
 
-# Fixed repository URL for the mop-with-dynapt project
-PYMOP_REPO_URL="https://$GH_ACCESS_TOKEN@github.com/SoftEngResearch/mop-with-dynapt.git"
-
 # Extract the repository name from the URL
 TESTING_REPO_NAME=$(basename -s .git "$TESTING_REPO_URL")
 
-# Create a new directory name by appending _PyMOP to the repository name
-CLONE_DIR="${TESTING_REPO_NAME}_PyMOP"
+# Create a new directory name by appending _ORIGINAL to the repository name
+CLONE_DIR="${TESTING_REPO_NAME}_ORIGINAL"
 
 # Create the directory if it does not exist
 mkdir -p "$CLONE_DIR"
@@ -33,9 +30,6 @@ cd "$CLONE_DIR" || { echo "Failed to enter directory $CLONE_DIR"; exit 1; }
 
 # Clone the testing repository
 git clone "$TESTING_REPO_URL" || { echo "Failed to clone $TESTING_REPO_URL"; exit 1; }
-
-# Clone the mop-with-dynapt repository
-git clone "$PYMOP_REPO_URL" || { echo "Failed to clone $PYMOP_REPO_URL"; exit 1; }
 
 # Navigate to the testing project directory
 cd "$TESTING_REPO_NAME" || { echo "Failed to enter directory $TESTING_REPO_NAME"; exit 1; }
@@ -59,27 +53,19 @@ done
 # Install dependencies
 pip install .[dev,test,tests,testing] || { echo "Failed to install dependencies"; exit 1; }
 
-# Navigate to the parent directory
-cd ..
+# Install pytest and pytest-json-report
+pip install pytest
 
-# Announce setup of PyMOP repository
-echo "Setting up PyMOP repository..."
-cd mop-with-dynapt || { echo "Failed to enter directory mop-with-dynapt"; exit 1; }
-
-# Checkout the specific branch
-git checkout add_statistics_new || { echo "Failed to checkout branch add_statistics_new"; exit 1; }
-
-# Install the project in editable mode with dev dependencies
-pip install -e ".[dev]" || { echo "Failed to install mop-with-dynapt"; exit 1; }
-
-# Navigate back to the testing repository directory
-cd ..
-cd "$TESTING_REPO_NAME" || { echo "Failed to return to directory $TESTING_REPO_NAME"; exit 1; }
-
-pip3 install pytest-json-report
+# Record the start time of the instrumentation process
+START_TIME=$(python -c 'import time; print(time.time())')
 
 # Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=ORIGINAL --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="ORIGINAL".json > original_out.txt
+pytest --continue-on-collection-errors > out_original.txt
+
+# Record the end time and calculate the instrumentation duration
+END_TIME=$(python -c 'import time; print(time.time())')
+END_TO_END_TIME=$(python -c "print($END_TIME - $START_TIME)")
+TEST_TIME=$END_TO_END_TIME
 
 # Deactivate the virtual environment
 deactivate
@@ -87,9 +73,14 @@ deactivate
 # delete venv folder
 rm -rf ./venv
 
-mv ./.report.json ../../results/pymop/.report.json
-mv ./ORIGINAL-time.json ../../results/pymop/ORIGINAL-time.json
-mv ./original_out.txt ../../results/pymop/original_out.txt
+# Save the instrumentation time, test time, and results to a new file
+RESULTS_FILE="../../results/original/${TESTING_REPO_NAME}_original_results.txt"
+
+# Write the instrumentation and test times to the results file
+echo "End to End Time: ${END_TO_END_TIME}s" > $RESULTS_FILE
+echo "Test Time: ${TEST_TIME}s" >> $RESULTS_FILE
+
+mv ./out_original.txt ../../results/original/out_original.txt
 
 # Return to the initial script directory
 cd - || exit
