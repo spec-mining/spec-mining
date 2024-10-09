@@ -157,7 +157,7 @@ jobs:
           run: |
             cd ./comparison-experiment
             mkdir ./results
-            mkdir ./results/dynapyt
+            mkdir ./results/pymop
             
         - name: Run PyMop Experiment
           run: |
@@ -189,4 +189,3 @@ jobs:
               prerelease: true
               token: ${{ secrets.GITHUB_TOKEN }}
 
-              
