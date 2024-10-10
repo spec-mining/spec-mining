@@ -556,47 +556,59 @@ export const specIDList: Array<SpecID> = [
     //     dependencyName: 'flask'
     // },
     // Tornado
+    // {
+    //     specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+    //     regexQuery: 'tornado AND RequestHandler',
+    //     githubQuery: 'tornado AND RequestHandler',
+    //     dependencyName: 'tornado'
+    // },
+    // {
+    //     specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+    //     regexQuery: 'tornado AND web AND RequestHandler AND /self.render\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'tornado AND web AND RequestHandler AND self.render(',
+    //     dependencyName: 'tornado'
+    // },
+    // {
+    //     specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+    //     regexQuery: 'tornado AND web AND RequestHandler AND /self.write\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'tornado AND web AND RequestHandler AND self.write',
+    //     dependencyName: 'tornado'
+    // },
+    // {
+    //     specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+    //     regexQuery: 'tornado AND web AND RequestHandler AND /self.set_header\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'tornado AND web AND RequestHandler AND self.set_header',
+    //     dependencyName: 'tornado'
+    // },
+    // {
+    //     specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+    //     regexQuery: 'tornado AND web AND RequestHandler AND /self.add_header\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'tornado AND web AND RequestHandler AND self.add_header',
+    //     dependencyName: 'tornado'
+    // },
+    // {
+    //     specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+    //     regexQuery: 'tornado AND web AND RequestHandler AND /self.clear_header\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'tornado AND web AND RequestHandler AND self.clear_header',
+    //     dependencyName: 'tornado'
+    // },
+    // {
+    //     specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
+    //     regexQuery: 'tornado AND web AND RequestHandler AND /self.set_status\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'tornado AND web AND RequestHandler AND self.set_status',
+    //     dependencyName: 'tornado'
+    // },
     {
-        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
-        regexQuery: 'tornado AND RequestHandler',
-        githubQuery: 'tornado AND RequestHandler',
-        dependencyName: 'tornado'
+        specName: 'FTP_MustLoginOnceOnly',
+        regexQuery: 'ftplib AND FTP AND /login\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'ftplib AND FTP AND login(',
+        dependencyName: 'pydocs'
     },
     {
-        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
-        regexQuery: 'tornado AND web AND RequestHandler AND /self.render\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'tornado AND web AND RequestHandler AND self.render(',
-        dependencyName: 'tornado'
-    },
-    {
-        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
-        regexQuery: 'tornado AND web AND RequestHandler AND /self.write\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'tornado AND web AND RequestHandler AND self.write',
-        dependencyName: 'tornado'
-    },
-    {
-        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
-        regexQuery: 'tornado AND web AND RequestHandler AND /self.set_header\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'tornado AND web AND RequestHandler AND self.set_header',
-        dependencyName: 'tornado'
-    },
-    {
-        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
-        regexQuery: 'tornado AND web AND RequestHandler AND /self.add_header\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'tornado AND web AND RequestHandler AND self.add_header',
-        dependencyName: 'tornado'
-    },
-    {
-        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
-        regexQuery: 'tornado AND web AND RequestHandler AND /self.clear_header\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'tornado AND web AND RequestHandler AND self.clear_header',
-        dependencyName: 'tornado'
-    },
-    {
-        specName: 'Tornado_NoAdditionalOutputCallsAfterFinish',
-        regexQuery: 'tornado AND web AND RequestHandler AND /self.set_status\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'tornado AND web AND RequestHandler AND self.set_status',
-        dependencyName: 'tornado'
+        specName: 'Logging_MustNotLogAfterShutdown',
+        regexQuery: 'logging AND /logging.shutdown\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'logging AND logging.shutdown(',
+        dependencyName: 'pydocs'
     },
 ]
 
