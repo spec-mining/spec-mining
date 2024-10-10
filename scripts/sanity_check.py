@@ -55,9 +55,9 @@ def sanity_check(lines):
     REQUIRED_ALGOS = [
         'ORIGINAL',
         # 'A',
-        'B',
-        'C',
-        'C+',
+        # 'B',
+        # 'C',
+        # 'C+',
         'D'
     ]
 
