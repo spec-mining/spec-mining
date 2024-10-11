@@ -52,7 +52,7 @@ echo "Setting up testing repository..."
 # Install additional requirements if available
 for file in *.txt; do
     if [ -f "$file" ]; then
-        pip install -r "$file" || { echo "Failed to install requirements from $file"; exit 1; }
+        pip install -r "$file"
     fi
 done
 
@@ -67,19 +67,37 @@ echo "Setting up PyMOP repository..."
 cd mop-with-dynapt || { echo "Failed to enter directory mop-with-dynapt"; exit 1; }
 
 # Checkout the specific branch
-git checkout add_statistics_new || { echo "Failed to checkout branch add_statistics_new"; exit 1; }
+git checkout dynapyt_comparison || { echo "Failed to checkout branch dynapyt_comparison"; exit 1; }
 
 # Install the project in editable mode with dev dependencies
-pip install -e ".[dev]" || { echo "Failed to install mop-with-dynapt"; exit 1; }
+pip install . || { echo "Failed to install mop-with-dynapt"; exit 1; }
 
 # Navigate back to the testing repository directory
 cd ..
+
 cd "$TESTING_REPO_NAME" || { echo "Failed to return to directory $TESTING_REPO_NAME"; exit 1; }
 
 pip3 install pytest-json-report
 
+# Record the start time of the instrumentation process
+START_TIME=$(python -c 'import time; print(time.time())')
+
 # Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json > out.txt
+pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors > out_1.txt
+
+# Record the end time and calculate the instrumentation duration
+END_TIME=$(python -c 'import time; print(time.time())')
+END_TO_END_TIME_1=$(python -c "print($END_TIME - $START_TIME)")
+
+# Record the start time of the instrumentation process
+START_TIME=$(python -c 'import time; print(time.time())')
+
+# Run tests with pytest
+pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json > out_2.txt
+
+# Record the end time and calculate the instrumentation duration
+END_TIME=$(python -c 'import time; print(time.time())')
+END_TO_END_TIME_2=$(python -c "print($END_TIME - $START_TIME)")
 
 # Deactivate the virtual environment
 deactivate
@@ -87,11 +105,19 @@ deactivate
 # delete venv folder
 rm -rf ./venv
 
+# Save the instrumentation time, test time, and results to a new file
+RESULTS_FILE="../../results/pymop/${TESTING_REPO_NAME}_results.txt"
+
+# Write the instrumentation and test times to the results file
+echo "End-to-end Time (1): ${END_TO_END_TIME_1}s" >> $RESULTS_FILE
+echo "End-to-end Time (2): ${END_TO_END_TIME_2}s" >> $RESULTS_FILE
+
 mv ./.report.json ../../results/pymop/.report.json
 mv ./D-full.json ../../results/pymop/D-full.json
 mv ./D-time.json ../../results/pymop/D-time.json
 mv ./D-violations.json ../../results/pymop/D-violations.json
-mv ./out.txt ../../results/pymop/out.txt
+mv ./out_1.txt ../../results/pymop/out_1.txt
+mv ./out_2.txt ../../results/pymop/out_2.txt
 
 # Return to the initial script directory
 cd - || exit

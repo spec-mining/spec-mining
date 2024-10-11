@@ -59,6 +59,9 @@ source venv/bin/activate
 # Install the required dependencies for DynaPyt and the package itself
 pip install -r requirements.txt
 pip install .
+pip install numpy
+pip install scipy
+pip install requests
 
 # Clone the testing repository into the specified subdirectory
 git clone "$TESTING_REPO_URL" ./test/PythonRepos/$TESTING_REPO_NAME || { echo "Failed to clone $TESTING_REPO_URL"; exit 1; }
@@ -96,7 +99,7 @@ printf ", '%s/'])\n" "$(pwd)/$TEST_DIR" >> run_all_tests.py
 # Install any additional dependencies listed in the repository's requirement files
 for file in *.txt; do
     if [ -f "$file" ]; then
-        pip install -r "$file" || { echo "Failed to install requirements from $file"; exit 1; }
+        pip install -r "$file"
     fi
 done
 
@@ -104,7 +107,7 @@ done
 START_TIME=$(python -c 'import time; print(time.time())')
 
 # Run DynaPyt instrumentation for analysis
-python -m dynapyt.run_instrumentation --dir . --analysis Combined_Specs
+python -m dynapyt.run_instrumentation --dir . --analysis dynapyt.analyses.Combined_Specs.Combined_Specs
 
 # Record the end time and calculate the instrumentation duration
 END_TIME=$(python -c 'import time; print(time.time())')
@@ -122,7 +125,7 @@ TEST_START_TIME=$(python -c 'import time; print(time.time())')
 
 # Run the tests and output the results to a file
 
-python -m dynapyt.run_analysis --entry run_all_tests.py --analysis Combined_Spec > ${TESTING_REPO_NAME}_Combined_Specs_output.txt
+python -m dynapyt.run_analysis --entry run_all_tests.py --analysis dynapyt.analyses.Combined_Specs.Combined_Specs > ${TESTING_REPO_NAME}_Combined_Specs_output.txt
 
 # Record the end time and calculate the test execution duration
 TEST_END_TIME=$(python -c 'import time; print(time.time())')
@@ -151,5 +154,5 @@ echo "Instrumentation Time: ${INSTRUMENTATION_TIME}s" > $RESULTS_FILE
 echo "Test Time: ${TEST_TIME}s" >> $RESULTS_FILE
 
 # Copy the test output file to the current directory
+cp "./DynaPyt/under_test/${TESTING_REPO_NAME}_Combined_Specs/dynapyt_statistics.txt" ../results/dynapyt/
 cp "./DynaPyt/under_test/${TESTING_REPO_NAME}_Combined_Specs/${TESTING_REPO_NAME}_Combined_Specs_output.txt" ../results/dynapyt/
-

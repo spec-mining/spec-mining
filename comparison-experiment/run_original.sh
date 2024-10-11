@@ -46,7 +46,7 @@ echo "Setting up testing repository..."
 # Install additional requirements if available
 for file in *.txt; do
     if [ -f "$file" ]; then
-        pip install -r "$file" || { echo "Failed to install requirements from $file"; exit 1; }
+        pip install -r "$file"
     fi
 done
 
