@@ -75,34 +75,6 @@ cp -r ./test/PythonRepos/$TESTING_REPO_NAME ./under_test/${TESTING_REPO_NAME}_Co
 # Navigate to the copied testing repository
 cd ./under_test/${TESTING_REPO_NAME}_Combined_Specs
 
-# Create a Python script to run all tests in parallel with 8 threads using pytest
-printf "import pytest\n\npytest.main(['--import-mode=importlib', '--continue-on-collection-errors'" > run_all_tests.py
-
-# Read test deselections from a file and append each to the pytest command
-while read line; do
-    printf ", '--deselect=%s'" "$line" >> run_all_tests.py
-done < ../${TESTING_REPO_NAME}_tmp/filtered.txt
-
-# Determine if the test folder is named 'test' or 'tests' and set the correct path
-if [ -d "tests" ]; then
-    TEST_DIR="tests"
-elif [ -d "test" ]; then
-    TEST_DIR="test"
-else
-    echo "Neither 'test' nor 'tests' directory exists in the repository."
-    exit 1
-fi
-
-# Complete the pytest command with the test directory path
-printf ", '%s/'])\n" "$(pwd)/$TEST_DIR" >> run_all_tests.py
-
-# Install any additional dependencies listed in the repository's requirement files
-for file in *.txt; do
-    if [ -f "$file" ]; then
-        pip install -r "$file"
-    fi
-done
-
 # Record the start time of the instrumentation process
 START_TIME=$(python -c 'import time; print(time.time())')
 
@@ -112,6 +84,16 @@ python -m dynapyt.run_instrumentation --dir . --analysis dynapyt.analyses.Combin
 # Record the end time and calculate the instrumentation duration
 END_TIME=$(python -c 'import time; print(time.time())')
 INSTRUMENTATION_TIME=$(python -c "print($END_TIME - $START_TIME)")
+
+# Create a Python script to run all tests in parallel with 8 threads using pytest
+printf "import pytest\n\npytest.main(['--import-mode=importlib', '--continue-on-collection-errors'])" > run_all_tests.py
+
+# Install any additional dependencies listed in the repository's requirement files
+for file in *.txt; do
+    if [ -f "$file" ]; then
+        pip install -r "$file"
+    fi
+done
 
 # Ensure that the package is installed with all necessary dependencies for testing, using a custom install script if available
 if [ -f myInstall.sh ]; then
