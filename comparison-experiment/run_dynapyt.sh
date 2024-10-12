@@ -75,19 +75,6 @@ cp -r ./test/PythonRepos/$TESTING_REPO_NAME ./under_test/${TESTING_REPO_NAME}_Co
 # Navigate to the copied testing repository
 cd ./under_test/${TESTING_REPO_NAME}_Combined_Specs
 
-# Record the start time of the instrumentation process
-START_TIME=$(python -c 'import time; print(time.time())')
-
-# Run DynaPyt instrumentation for analysis
-python -m dynapyt.run_instrumentation --dir . --analysis dynapyt.analyses.Combined_Specs.Combined_Specs
-
-# Record the end time and calculate the instrumentation duration
-END_TIME=$(python -c 'import time; print(time.time())')
-INSTRUMENTATION_TIME=$(python -c "print($END_TIME - $START_TIME)")
-
-# Create a Python script to run all tests in parallel with 8 threads using pytest
-printf "import pytest\n\npytest.main(['--import-mode=importlib', '--continue-on-collection-errors'])" > run_all_tests.py
-
 # Install any additional dependencies listed in the repository's requirement files
 for file in *.txt; do
     if [ -f "$file" ]; then
@@ -101,6 +88,19 @@ if [ -f myInstall.sh ]; then
 else
     pip install .[dev,test,tests,testing] || { echo "Failed to install dependencies"; exit 1; }
 fi
+
+# Record the start time of the instrumentation process
+START_TIME=$(python -c 'import time; print(time.time())')
+
+# Run DynaPyt instrumentation for analysis
+python -m dynapyt.run_instrumentation --dir . --analysis dynapyt.analyses.Combined_Specs.Combined_Specs
+
+# Record the end time and calculate the instrumentation duration
+END_TIME=$(python -c 'import time; print(time.time())')
+INSTRUMENTATION_TIME=$(python -c "print($END_TIME - $START_TIME)")
+
+# Create a Python script to run all tests in parallel with 8 threads using pytest
+printf "import pytest\n\npytest.main(['--import-mode=importlib', '--continue-on-collection-errors'])" > run_all_tests.py
 
 # Record the start time of the test execution
 TEST_START_TIME=$(python -c 'import time; print(time.time())')
