@@ -83,21 +83,11 @@ pip3 install pytest-json-report
 START_TIME=$(python -c 'import time; print(time.time())')
 
 # Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors > out_1.txt
+pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json > out.txt
 
 # Record the end time and calculate the instrumentation duration
 END_TIME=$(python -c 'import time; print(time.time())')
-END_TO_END_TIME_1=$(python -c "print($END_TIME - $START_TIME)")
-
-# Record the start time of the instrumentation process
-START_TIME=$(python -c 'import time; print(time.time())')
-
-# Run tests with pytest
-pytest --path="$PWD"/../../Specs/PyMOP --algo=D --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="D".json > out_2.txt
-
-# Record the end time and calculate the instrumentation duration
-END_TIME=$(python -c 'import time; print(time.time())')
-END_TO_END_TIME_2=$(python -c "print($END_TIME - $START_TIME)")
+END_TO_END_TIME=$(python -c "print($END_TIME - $START_TIME)")
 
 # Deactivate the virtual environment
 deactivate
@@ -109,15 +99,13 @@ rm -rf ./venv
 RESULTS_FILE="../../results/pymop/${TESTING_REPO_NAME}_results.txt"
 
 # Write the instrumentation and test times to the results file
-echo "End-to-end Time (1): ${END_TO_END_TIME_1}s" >> $RESULTS_FILE
-echo "End-to-end Time (2): ${END_TO_END_TIME_2}s" >> $RESULTS_FILE
+echo "End-to-end Time: ${END_TO_END_TIME}s" >> $RESULTS_FILE
 
 mv ./.report.json ../../results/pymop/.report.json
 mv ./D-full.json ../../results/pymop/D-full.json
 mv ./D-time.json ../../results/pymop/D-time.json
 mv ./D-violations.json ../../results/pymop/D-violations.json
-mv ./out_1.txt ../../results/pymop/out_1.txt
-mv ./out_2.txt ../../results/pymop/out_2.txt
+mv ./out.txt ../../results/pymop/out.txt
 
 # Return to the initial script directory
 cd - || exit
