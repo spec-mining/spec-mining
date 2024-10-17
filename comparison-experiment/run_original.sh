@@ -60,7 +60,7 @@ for file in *.txt; do
 done
 
 # Install dependencies
-pip install .[dev,test,tests,testing] || { echo "Failed to install dependencies"; exit 1; }
+pip install .[dev,test,tests,testing]
 
 # Install pytest and pytest-json-report
 pip install pytest
