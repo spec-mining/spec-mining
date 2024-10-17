@@ -75,6 +75,15 @@ cp -r ./test/PythonRepos/$TESTING_REPO_NAME ./under_test/${TESTING_REPO_NAME}_Co
 # Navigate to the copied testing repository
 cd ./under_test/${TESTING_REPO_NAME}_Combined_Specs
 
+# If sha is not empty, attempt to checkout the sha
+if [ -n "$target_sha" ]; then
+  echo "SHA exists: $target_sha"
+  # Assuming you have already cloned the repo and are in the repo directory
+  git checkout "$target_sha"
+else
+  echo "SHA is empty, no checkout performed."
+fi
+
 # Install any additional dependencies listed in the repository's requirement files
 for file in *.txt; do
     if [ -f "$file" ]; then
@@ -86,7 +95,7 @@ done
 if [ -f myInstall.sh ]; then
     bash ./myInstall.sh || { echo "Failed to run myInstall.sh"; exit 1; }
 else
-    pip install .[dev,test,tests,testing] || { echo "Failed to install dependencies"; exit 1; }
+    pip install .[dev,test,tests,testing]
 fi
 
 # Record the start time of the instrumentation process
