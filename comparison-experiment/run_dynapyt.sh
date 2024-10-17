@@ -93,7 +93,7 @@ done
 
 # Ensure that the package is installed with all necessary dependencies for testing, using a custom install script if available
 if [ -f myInstall.sh ]; then
-    bash ./myInstall.sh || { echo "Failed to run myInstall.sh"; exit 1; }
+    bash ./myInstall.sh
 else
     pip install .[dev,test,tests,testing]
 fi

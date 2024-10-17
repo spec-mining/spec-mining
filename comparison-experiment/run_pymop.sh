@@ -55,19 +55,6 @@ python -m venv venv
 # Activate the virtual environment
 source venv/bin/activate
 
-# Announce setup of testing repository
-echo "Setting up testing repository..."
-
-# Install additional requirements if available
-for file in *.txt; do
-    if [ -f "$file" ]; then
-        pip install -r "$file"
-    fi
-done
-
-# Install dependencies
-pip install .[dev,test,tests,testing]
-
 # Navigate to the parent directory
 cd ..
 
@@ -85,6 +72,19 @@ pip install . || { echo "Failed to install mop-with-dynapt"; exit 1; }
 cd ..
 
 cd "$TESTING_REPO_NAME" || { echo "Failed to return to directory $TESTING_REPO_NAME"; exit 1; }
+
+# Announce setup of testing repository
+echo "Setting up testing repository..."
+
+# Install additional requirements if available
+for file in *.txt; do
+    if [ -f "$file" ]; then
+        pip install -r "$file"
+    fi
+done
+
+# Install dependencies
+pip install .[dev,test,tests,testing]
 
 pip3 install pytest-json-report
 
