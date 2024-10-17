@@ -34,6 +34,15 @@ git clone "$TESTING_REPO_URL" || { echo "Failed to clone $TESTING_REPO_URL"; exi
 # Navigate to the testing project directory
 cd "$TESTING_REPO_NAME" || { echo "Failed to enter directory $TESTING_REPO_NAME"; exit 1; }
 
+# If sha is not empty, attempt to checkout the sha
+if [ -n "$target_sha" ]; then
+  echo "SHA exists: $target_sha"
+  # Assuming you have already cloned the repo and are in the repo directory
+  git checkout "$target_sha"
+else
+  echo "SHA is empty, no checkout performed."
+fi
+
 # Create a virtual environment in the project directory using Python's built-in venv
 python -m venv venv
 
