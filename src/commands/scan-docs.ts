@@ -95,6 +95,8 @@ const regexPatterns = [
 
     // 30. "Must do X at the end/eventually"
     /(?:must|need to|should|have to|ought to|required to)\s+(?:call|invoke|execute|run|perform|do)\s+(.+?)\s+(?:at the end|eventually|finally|after all operations)/i,
+
+    // security threat hole malicious etc...
 ].reverse();
 
 interface KeywordMatch {
