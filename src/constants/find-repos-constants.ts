@@ -598,16 +598,52 @@ export const specIDList: Array<SpecID> = [
     //     githubQuery: 'tornado AND web AND RequestHandler AND self.set_status',
     //     dependencyName: 'tornado'
     // },
+    // {
+    //     specName: 'FTP_MustLoginOnceOnly',
+    //     regexQuery: 'ftplib AND FTP AND /login\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'ftplib AND FTP AND login(',
+    //     dependencyName: 'pydocs'
+    // },
+    // {
+    //     specName: 'Logging_MustNotLogAfterShutdown',
+    //     regexQuery: 'logging AND /logging.shutdown\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'logging AND logging.shutdown(',
+    //     dependencyName: 'pydocs'
+    // },
     {
-        specName: 'FTP_MustLoginOnceOnly',
-        regexQuery: 'ftplib AND FTP AND /login\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'ftplib AND FTP AND login(',
+        specName: 'Pydocs_MustShutdownExecutor',
+        regexQuery: 'concurrent AND futures AND /ThreadPoolExecutor\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'concurrent AND futures AND ThreadPoolExecutor(',
         dependencyName: 'pydocs'
     },
     {
-        specName: 'Logging_MustNotLogAfterShutdown',
-        regexQuery: 'logging AND /logging.shutdown\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'logging AND logging.shutdown(',
+        specName: 'Pydocs_MustShutdownExecutor',
+        regexQuery: 'concurrent AND futures AND /ProcessPoolExecutor\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'concurrent AND futures AND ProcessPoolExecutor(',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Pydocs_NoReadAfterAccess',
+        regexQuery: '/os.access\((?:[^()]*|\([^()]*\))*\)/ AND R_OK AND /open\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'os.access( AND R_OK AND open(',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Pydocs_ShouldUseStreamWriterCorrectly',
+        regexQuery: 'asyncio AND /open_connection\((?:[^()]*|\([^()]*\))*\)/ AND /.write\((?:[^()]*|\([^()]*\))*\)/ AND /.drain\((?:[^()]*|\([^()]*\))*\)/ OR /.wait_closed\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'asyncio AND open_connection( AND .write( AND .drain( OR .wait_closed(',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Pydocs_ShouldUseStreamWriterCorrectly',
+        regexQuery: 'asyncio AND /start_server\((?:[^()]*|\([^()]*\))*\)/ AND /.write\((?:[^()]*|\([^()]*\))*\)/ AND /.drain\((?:[^()]*|\([^()]*\))*\)/ OR /.wait_closed\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'asyncio AND start_server( AND .write( AND .drain( OR .wait_closed(',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Pydocs_ShouldNotInstantiateStreamWriter',
+        regexQuery: 'asyncio AND /StreamWriter\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'asyncio AND StreamWriter(',
         dependencyName: 'pydocs'
     },
 ]
