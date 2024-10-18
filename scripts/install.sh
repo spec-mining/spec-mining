@@ -45,8 +45,8 @@ source env/bin/activate
 # Install dependencies
 pip3 install .[dev,test,tests,testing]
 
-# Install additional requirements if available
-for file in *.txt; do
+# Install additional requirements if available (within root + 2 nest levels excluding env/ folder)
+find . -maxdepth 3 -type d -name "env" -prune -o -type f -name "*.txt" -print | while read -r file; do
     if [ -f "$file" ]; then
         pip3 install -r "$file"
     fi
