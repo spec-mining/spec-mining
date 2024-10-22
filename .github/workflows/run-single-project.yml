@@ -145,7 +145,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        algorithm: ['D']
+        algorithm: ['B', 'C', 'C+', 'D']
     timeout-minutes: 185
     steps:
         - uses: actions/checkout@v4
