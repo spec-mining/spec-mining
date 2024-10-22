@@ -22,8 +22,20 @@ call_pymop(){
     #run and print this command
     set -x
     export PYTHONIOENCODING=utf8
-    timeout 14400 pytest --color=no -v -p pythonmop  -rA  --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=$report/MEM_$algo \
-    --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
+
+
+    if [ "$algo" = "ORIGINAL" ]; then
+        START_TIME=$(python -c 'import time; print(time.time())')
+        timeout 14400 pytest --color=no -v -rA --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=$report/MEM_$algo \
+        --continue-on-collection-errors --json-report --json-report-indent=2 $extra_args &> $report/pymop_$algo.out
+        END_TIME=$(python -c 'import time; print(time.time())')
+        END_TO_END_TIME=$(python -c "print($END_TIME - $START_TIME)")
+        echo "{\"test_duration\": ${END_TO_END_TIME}}" > $report/$algo-time.json
+    else
+        timeout 14400 pytest --color=no -v -p pythonmop -rA --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=$report/MEM_$algo \
+        --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
+    fi
+    
     # if process stop by timeout, then print timeout
     if [ $? -eq 124 ]; then
         echo "PROJECT TIMEOUT: ALGO_$algo" > $report/TIMEOUT-pymop_$algo.out

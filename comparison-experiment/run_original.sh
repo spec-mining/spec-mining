@@ -69,7 +69,8 @@ pip install pytest
 START_TIME=$(python -c 'import time; print(time.time())')
 
 # Run tests with pytest
-pytest --continue-on-collection-errors > out_original.txt
+timeout 14400 pytest --color=no -v -rA --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=MEM_ORIGINAL \
+--continue-on-collection-errors --json-report --json-report-indent=2 > out_original.txt
 
 # Record the end time and calculate the instrumentation duration
 END_TIME=$(python -c 'import time; print(time.time())')
@@ -84,10 +85,12 @@ rm -rf ./venv
 
 # Save the instrumentation time, test time, and results to a new file
 RESULTS_FILE="../../results/original/${TESTING_REPO_NAME}_original_results.txt"
+TIME_RESULTS_FILE="../../results/original/${TESTING_REPO_NAME}_ORIGINAL-time.json"
 
 # Write the instrumentation and test times to the results file
 echo "End to End Time: ${END_TO_END_TIME}s" > $RESULTS_FILE
 echo "Test Time: ${TEST_TIME}s" >> $RESULTS_FILE
+echo "{\"test_duration\": ${TEST_TIME}}" > $TIME_RESULTS_FILE
 
 mv ./out_original.txt ../../results/original/out_original.txt
 
