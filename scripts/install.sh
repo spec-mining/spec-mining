@@ -2,18 +2,17 @@
 set -x
 
 # check if the user has provided a URL
-if [ -z "$1" ]; then
-    echo "Please provide a URL to the git repository"
+if [ -z "$1" ] || [ -z "$2" ]; then
+    echo "Please provide a URL to the git repository and a second argument"
     exit 1
 fi
 
 # Clone project and create environment
 
-# Argument containing the link and SHA
-input=$1
-
 # Split the input into link and sha
-IFS=';' read -r url target_sha <<< "$input"
+IFS=';' read -r url target_sha <<< "$1"
+
+ALGO=$2
 
 # Output the url
 echo "Url: $url"
@@ -52,12 +51,15 @@ find . -maxdepth 3 -type d -name "env" -prune -o -type f -name "*.txt" -print | 
     fi
 done
 
-#pip3 install pytest-json-report pytest-monitor pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
-pip3 install pytest-json-report memray pytest-memray pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
-
 # Install pythonmop (assuming it's in a sibling directory named 'mop-with-dynapt')
-cd ../mop-with-dynapt || exit
-pip3 install .
-sudo apt-get install python3-tk -y
+if [ "$ALGO" != "ORIGINAL" ]; then
+    pip3 install pytest-json-report memray pytest-memray pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
+    cd ../mop-with-dynapt || exit
+    pip3 install .
+    sudo apt-get install python3-tk -y
+else
+    pip3 install pytest-json-report pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
+fi
+
 cd -
 deactivate

@@ -41,13 +41,6 @@ jobs:
               echo "REPO_URL=$REPO_URL" >> $GITHUB_ENV
           shell: bash
     
-        - name: clone SoftEngResearch/mop-with-dynapt
-          run: |
-            cd ./projects
-            git clone https://${{ secrets.GH_ACCESS_TOKEN }}@github.com/SoftEngResearch/mop-with-dynapt.git
-            cd mop-with-dynapt
-            git checkout add_statistics_new
-    
         - name: Create projects directory and copy scripts from ../scripts there
           run: |
             cd ./projects
@@ -60,41 +53,11 @@ jobs:
             cd ./projects
             ls -l
             chmod +x ./install.sh
-            ./install.sh "${{ inputs.project-link }}"
-
-        - name: Remove unnecessary specs
-          run: |
-            cd ./projects/$REPO_NAME
-            # cp ../../scripts/remove-unnecessary-specs.sh .
-            # chmod +x ./remove-unnecessary-specs.sh
-            # ./remove-unnecessary-specs.sh
-
-            echo "======================= specs before removing unwanted specs ========================"
-            ls -al ../mop-with-dynapt/specs-new
-            
-            declare -a all_specs=($(ls ../mop-with-dynapt/specs-new | grep -v -E 'bin|__pycache__'))
-            declare -a specs_to_delete=("ArgParse_Parent" "Arrays_SortBeforeBinarySearch" "faulthandler_disableBeforeClose" "faulthandler_tracetrackDumpBeforeClose" "faulthandler_unregisterBeforeClose" "File_MustClose" "NLTK_MissingMegamExplicitArg" "NLTK_MissingMegamFvalsArg" "NLTK_MustImplementEntries" "NLTK_NonterminalSymbolMutability" "RandomMustUseSeed" "Requests_PreparedRequestInit" "StringTemplate_ChangeAfterCreate" "Turtle_LastStatementDone" "UseProtp_in_FTP_TLS" "XMLParser_ParseMustFinalize")
-
-          
-            # delete all specs that appear in specs_to_delete. don't forget that spec file names end with .py as they're python files
-            
-            # for spec in "${all_specs[@]}"; do
-            #   if [[ " ${specs_to_delete[@]} " =~ " ${spec%.*} " ]]; then
-            #     rm ../mop-with-dynapt/specs-new/$spec
-            #   fi
-            # done
-
-            # also delete these (causing issues)
-            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
-            rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
-            rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
-
-            echo "=================== specs after removing unwanted ones ================="
-            ls -al ../mop-with-dynapt/specs-new
+            ./install.sh "${{ inputs.project-link }}" "ORIGINAL"
     
-        - name: Install Dependencies and Run MOP
+        - name: Install Dependencies and Run Project
           run: |
-            echo "================== Running MOP =================="
+            echo "================== Running Project =================="
             cd ./projects
 
             echo "Repository Name: $REPO_NAME"
@@ -191,7 +154,7 @@ jobs:
             cd ./projects
             ls -l
             chmod +x ./install.sh
-            ./install.sh "${{ inputs.project-link }}"
+            ./install.sh "${{ inputs.project-link }}" "${{matrix.algorithm}}"
 
         - name: Remove unnecessary specs
           run: |

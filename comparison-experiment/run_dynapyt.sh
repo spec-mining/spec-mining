@@ -63,6 +63,9 @@ pip install numpy
 pip install scipy
 pip install requests
 
+# Install pytest and a few common plugins
+pip3 install pytest-json-report pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
+
 # Clone the testing repository into the specified subdirectory
 git clone --depth 1 "$TESTING_REPO_URL" ./test/PythonRepos/$TESTING_REPO_NAME || { echo "Failed to clone $TESTING_REPO_URL"; exit 1; }
 

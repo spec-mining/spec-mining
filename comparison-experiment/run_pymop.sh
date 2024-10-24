@@ -87,7 +87,9 @@ done
 # Install dependencies
 pip install .[dev,test,tests,testing]
 
-pip3 install pytest-json-report
+# Install pytest and a few common plugins
+pip install pytest
+pip3 install pytest-json-report pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
 
 # Record the start time of the instrumentation process
 START_TIME=$(python -c 'import time; print(time.time())')
