@@ -64,7 +64,7 @@ pip install scipy
 pip install requests
 
 # Clone the testing repository into the specified subdirectory
-git clone "$TESTING_REPO_URL" ./test/PythonRepos/$TESTING_REPO_NAME || { echo "Failed to clone $TESTING_REPO_URL"; exit 1; }
+git clone --depth 1 "$TESTING_REPO_URL" ./test/PythonRepos/$TESTING_REPO_NAME || { echo "Failed to clone $TESTING_REPO_URL"; exit 1; }
 
 # Create a directory to hold the combined specs for testing
 mkdir -p under_test
@@ -79,6 +79,7 @@ cd ./under_test/${TESTING_REPO_NAME}_Combined_Specs
 if [ -n "$target_sha" ]; then
   echo "SHA exists: $target_sha"
   # Assuming you have already cloned the repo and are in the repo directory
+  git fetch --depth 1 origin "$target_sha"
   git checkout "$target_sha"
 else
   echo "SHA is empty, no checkout performed."

@@ -32,7 +32,7 @@ mkdir -p "$CLONE_DIR"
 cd "$CLONE_DIR" || { echo "Failed to enter directory $CLONE_DIR"; exit 1; }
 
 # Clone the testing repository
-git clone "$TESTING_REPO_URL" || { echo "Failed to clone $TESTING_REPO_URL"; exit 1; }
+git clone --depth 1 "$TESTING_REPO_URL" || { echo "Failed to clone $TESTING_REPO_URL"; exit 1; }
 
 # Clone the mop-with-dynapt repository
 git clone "$PYMOP_REPO_URL" || { echo "Failed to clone $PYMOP_REPO_URL"; exit 1; }
@@ -44,6 +44,7 @@ cd "$TESTING_REPO_NAME" || { echo "Failed to enter directory $TESTING_REPO_NAME"
 if [ -n "$target_sha" ]; then
   echo "SHA exists: $target_sha"
   # Assuming you have already cloned the repo and are in the repo directory
+  git fetch --depth 1 origin "$target_sha"
   git checkout "$target_sha"
 else
   echo "SHA is empty, no checkout performed."
