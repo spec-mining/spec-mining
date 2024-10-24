@@ -69,7 +69,7 @@ pip install pytest
 START_TIME=$(python -c 'import time; print(time.time())')
 
 # Run tests with pytest
-timeout 14400 pytest --color=no -v -rA --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=MEM_ORIGINAL \
+pytest --color=no -v -rA --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=MEM_ORIGINAL \
 --continue-on-collection-errors --json-report --json-report-indent=2 > out_original.txt
 
 # Record the end time and calculate the instrumentation duration
