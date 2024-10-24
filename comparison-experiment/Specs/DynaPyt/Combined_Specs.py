@@ -67,39 +67,6 @@ class Combined_Specs(BaseAnalysis):
                         else:
                             self.violation["Arrays_Comparable"].append([call_file_name, call_line_num])
 
-                elif isinstance(objs, set):
-
-                    # Calculate the number of events
-                    if "Sets_Comparable" not in self.event:
-                        self.event["Sets_Comparable"] = 1
-                    else:
-                        self.event["Sets_Comparable"] += 1
-
-                    new_objs = list(objs)  # Convert the elements in the set to a new list.
-                    if kw_args.get('key'):  # If a key method for comparison is provided.
-                        key = kw_args['key']  # Store the key method.
-                        for i in range(len(new_objs)):  # Convert the elements using the inputted key method.
-                            new_objs[i] = key(new_objs[i])
-                    try:  # Check if the object is comparable.
-                        for i in range(len(new_objs)):
-                            for j in range(i + 1, len(new_objs)):
-                                # This will raise a TypeError if elements at i and j are not comparable.
-                                _ = new_objs[i] < new_objs[j]
-                    except TypeError:
-                        # Find the file name and line number of the function in the original file
-                        call_file_name = dyn_ast
-                        call_line_num = BaseAnalysis.iid_to_location(self, dyn_ast, iid).start_line
-                        # Print the violation message
-                        warnings.warn(
-                            f'Spec - {self.__class__.__name__}: Set with non-comparable elements is about to be sorted. '
-                            f'File {call_file_name}, line {call_line_num}.')
-                        
-                        # Calculate the number of violations
-                        if "Sets_Comparable" not in self.violation:
-                            self.violation["Sets_Comparable"] = [[call_file_name, call_line_num]]
-                        else:
-                            self.violation["Sets_Comparable"].append([call_file_name, call_line_num])
-
             # Check if the function is post()
             elif function.__name__ == "post" and class_name == 'requests.sessions':
 
