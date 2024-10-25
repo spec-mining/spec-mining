@@ -58,7 +58,7 @@ if [ "$ALGO" != "ORIGINAL" ]; then
     pip3 install .
     sudo apt-get install python3-tk -y
 else
-    pip3 install pytest-json-report pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
+    pip3 install pytest-json-report memray pytest-memray pytest-cov pytest-env pytest-rerunfailures pytest-socket pytest-django
 fi
 
 cd -
