@@ -1,0 +1,108 @@
+name: Analyzes the data and generate a coverage_report.csv
+
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-tag:
+        description: 'The tag of the release to download logs from.'
+        required: true
+        type: string
+      repositories:
+        description: 'Space-separated list of repositories in the format owner/repo.'
+        required: true
+        type: string
+
+jobs:
+    analyze_data:
+        runs-on: ubicloud-standard-8
+        steps:
+          - uses: actions/checkout@v4
+            with:
+              fetch-depth: 0
+    
+          - name: Setup working directories
+            run: |
+              mkdir -p ./projects/reports
+            
+          - name: Download files from multiple releases
+            run: |
+              for repo in ${{ github.event.inputs.repositories }}; do
+                echo "Downloading from $repo"
+                # Parse the owner and repo name
+                IFS='/' read -ra REPO_PARTS <<< "$repo"
+                OWNER=${REPO_PARTS[0]}
+                REPO=${REPO_PARTS[1]}
+                # Use curl to fetch the latest release data
+                RELEASE_DATA=$(curl --silent -H "Authorization: token $GITHUB_TOKEN" \
+                  "https://api.github.com/repos/$OWNER/$REPO/releases/tags/${{ github.event.inputs.release-tag }}")
+                # Check if the release data contains assets
+                if echo "$RELEASE_DATA" | jq -e '.assets | length > 0' >/dev/null; then
+                  # Extract the URLs of all assets
+                  ASSET_URLS=$(echo $RELEASE_DATA | jq -r '.assets[].browser_download_url')
+                  # Loop over each asset URL and download
+                  for url in $ASSET_URLS; do
+                    ASSET_NAME=$(basename $url)
+                    # Decode URL-encoded characters
+                    DECODED_NAME=$(printf "%b" "${ASSET_NAME//%/\\x}")
+                    curl -L -o "./projects/reports/$DECODED_NAME" -H "Authorization: token $GITHUB_TOKEN" "$url"
+                  done
+                else
+                  echo "No assets found or error in release data for $repo."
+                fi
+              done
+              
+              ls -al ./projects/reports
+            
+            env:
+              GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+          - name: extract zip files into folders with the same name
+            run: |
+              cd ./projects/reports
+              for f in *.zip; do
+                folder_name=$(echo "${f%.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
+                unzip -o -d "$folder_name" "$f"
+                rm "$f"
+              done
+              ls -l
+
+          - name: Generate report csv
+            run: |
+              cd ./projects/reports
+    
+              # move ../../../scripts/generate_cov_csv.py to ./projects/reports
+              cp ../../scripts/generate_cov_csv.py .
+
+              # ls -l
+
+              python3 generate_cov_csv.py &> output_generate_cov_csv.txt
+
+    
+            shell: bash
+            continue-on-error: true
+
+          - name: print logs
+            run: |
+              cd ./projects/reports
+              echo "======================== generate_cov_csv.py ====================="
+              cat ./output_generate_cov_csv.txt
+    
+          - name: Upload report to GitHub Release
+            uses: Wandalen/wretry.action@master
+            with:
+              attempt_delay: 60000 # 1 min
+              attempt_limit: 10
+              action: softprops/action-gh-release@v1
+              with: |
+                files: |
+                  ./projects/reports/coverage_report.csv
+                  ./projects/reports/output_generate_cov_csv.txt
+                tag_name: ${{inputs.release-tag}}
+                name: ${{inputs.release-tag}}
+                draft: false
+                prerelease: true
+                token: ${{ secrets.GITHUB_TOKEN }}
