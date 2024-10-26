@@ -610,42 +610,155 @@ export const specIDList: Array<SpecID> = [
     //     githubQuery: 'logging AND logging.shutdown(',
     //     dependencyName: 'pydocs'
     // },
+    // {
+    //     specName: 'Pydocs_MustShutdownExecutor',
+    //     regexQuery: 'concurrent AND futures AND /ThreadPoolExecutor\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'concurrent AND futures AND ThreadPoolExecutor(',
+    //     dependencyName: 'pydocs'
+    // },
+    // {
+    //     specName: 'Pydocs_MustShutdownExecutor',
+    //     regexQuery: 'concurrent AND futures AND /ProcessPoolExecutor\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'concurrent AND futures AND ProcessPoolExecutor(',
+    //     dependencyName: 'pydocs'
+    // },
+    // {
+    //     specName: 'Pydocs_NoReadAfterAccess',
+    //     regexQuery: '/os.access\((?:[^()]*|\([^()]*\))*\)/ AND R_OK AND /open\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'os.access( AND R_OK AND open(',
+    //     dependencyName: 'pydocs'
+    // },
+    // {
+    //     specName: 'Pydocs_ShouldUseStreamWriterCorrectly',
+    //     regexQuery: 'asyncio AND /open_connection\((?:[^()]*|\([^()]*\))*\)/ AND /.write\((?:[^()]*|\([^()]*\))*\)/ AND /.drain\((?:[^()]*|\([^()]*\))*\)/ OR /.wait_closed\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'asyncio AND open_connection( AND .write( AND .drain( OR .wait_closed(',
+    //     dependencyName: 'pydocs'
+    // },
+    // {
+    //     specName: 'Pydocs_ShouldUseStreamWriterCorrectly',
+    //     regexQuery: 'asyncio AND /start_server\((?:[^()]*|\([^()]*\))*\)/ AND /.write\((?:[^()]*|\([^()]*\))*\)/ AND /.drain\((?:[^()]*|\([^()]*\))*\)/ OR /.wait_closed\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'asyncio AND start_server( AND .write( AND .drain( OR .wait_closed(',
+    //     dependencyName: 'pydocs'
+    // },
+    // {
+    //     specName: 'Pydocs_ShouldNotInstantiateStreamWriter',
+    //     regexQuery: 'asyncio AND /StreamWriter\((?:[^()]*|\([^()]*\))*\)/',
+    //     githubQuery: 'asyncio AND StreamWriter(',
+    //     dependencyName: 'pydocs'
+    // },
     {
-        specName: 'Pydocs_MustShutdownExecutor',
-        regexQuery: 'concurrent AND futures AND /ThreadPoolExecutor\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'concurrent AND futures AND ThreadPoolExecutor(',
+        specName: 'Pydocs_MustFlushMmap',
+        regexQuery: 'mmap AND /mmap\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'mmap AND mmap(',
         dependencyName: 'pydocs'
     },
     {
-        specName: 'Pydocs_MustShutdownExecutor',
-        regexQuery: 'concurrent AND futures AND /ProcessPoolExecutor\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'concurrent AND futures AND ProcessPoolExecutor(',
+        specName: 'Pydocs_MustCloseSocket',
+        regexQuery: 'socket AND /socket\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'socket AND socket(',
         dependencyName: 'pydocs'
     },
     {
-        specName: 'Pydocs_NoReadAfterAccess',
-        regexQuery: '/os.access\((?:[^()]*|\([^()]*\))*\)/ AND R_OK AND /open\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'os.access( AND R_OK AND open(',
+        specName: 'Pydocs_MustCloseSocket',
+        regexQuery: 'socket AND /socket\((?:[^()]*|\([^()]*\))*\)/ AND /shutdown\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'socket AND socket( AND shutdown(',
         dependencyName: 'pydocs'
     },
     {
-        specName: 'Pydocs_ShouldUseStreamWriterCorrectly',
-        regexQuery: 'asyncio AND /open_connection\((?:[^()]*|\([^()]*\))*\)/ AND /.write\((?:[^()]*|\([^()]*\))*\)/ AND /.drain\((?:[^()]*|\([^()]*\))*\)/ OR /.wait_closed\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'asyncio AND open_connection( AND .write( AND .drain( OR .wait_closed(',
+        specName: 'Pydocs_MustShutdownBeforeCloseSocket',
+        regexQuery: 'socket AND /close\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'socket AND close(',
+        dependencyName: 'pydocs'
+    },    
+    {
+        specName: 'Pydocs_MustShutdownBeforeCloseSocket',
+        regexQuery: 'socket AND /socket\((?:[^()]*|\([^()]*\))*\)/ AND /close\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'socket AND socket( AND close(',
         dependencyName: 'pydocs'
     },
     {
-        specName: 'Pydocs_ShouldUseStreamWriterCorrectly',
-        regexQuery: 'asyncio AND /start_server\((?:[^()]*|\([^()]*\))*\)/ AND /.write\((?:[^()]*|\([^()]*\))*\)/ AND /.drain\((?:[^()]*|\([^()]*\))*\)/ OR /.wait_closed\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'asyncio AND start_server( AND .write( AND .drain( OR .wait_closed(',
+        specName: 'Pydocs_MustUnlinkSharedMemory',
+        regexQuery: 'multiprocessing OR shared_memory AND /SharedMemory\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'multiprocessing OR shared_memory AND SharedMemory(',
         dependencyName: 'pydocs'
     },
     {
-        specName: 'Pydocs_ShouldNotInstantiateStreamWriter',
-        regexQuery: 'asyncio AND /StreamWriter\((?:[^()]*|\([^()]*\))*\)/',
-        githubQuery: 'asyncio AND StreamWriter(',
+        specName: 'Pydocs_MustUnlinkSharedMemory',
+        regexQuery: 'multiprocessing OR shared_memory AND /SharedMemory\((?:[^()]*|\([^()]*\))*\)/ AND /close\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'multiprocessing OR shared_memory AND SharedMemory( AND close(',
         dependencyName: 'pydocs'
     },
+    {
+        specName: 'Requests_MustCloseSession',
+        regexQuery: 'requests AND /Session\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Session(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Requests_MustCloseSession',
+        regexQuery: 'requests AND /Session\((?:[^()]*|\([^()]*\))*\)/ AND /get\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Session( AND get(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Requests_MustCloseSession',
+        regexQuery: 'requests AND /Session\((?:[^()]*|\([^()]*\))*\)/ AND /post\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Session( AND post(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Requests_MustCloseSession',
+        regexQuery: 'requests AND /Session\((?:[^()]*|\([^()]*\))*\)/ AND /delete\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Session( AND delete(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Requests_MustCloseSession',
+        regexQuery: 'requests AND /Session\((?:[^()]*|\([^()]*\))*\)/ AND /put\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Session( AND put(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Requests_MustCloseSession',
+        regexQuery: 'requests AND /Session\((?:[^()]*|\([^()]*\))*\)/ AND /patch\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Session( AND patch(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Requests_MustCloseResponse',
+        regexQuery: 'requests AND /Response\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Response(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Requests_MustCloseResponse',
+        regexQuery: 'requests AND /Response\((?:[^()]*|\([^()]*\))*\)/ AND /prepare\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'requests AND Response( AND prepare(',
+        dependencyName: 'requests'
+    },
+    {
+        specName: 'Pydocs_MustReleaseLock',
+        regexQuery: 'threading AND /Lock\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'threading AND Lock(',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Pydocs_MustReleaseLock',
+        regexQuery: 'threading AND /Lock\((?:[^()]*|\([^()]*\))*\)/ AND /acquire\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'threading AND Lock( AND acquire(',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Pydocs_MustReleaseRLock',
+        regexQuery: 'threading AND /RLock\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'threading AND RLock(',
+        dependencyName: 'pydocs'
+    },
+    {
+        specName: 'Pydocs_MustReleaseRLock',
+        regexQuery: 'threading AND /RLock\((?:[^()]*|\([^()]*\))*\)/ AND /acquire\((?:[^()]*|\([^()]*\))*\)/',
+        githubQuery: 'threading AND RLock( AND acquire(',
+        dependencyName: 'pydocs'
+    }
 ]
-
 
