@@ -72,7 +72,7 @@ START_TIME=$(python -c 'import time; print(time.time())')
 
 # Run tests with pytest
 coverage run --source=. --branch -m pytest --continue-on-collection-errors --json-report --json-report-indent=2 > coverage_out.txt
-coverage json --pretty-print
+coverage json --ignore-errors --pretty-print
 
 # Record the end time and calculate the instrumentation duration
 END_TIME=$(python -c 'import time; print(time.time())')
@@ -88,18 +88,16 @@ rm -rf ./venv
 # Save the instrumentation time, test time, and results to a new file
 RESULTS_FILE="../../results/original/${TESTING_REPO_NAME}_original_results.txt"
 TIME_RESULTS_FILE="../../results/original/${TESTING_REPO_NAME}_ORIGINAL-time.json"
+PROJECT_INFO_FILE="../../results/original/${TESTING_REPO_NAME}_ORIGINAL-project_info.txt"
 
 # Write the instrumentation and test times to the results file
 echo "End to End Time: ${END_TO_END_TIME}s" > $RESULTS_FILE
 echo "Test Time: ${TEST_TIME}s" >> $RESULTS_FILE
 echo "{\"test_duration\": ${TEST_TIME}}" > $TIME_RESULTS_FILE
+echo "$TESTING_REPO_NAME@$target_sha" > $PROJECT_INFO_FILE
 
-echo "$TESTING_REPO_NAME@$target_sha" > $RESULTS_FILE/project_info.out
-
-mv ./out_original.txt ../../results/original/out_original.txt
 mv ./coverage_out.txt ../../results/original/coverage_out.txt
 mv ./coverage.json ../../results/original/coverage.json
-mv ./project_info.out ../../results/original/project_info.txt
 
 # Return to the initial script directory
 cd - || exit
