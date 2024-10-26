@@ -49,6 +49,10 @@ def generate_csv(directory):
                             coverage_data.get('missing_branches', '')
                         ]
                         writer.writerow(row)
+                    else:
+                        print(f"Coverage JSON file not found for folder: {folder_path}")
+                else:
+                    print(f"Folder is not a directory: {folder_path}")  
             except Exception as e:
                 print(f"Error processing folder {folder}: {e}")
                 row = [
