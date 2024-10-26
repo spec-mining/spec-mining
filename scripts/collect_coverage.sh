@@ -94,9 +94,12 @@ echo "End to End Time: ${END_TO_END_TIME}s" > $RESULTS_FILE
 echo "Test Time: ${TEST_TIME}s" >> $RESULTS_FILE
 echo "{\"test_duration\": ${TEST_TIME}}" > $TIME_RESULTS_FILE
 
+echo "$TESTING_REPO_NAME@$target_sha" > $RESULTS_FILE/project_info.out
+
 mv ./out_original.txt ../../results/original/out_original.txt
 mv ./coverage_out.txt ../../results/original/coverage_out.txt
 mv ./coverage.json ../../results/original/coverage.json
+mv ./project_info.out ../../results/original/project_info.txt
 
 # Return to the initial script directory
 cd - || exit
