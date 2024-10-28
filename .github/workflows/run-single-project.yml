@@ -179,7 +179,7 @@ jobs:
             # done
 
             # also delete these (causing issues)
-            # rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
+            rm ../mop-with-dynapt/specs-new/TfFunction_NoSideEffect.py
             # rm ../mop-with-dynapt/specs-new/Sets_Comparable.py
             # rm ../mop-with-dynapt/specs-new/Console_CloseReader.py
             # rm ../mop-with-dynapt/specs-new/UnsafeMapIterator.py
