@@ -25,13 +25,16 @@ def find_missing_required_algo(project_lines, name, required_algos):
 
 
 def is_results_diff(lines, name):
-    columns = ['passed', 'failed', 'skipped', 'errors']
+    columns = ['passed', 'failed']
     # check if the diffs are the same for all lines for all columns
     for c in columns:
         results = set()
         for l in lines:
             # check if the value is a number using int
             try:
+                if l[c] == '':
+                    l[c] = 0
+                
                 results.add(int(l[c]))
             except:
                 print(f'***Project {name} has non-integer {c} value')
@@ -55,9 +58,9 @@ def sanity_check(lines):
     REQUIRED_ALGOS = [
         'ORIGINAL',
         # 'A',
-        # 'B',
-        # 'C',
-        # 'C+',
+        'B',
+        'C',
+        'C+',
         'D'
     ]
 
