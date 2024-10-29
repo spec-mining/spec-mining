@@ -122,15 +122,26 @@ def sanity_check(lines):
 
 
 def update_test_duration(lines):
-    for l in lines:
-        l['old_test_duration'] = l['test_duration']
-        if l['algorithm'] == 'ORIGINAL':
-            l['test_duration'] = l['time']
-        else:
-            l['test_duration'] = float(l['time']) - float(l['time_instrumentation']) - float(l['time_create_monitor'])
+    for p in lines:
+        for l in lines[p]:
+
+            l['old_test_duration'] = l['test_duration']
+            
+            if l['algorithm'] == 'ORIGINAL':
+                l['test_duration'] = l['time']
+            
+            else:
+                t = float(l['time'] or 0)
+                t_i = float(l['time_instrumentation'] or 0)
+                t_c_m = float(l['time_create_monitor'] or 0)
+                l['test_duration'] = t - t_i - t_c_m
     return lines
 
 def save_new_csv(file_name, new_projects, original_keys):
+    new_keys = list(original_keys)
+    new_keys.append('old_test_duration')
+    original_keys = new_keys
+    
     with open(file_name, mode='w') as file:
         fieldnames = original_keys
         writer = csv.DictWriter(file, fieldnames=fieldnames)
@@ -141,7 +152,7 @@ def save_new_csv(file_name, new_projects, original_keys):
 
 
 def main():
-    lines = read_csv_to_list_dict("results.csv")
+    lines = read_csv_to_list_dict("results-6.csv")
     sanity_check(lines)
 
 
