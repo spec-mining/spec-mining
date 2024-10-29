@@ -116,9 +116,19 @@ def sanity_check(lines):
         f"saving new csv, with only projects that successfully ran algos {REQUIRED_ALGOS} ")
 
     file_name = 'sanity-check-results.csv'
+    successful_projects = update_test_duration(successful_projects)
     save_new_csv(file_name, successful_projects, original_keys)
     print("saved new csv, file name: sanity-check-results.csv")
 
+
+def update_test_duration(lines):
+    for l in lines:
+        l['old_test_duration'] = l['test_duration']
+        if l['algorithm'] == 'ORIGINAL':
+            l['test_duration'] = l['time']
+        else:
+            l['test_duration'] = float(l['time']) - float(l['time_instrumentation']) - float(l['time_create_monitor'])
+    return lines
 
 def save_new_csv(file_name, new_projects, original_keys):
     with open(file_name, mode='w') as file:
