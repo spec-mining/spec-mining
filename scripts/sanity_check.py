@@ -152,7 +152,7 @@ def save_new_csv(file_name, new_projects, original_keys):
 
 
 def main():
-    lines = read_csv_to_list_dict("results-6.csv")
+    lines = read_csv_to_list_dict("results.csv")
     sanity_check(lines)
 
 
