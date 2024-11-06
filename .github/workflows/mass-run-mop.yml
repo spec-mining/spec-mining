@@ -18,6 +18,13 @@ on:
         description: 'Name of the release to be created.'
         default: all-results-2024-05-18-morning
         required: true
+      experimental_setup:
+        description: 'which experimental setup to use. Options are "github" or "docker".'
+        default: 'github'
+        type: choice
+        options:
+          - github
+          - docker
   repository_dispatch:
     types: [run-multiple-repos]
 
@@ -48,8 +55,23 @@ jobs:
             LINKS_TAB_NAME: ${{github.event.inputs.links_worksheetTitle || github.event.client_payload.links_worksheetTitle}}
 
   run_jobs:
+    if: ${{ github.event.inputs.experimental_setup != 'docker' && github.event.client_payload.experimental_setup != 'docker' }}
     needs: fetch_data
     uses: mohasarc/spec-mining/.github/workflows/run-single-project.yml@main
+    with:
+      project-link: ${{ matrix.repo-link }}
+      release-name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
+    secrets:
+      GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        repo-link: ${{ fromJson(needs.fetch_data.outputs.matrix) }}
+
+  run_jobs_with_docker:
+    if: ${{ github.event.inputs.experimental_setup == 'docker' || github.event.client_payload.experimental_setup == 'docker' }}
+    needs: fetch_data
+    uses: mohasarc/spec-mining/.github/workflows/run-single-project-with-docker.yml@main
     with:
       project-link: ${{ matrix.repo-link }}
       release-name: ${{ github.event.inputs.release_name || github.event.client_payload.release_name }}
