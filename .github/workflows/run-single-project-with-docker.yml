@@ -37,12 +37,21 @@ jobs:
               echo "SHA=$SHA" >> $GITHUB_ENV
           shell: bash
     
+        - name: Pull Docker image
+          run: docker pull ghcr.io/mohasarc/pymop-experimental-setup:latest
+        
         - name: Run the project with Docker
-          uses: addnab/docker-run-action@v3
-          with:
-              image: mohasarc/pymop-experimental-setup:latest
-              options: "-v ${{ github.workspace }}/projects:/experiment/__results__ ${{env.REPO_URL}} ${{env.SHA}} ORIGINAL 14400 ${{ secrets.GH_ACCESS_TOKEN }}"
-    
+          run: |
+            docker run \
+              -v ${{ github.workspace }}/projects:/experiment/__results__ \
+              ghcr.io/mohasarc/pymop-experimental-setup:latest \
+              ${{env.REPO_URL}} \
+              ${{env.SHA}} \
+              ORIGINAL \
+              14400 \
+              ${{ secrets.GH_ACCESS_TOKEN }}
+          shell: bash
+
         - name: Upload report to GitHub Release
           uses: Wandalen/wretry.action@master
           with:
@@ -97,13 +106,21 @@ jobs:
           run: |
             cd ./projects
 
-
+        - name: Pull Docker image
+          run: docker pull ghcr.io/mohasarc/pymop-experimental-setup:latest
+          
         - name: Run the project with Docker
-          uses: addnab/docker-run-action@v3
-          with:
-              image: mohasarc/pymop-experimental-setup:latest
-              options: "-v ${{ github.workspace }}/projects:/experiment/__results__ ${{env.REPO_URL}} ${{env.SHA}} ${{matrix.algorithm}} 14400 ${{ secrets.GH_ACCESS_TOKEN }}"
-    
+          run: |
+            docker run \
+                -v ${{ github.workspace }}/projects:/experiment/__results__ \
+                ghcr.io/mohasarc/pymop-experimental-setup:latest \
+                ${{env.REPO_URL}} \
+                ${{env.SHA}} \
+                ${{matrix.algorithm}} \
+                14400 \
+                ${{ secrets.GH_ACCESS_TOKEN }}
+          shell: bash
+
         - name: Upload report to GitHub Release
           uses: Wandalen/wretry.action@master
           with:
