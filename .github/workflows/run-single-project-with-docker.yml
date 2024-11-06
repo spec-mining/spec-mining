@@ -41,7 +41,7 @@ jobs:
           uses: addnab/docker-run-action@v3
           with:
               image: mohasarc/pymop-experimental-setup:latest
-              options: -v ${{ github.workspace }}/projects:/experiment/__results__ ${{env.REPO_URL}} ${{env.SHA}} ORIGINAL 14400 ${{ secrets.GH_ACCESS_TOKEN }}
+              options: "-v ${{ github.workspace }}/projects:/experiment/__results__ ${{env.REPO_URL}} ${{env.SHA}} ORIGINAL 14400 ${{ secrets.GH_ACCESS_TOKEN }}"
     
         - name: Upload report to GitHub Release
           uses: Wandalen/wretry.action@master
@@ -102,7 +102,7 @@ jobs:
           uses: addnab/docker-run-action@v3
           with:
               image: mohasarc/pymop-experimental-setup:latest
-              options: -v ${{ github.workspace }}/projects:/experiment/__results__ ${{env.REPO_URL}} ${{env.SHA}} ${{matrix.algorithm}} 14400 ${{ secrets.GH_ACCESS_TOKEN }}
+              options: "-v ${{ github.workspace }}/projects:/experiment/__results__ ${{env.REPO_URL}} ${{env.SHA}} ${{matrix.algorithm}} 14400 ${{ secrets.GH_ACCESS_TOKEN }}"
     
         - name: Upload report to GitHub Release
           uses: Wandalen/wretry.action@master
