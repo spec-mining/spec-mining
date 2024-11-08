@@ -52,6 +52,11 @@ jobs:
               ${{ secrets.GH_ACCESS_TOKEN }}
           shell: bash
 
+        - name: Print contents of ./projects
+          run: |
+            cd ./projects
+            ls -la
+
         - name: Upload report to GitHub Release
           uses: Wandalen/wretry.action@master
           with:
@@ -120,6 +125,11 @@ jobs:
                 14400 \
                 ${{ secrets.GH_ACCESS_TOKEN }}
           shell: bash
+        
+        - name: Print contents of ./projects
+          run: |
+            cd ./projects
+            ls -la
 
         - name: Upload report to GitHub Release
           uses: Wandalen/wretry.action@master
