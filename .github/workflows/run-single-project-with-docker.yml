@@ -78,9 +78,11 @@ jobs:
             tar -xzf ./projects/*.tar.gz -C ./projects/extracted
 
             # run check_success.py
-            cd ./projects/extracted
+            cd ./projects/extracted/
+            folder_name=$(ls -d */ | head -n 1)
+            cd "$folder_name"
             ls -la
-            cp ../../scripts/check_success.py .
+            cp ../../../scripts/check_success.py .
             python3 check_success.py
 
   run-algos:
