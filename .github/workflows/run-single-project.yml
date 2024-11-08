@@ -96,7 +96,7 @@ jobs:
               prerelease: true
               token: ${{ secrets.GITHUB_TOKEN }}
         
-        - name: Fail the job on errors in ${{env.REPO_NAME}}_ORIGINAL.out
+        - name: Fail the job on errors in ${{env.REPO_NAME}}-pytest-output.txt
           run: |
             cd ./projects/reports/$REPO_NAME
             cp ../../../scripts/check_success.py .

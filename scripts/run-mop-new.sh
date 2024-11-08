@@ -27,18 +27,18 @@ call_pymop(){
     if [ "$algo" = "ORIGINAL" ]; then
         START_TIME=$(python -c 'import time; print(time.time())')
         timeout 14400 pytest --color=no -v -rA --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=$report/MEM_$algo \
-        --continue-on-collection-errors --json-report --json-report-indent=2 $extra_args &> $report/pymop_$algo.out
+        --continue-on-collection-errors --json-report --json-report-indent=2 $extra_args &> $report/$algo-pytest-output.txt
         END_TIME=$(python -c 'import time; print(time.time())')
         END_TO_END_TIME=$(python -c "print($END_TIME - $START_TIME)")
         echo "{\"test_duration\": ${END_TO_END_TIME}}" > $report/$algo-time.json
     else
         timeout 14400 pytest --color=no -v -p pythonmop -rA --path="$PWD"/../mop-with-dynapt/specs-new/ --algo $algo --memray --trace-python-allocators --most-allocations=0 --memray-bin-path=$report/MEM_$algo \
-        --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="$algo".json $extra_args &> $report/pymop_$algo.out
+        --continue-on-collection-errors --json-report --json-report-indent=2 --statistics --statistics_file="$algo".json $extra_args &> $report/$algo-pytest-output.txt
     fi
     
     # if process stop by timeout, then print timeout
     if [ $? -eq 124 ]; then
-        echo "PROJECT TIMEOUT: ALGO_$algo" > $report/TIMEOUT-pymop_$algo.out
+        echo "PROJECT TIMEOUT: ALGO_$algo" > $report/TIMEOUT-output_$algo.txt
     fi
     set +x
     
@@ -49,7 +49,7 @@ call_pymop(){
     mv "$algo"-violations.json $report/$algo-violations.json
     mv "$algo"-time.json $report/$algo-time.json
 
-    gzip -f $report/$algo.report.json $report/pymop_$algo.out
+    gzip -f $report/$algo.report.json $report/$algo-pytest-output.txt
 }
 
 HERE="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
@@ -75,8 +75,7 @@ cd "$project_dir" || exit
 # add git infos:
 sha=$(git rev-parse HEAD | cut -c1-7)
 url=$(git remote get-url origin)
-echo "sha-commit,$sha" > $report/project_info.out
-echo "project-url,$url" >> $report/project_info.out
+echo "{\"sha-commit\": \"$sha\", \"project-url\": \"$url\"}" > $results_dir/project_info.json
 
 rm -f .pymon
 source env/bin/activate

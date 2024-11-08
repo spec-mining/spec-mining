@@ -423,7 +423,7 @@ def main():
 
             for algorithm in algos:
                 print(f'Algo: {algorithm}')
-                filename = f'pymop_{algorithm}.out'
+                filename = f'{algorithm}-pytest-output.txt'
                 line = None
                 try:
                     line = get_results(filename, projectname, algorithm)

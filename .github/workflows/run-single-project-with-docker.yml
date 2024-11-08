@@ -71,7 +71,7 @@ jobs:
               prerelease: true
               token: ${{ secrets.GITHUB_TOKEN }}
         
-        - name: Fail the job on errors in ${{env.REPO_URL}}_ORIGINAL.out
+        - name: Fail the job on errors in ${{env.REPO_URL}}-pytest-output.txt
           run: |
             # extract the tar.gz file into ./projects/extracted
             mkdir -p ./projects/extracted
@@ -79,7 +79,7 @@ jobs:
 
             # run check_success.py
             cd ./projects/extracted
-            cp ../../../scripts/check_success.py .
+            cp ../../scripts/check_success.py .
             python3 check_success.py
 
   run-algos:

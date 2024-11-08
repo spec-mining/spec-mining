@@ -63,11 +63,20 @@ jobs:
           - name: extract zip files into folders with the same name
             run: |
               cd ./projects/reports
+
               for f in *.zip; do
                 folder_name=$(echo "${f%.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
                 unzip -o -d "$folder_name" "$f"
                 rm "$f"
               done
+
+              for f in *.tar.gz; do
+                folder_name=$(echo "${f%.*.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
+                mkdir -p "$folder_name"
+                tar -xzf "$f" -C "$folder_name"
+                rm "$f"
+              done
+
               ls -l
 
           - name: Generate report csv
