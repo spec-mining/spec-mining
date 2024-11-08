@@ -83,7 +83,7 @@ jobs:
         repo-link: ${{ fromJson(needs.fetch_data.outputs.matrix) }}
 
   analyze_data:
-    needs: run_jobs
+    needs: [run_jobs, run_jobs_with_docker]
     if: always()
     runs-on: ubuntu-latest
     steps:

@@ -79,6 +79,7 @@ jobs:
 
             # run check_success.py
             cd ./projects/extracted
+            ls -la
             cp ../../scripts/check_success.py .
             python3 check_success.py
 
