@@ -70,13 +70,6 @@ jobs:
                 rm "$f"
               done
 
-              for f in *.tar.gz; do
-                folder_name=$(echo "${f%.*.*}" | sed -E 's/(_ORIGINAL|_A|_B|_C\+?|_D)$//')
-                mkdir -p "$folder_name"
-                tar -xzf "$f" -C "$folder_name"
-                rm "$f"
-              done
-
               ls -l
 
           - name: Generate report csv
