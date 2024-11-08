@@ -64,7 +64,7 @@ jobs:
             attempt_limit: 10
             action: softprops/action-gh-release@v1
             with: |
-              files: ./projects/*.zip
+              files: ./projects/*.tar.gz
               tag_name: ${{ inputs.release-name }}
               name: ${{ inputs.release-name }}
               draft: false
@@ -73,8 +73,9 @@ jobs:
         
         - name: Fail the job on errors in ${{env.REPO_URL}}_ORIGINAL.out
           run: |
-            # extract the zip file into ./projects/extracted
-            unzip -o -d ./projects/extracted ./projects/*.zip
+            # extract the tar.gz file into ./projects/extracted
+            mkdir -p ./projects/extracted
+            tar -xzf ./projects/*.tar.gz -C ./projects/extracted
 
             # run check_success.py
             cd ./projects/extracted
@@ -138,7 +139,7 @@ jobs:
             attempt_limit: 10
             action: softprops/action-gh-release@v1
             with: |
-              files: ./projects/*.zip
+              files: ./projects/*.tar.gz
               tag_name: ${{ inputs.release-name }}
               name: ${{ inputs.release-name }}
               draft: false
