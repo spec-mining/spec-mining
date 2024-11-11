@@ -15,7 +15,7 @@ on:
 jobs:
   run-original:
     runs-on: ubuntu-latest
-    timeout-minutes: 185
+    timeout-minutes: 360
     steps:
         - uses: actions/checkout@v4
           with:
@@ -48,7 +48,7 @@ jobs:
               ${{env.REPO_URL}} \
               ${{env.SHA}} \
               ORIGINAL \
-              14400 \
+              19800 \
               ${{ secrets.GH_ACCESS_TOKEN }}
           shell: bash
 
@@ -92,7 +92,7 @@ jobs:
       fail-fast: false
       matrix:
         algorithm: ['B', 'C', 'C+', 'D']
-    timeout-minutes: 185
+    timeout-minutes: 360
     steps:
         - uses: actions/checkout@v4
           with:
@@ -126,7 +126,7 @@ jobs:
                 ${{env.REPO_URL}} \
                 ${{env.SHA}} \
                 ${{matrix.algorithm}} \
-                14400 \
+                19800 \
                 ${{ secrets.GH_ACCESS_TOKEN }}
           shell: bash
         
