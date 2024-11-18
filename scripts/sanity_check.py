@@ -132,9 +132,9 @@ def update_test_duration(lines):
             
             else:
                 t = float(l['time'] or 0)
-                #t_i = float(l['time_instrumentation'] or 0)
-                t_c_m = float(l['time_create_monitor'] or 0)
-                l['test_duration'] = round(t - t_c_m, 2)
+                t_i = float(l['time_instrumentation'] or 0)
+                # t_c_m = float(l['time_create_monitor'] or 0)
+                l['test_duration'] = round(t + t_i, 2)
     return lines
 
 def save_new_csv(file_name, new_projects, original_keys):
