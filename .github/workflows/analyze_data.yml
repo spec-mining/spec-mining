@@ -79,6 +79,8 @@ jobs:
               # move ../../../scripts/parse_reports.py and sanity_check.py to ./projects/reports
               cp ../../scripts/parse_reports.py .
               cp ../../scripts/sanity_check.py .
+              cp ../../scripts/parse_results_tests.py .
+
 
               # ls -l
 
@@ -90,6 +92,10 @@ jobs:
               python3 sanity_check.py &> output_sanity_check.txt
               echo "========================= Results after Sanity check ========================"
               #cat sanity-check-results.csv
+
+              python3 parse_results_tests.py &> output_parse_results_tests.txt
+              echo "========================= Results after parsing results tests ========================"
+              #cat results_tests.csv
     
             shell: bash
             continue-on-error: true
@@ -119,6 +125,8 @@ jobs:
                   ./projects/reports/sanity-check-results.csv
                   ./projects/reports/output_parse_reports.txt
                   ./projects/reports/output_sanity_check.txt
+                  ./projects/reports/results_tests.csv
+                  ./projects/reports/output_parse_results_tests.txt
                 tag_name: ${{inputs.release-tag}}
                 name: ${{inputs.release-tag}}
                 draft: false
