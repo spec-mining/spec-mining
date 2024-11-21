@@ -34,7 +34,9 @@ def is_results_diff(lines, name):
             try:
                 if l[c] == '':
                     l[c] = 0
-                
+                if c == 'passed' and int(l[c]) == 0: # the project should have at least 1 passed test
+                    print(f'***Project {name} has 0 passed tests')
+                    return True
                 results.add(int(l[c]))
             except:
                 print(f'***Project {name} has non-integer {c} value')
