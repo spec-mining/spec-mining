@@ -3,7 +3,7 @@ import csv
 from typing import Any, Dict, List
 import os
 
-ALGOS = ['B', 'C', 'C+', 'D']
+ALGOS = ['ORIGINAL', 'B', 'C', 'C+', 'D']
 
 def load_json(input_file: str) -> Dict[str, Any]:
     """Load JSON data from a file."""
